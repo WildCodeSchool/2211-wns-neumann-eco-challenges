@@ -1,21 +1,23 @@
-import "reflect-metadata";
-import db from "./db";
-import { ApolloServer } from "apollo-server";
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
-import { buildSchema } from "type-graphql";
-import { join } from "path";
+import 'reflect-metadata';
+import db from './db';
+import { ApolloServer } from 'apollo-server';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { buildSchema } from 'type-graphql';
+// import { join } from 'path';
+import { UserResolver } from './resolvers/resolver';
 
 async function start(): Promise<void> {
   await db.initialize();
 
   const schema = await buildSchema({
-    resolvers: [join(__dirname, "/resolvers/*.ts")],
+    // resolvers: [join(__dirname, '/resolvers/*.ts')],
+    resolvers: [UserResolver],
   });
 
   const server = new ApolloServer({
     schema,
     csrfPrevention: true,
-    cache: "bounded",
+    cache: 'bounded',
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
   });
 
