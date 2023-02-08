@@ -3,15 +3,13 @@ import db from './db';
 import { ApolloServer } from 'apollo-server';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { buildSchema } from 'type-graphql';
-// import { join } from 'path';
-import { UserResolver } from './resolvers/resolver';
+import { join } from 'path';
 
 async function start(): Promise<void> {
   await db.initialize();
 
   const schema = await buildSchema({
-    // resolvers: [join(__dirname, '/resolvers/*.ts')],
-    resolvers: [UserResolver],
+    resolvers: [join(__dirname, '/resolvers/*.ts')],
   });
 
   const server = new ApolloServer({
