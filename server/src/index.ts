@@ -45,7 +45,7 @@ async function start(): Promise<void> {
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     context: ({req, res}) => ({req, res}),
     cors: {
-      origin: env.CORS_ALLOWED_ORIGINS.split(" "),
+      origin: env.CORS_ALLOWED_ORIGINS.split(","),
       credentials: true,
     }
   });
