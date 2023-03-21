@@ -7,14 +7,15 @@ import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import datasource from './db';
 import { env } from './env';
-import { ContextType, JWTPayload } from './resolvers/resolver';
-import User from './entity/users';
+import { ContextType, JWTPayload } from './user/users.resolver';
+import User from './user/Users';
 
 async function start(): Promise<void> {
   await datasource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [join(__dirname, '/resolvers/*.ts')],
+    // resolvers: [join(__dirname, '/resolvers/*.ts')],
+    resolvers : [join(__dirname, "/**/*.resolver.ts")],
     authChecker: async ({context}: {context: ContextType})  => {
       const {
         req: {headers},
