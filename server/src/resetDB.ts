@@ -1,5 +1,5 @@
 import datasource from "./db";
-import User, { hashPassword } from "./user/Users";
+import User, { hashPassword } from "./user/user.entity";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
