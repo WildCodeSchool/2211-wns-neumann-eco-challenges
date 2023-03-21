@@ -1,4 +1,4 @@
-import User, { hashPassword, UserInput, verifyPassword } from '../entity/users';
+import User, { hashPassword, UserInput, verifyPassword } from './Users';
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import datasource from '../db';
 import { ApolloError } from 'apollo-server-errors';
