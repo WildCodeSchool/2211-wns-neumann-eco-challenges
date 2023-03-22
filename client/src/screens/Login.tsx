@@ -12,7 +12,7 @@ export default function Login() {
 
   const [login] = useLoginMutation();
   const [logout] = useLogoutMutation();
-  const {data: currentUser, client} = useGetProfileQuery({
+  const { data: currentUser, client } = useGetProfileQuery({
     errorPolicy: "ignore",
   });
 
@@ -36,7 +36,7 @@ export default function Login() {
             e.preventDefault();
             setError("");
             try {
-              await login({variables: {data: {email, password}}});
+              await login({ variables: { data: { email, password } } });
             } catch (err) {
               setError("invalid credentials");
             } finally {
@@ -63,7 +63,7 @@ export default function Login() {
             />
           </label>
           {error && <p className="text-red-500">{error}</p>}
-          <button type="submit">Log In</button>
+          <button type="submit">Log in</button>
         </form>
       )}
     </div>
