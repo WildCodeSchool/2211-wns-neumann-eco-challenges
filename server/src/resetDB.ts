@@ -1,8 +1,11 @@
 import datasource from "./db";
-import User, { hashPassword } from "./user/Users";
+import { addEcogesture } from "./ecogesture/ecogesture.service";
+
+import User, { hashPassword } from "./user/user.entity";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
+  await ecogestureFill();
   await datasource.getRepository(User).delete({});
   await datasource.getRepository(User).save([
     {
@@ -15,3 +18,19 @@ async function reset(): Promise<void> {
 }
 
 reset().catch(console.error);
+
+async function ecogestureFill(): Promise<void> {
+  await addEcogesture([
+    {
+      name: "fix my bike",
+      difficulty: 5,
+      reward: 2,
+    },
+    {
+      name: "clean streets",
+      difficulty: 7,
+      reward: 2,
+      isProofNeeded: true,
+    },
+  ]);
+}

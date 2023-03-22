@@ -4,9 +4,9 @@ import { Field, ObjectType } from "type-graphql";
 @Entity()
 @ObjectType()
 class Ecogesture {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: number;
+  id?: string;
 
   @Field()
   @Column()
@@ -14,15 +14,15 @@ class Ecogesture {
 
   @Field()
   @Column()
-  difficulty: string;
+  difficulty: number;
 
   @Field()
   @Column()
   reward: number;
 
   @Field()
-  @Column()
-  isProofNeeded: boolean;
+  @Column({ default: false })
+  isProofNeeded?: boolean;
 }
 
 export default Ecogesture;
