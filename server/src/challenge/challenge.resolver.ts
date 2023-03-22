@@ -40,4 +40,12 @@ export class ChallengeResolver {
       .getRepository(Challenge)
       .save({ id, name, status, startingDate, endingDate });
   }
+
+  @Mutation(() => Boolean)
+  async deleteChallenge(@Arg("id", () => String) id: number): Promise<boolean> {
+    const { affected } = await datasource.getRepository(Challenge).delete(id);
+    if (affected === 0)
+      throw new ApolloError("Challenge not found", "NOT_FOUND");
+    return true;
+  }
 }
