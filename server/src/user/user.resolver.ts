@@ -1,10 +1,11 @@
-import User, { hashPassword, UserInput, verifyPassword } from "./user.entity";
+import User, { UserInput, verifyPassword } from "./user.entity";
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import datasource from "../db";
 import { ApolloError } from "apollo-server-errors";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../env";
+import { createUser, deleteUser, getUsers } from "./user.service";
 
 export interface JWTPayload {
   userId: number;
@@ -18,12 +19,22 @@ export interface ContextType {
 
 @Resolver(() => User)
 export class UserResolver {
-  @Mutation(() => User)
-  async createUser(@Arg("data") { email, password }: UserInput): Promise<User> {
-    const hashedPassword = await hashPassword(password);
-    return await datasource.getRepository(User).save({ email, hashedPassword });
+  @Query(() => [User])
+  async users(): Promise<User[]> {
+    return await getUsers();
   }
 
+  @Mutation(() => [User])
+  async createUser(@Arg("data") userData: [User]): Promise<User[]> {
+    return await createUser(userData);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUser(@Arg("uuid") userID: string): Promise<boolean> {
+    return await deleteUser(userID);
+  }
+
+  // Login - JWT
   @Mutation(() => String)
   async login(
     @Arg("data") { email, password }: UserInput,

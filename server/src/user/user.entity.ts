@@ -11,6 +11,14 @@ class User {
   id: number;
 
   @Field()
+  @Column()
+  firstName: string;
+
+  @Field()
+  @Column()
+  lastName: string;
+
+  @Field()
   @Column({ unique: true })
   email: string;
 
