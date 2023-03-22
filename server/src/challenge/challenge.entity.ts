@@ -1,5 +1,6 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, InputType, ObjectType } from "type-graphql";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { MaxLength, MinLength } from "class-validator";
 
 @Entity()
 @ObjectType()
@@ -23,6 +24,40 @@ class Challenge {
   @Column({ type: "timestamptz", nullable: true })
   @Field()
   endingDate: Date;
+}
+
+@InputType()
+export class ChallengeInput {
+  @Field()
+  @MaxLength(50)
+  @MinLength(5)
+  name: string;
+
+  @Field({ nullable: true })
+  status?: boolean;
+
+  @Field({ nullable: true })
+  startingDate: Date;
+
+  @Field({ nullable: true })
+  endingDate: Date;
+}
+
+@InputType()
+export class ChallengeUpdateInput {
+  @Field({ nullable: true })
+  @MaxLength(50)
+  @MinLength(5)
+  name?: string;
+
+  @Field({ nullable: true })
+  status?: boolean;
+
+  @Field({ nullable: true })
+  startingDate?: Date;
+
+  @Field({ nullable: true })
+  endingDate?: Date;
 }
 
 export default Challenge;
