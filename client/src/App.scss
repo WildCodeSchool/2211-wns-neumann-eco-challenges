@@ -1,12 +1,81 @@
 $backgroundColor: #f8fffcec;
-$greyColor: #404040ec;
+$darkGreyColor: #404040ec;
+$greyColor: #585555;
 $darkBlueColor: #104455;
 $lightGreenColor: #3bd8a9;
-
+$lightGreyColor: #8d8d8d;
+$normalRadius: 20px !important;
+$sizeChallengeTimerClock: 20px;
+$rightOffsetChallengeTimerClock: 7px;
+$nightLinearGradient: linear-gradient(
+  0deg,
+  rgba(48, 30, 103, 0.8) 0%,
+  rgba(91, 143, 185, 0.8) 100%
+);
+$pinkLinearGradient: linear-gradient(
+  0deg,
+  rgba(250, 123, 135, 0.8) 0%,
+  rgba(255, 219, 247, 0.8) 100%
+);
+$seaLinearGradient: linear-gradient(
+  0deg,
+  rgba(98, 182, 183, 1) 0%,
+  rgba(193, 238, 228, 0.8) 100%
+);
+$sunsetLinearGradient: linear-gradient(
+  0deg,
+  rgba(255, 153, 150, 1) 0%,
+  rgba(255, 229, 205, 1) 100%
+);
 .App {
   background-color: $backgroundColor;
 }
 
+.sunsetLinearGradient {
+  background: $sunsetLinearGradient;
+}
+
+.paddingOngoingChallengeItem {
+  padding-right: ($sizeChallengeTimerClock + $rightOffsetChallengeTimerClock);
+}
+.challengeTimer {
+  width: $sizeChallengeTimerClock;
+  height: $sizeChallengeTimerClock;
+  border-radius: 50%;
+  position: absolute;
+  top: 7px;
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  right: $rightOffsetChallengeTimerClock;
+}
+.pinkLinearGradient {
+  background: $pinkLinearGradient;
+}
+.seaLinearGradient {
+  background: $seaLinearGradient;
+}
+
+.ongoingChallengeItem {
+  display: flex;
+}
+.nightLinearGradient {
+  background: $nightLinearGradient;
+}
+.lightTextColor {
+  color: $lightGreyColor;
+}
+.lightGreenLeftBorder {
+  border-left: 6px solid $lightGreenColor;
+}
+
+.greyTextColor {
+  color: $greyColor;
+}
+.challengeItemContainer {
+  border-radius: $normalRadius;
+}
+.darkBackground {
+  background-color: $darkBlueColor;
+}
 .headerTitle {
   color: $lightGreenColor;
 }
@@ -33,7 +102,8 @@ $lightGreenColor: #3bd8a9;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: $greyColor;
+  color: $darkGreyColor;
+  margin: 20px;
 }
 
 .App-link {

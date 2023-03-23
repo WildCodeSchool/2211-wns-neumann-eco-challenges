@@ -11,8 +11,8 @@ export const DashboardWrapper = ({
   component: React.ReactNode;
 }) => {
   return (
-    <Stack spacing={-1}>
-      <Typography fontWeight={700} variant="h6">
+    <Stack spacing={0}>
+      <Typography fontWeight={700} variant="h6" lineHeight={1.5}>
         {title}
       </Typography>
       <Typography fontWeight={400} variant="subtitle1">
