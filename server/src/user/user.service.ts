@@ -1,12 +1,12 @@
 import { ApolloError } from "apollo-server";
 import datasource from "../db";
-import User from "./user.entity";
+import User, { UserInput } from "./user.entity";
 
 export async function getUsers(): Promise<User[]> {
   return await datasource.getRepository(User).find();
 }
 
-export async function createUser(userData: User[]): Promise<User[]> {
+export async function createUser(userData: UserInput): Promise<User> {
   return await datasource.getRepository(User).save(userData);
 }
 

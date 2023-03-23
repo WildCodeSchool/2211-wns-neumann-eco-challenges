@@ -1,10 +1,10 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 
-import Ecogesture from "./ecogesture.entity";
+import Ecogesture, { EcogestureInput } from "./ecogesture.entity";
 import {
   allEcogestures,
-  deleteEcogesture,
-  addEcogesture,
+  deleteEcogestures,
+  createEcogestures,
 } from "./ecogesture.service";
 
 @Resolver(Ecogesture)
@@ -15,12 +15,17 @@ export class EcogestureResolver {
   }
 
   @Mutation(() => [Ecogesture])
-  async addEcogesture(@Arg("data") data: [Ecogesture]): Promise<Ecogesture[]> {
-    return await addEcogesture(data);
+  async createEcogestures(
+    @Arg("inputs", () => [EcogestureInput])
+    ecogestureData: EcogestureInput[]
+  ): Promise<Ecogesture> {
+    return await createEcogestures(ecogestureData);
   }
 
   @Mutation(() => Boolean)
-  async deleteEcogesture(@Arg("uuid") ecogestureID: string): Promise<boolean> {
-    return await deleteEcogesture(ecogestureID);
+  async deleteEcogestures(
+    @Arg("ids", () => [String]) ecogestureID: string[]
+  ): Promise<boolean> {
+    return await deleteEcogestures(ecogestureID);
   }
 }

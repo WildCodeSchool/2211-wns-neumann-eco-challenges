@@ -1,12 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
+import { Field, InputType, ObjectType } from "type-graphql";
 
 @Entity()
 @ObjectType()
 class Ecogesture {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id?: string;
+  id: string;
 
   @Field()
   @Column()
@@ -26,3 +26,18 @@ class Ecogesture {
 }
 
 export default Ecogesture;
+
+@InputType()
+export class EcogestureInput {
+  @Field()
+  name: string;
+
+  @Field()
+  difficulty: number;
+
+  @Field()
+  reward: number;
+
+  @Field()
+  isProofNeeded?: boolean;
+}

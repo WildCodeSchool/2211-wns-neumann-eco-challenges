@@ -11,11 +11,11 @@ class User {
   id: number;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   firstName: string;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   lastName: string;
 
   @Field()

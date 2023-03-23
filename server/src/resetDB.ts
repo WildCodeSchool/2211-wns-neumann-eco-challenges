@@ -1,5 +1,5 @@
 import datasource from "./db";
-import { addEcogesture } from "./ecogesture/ecogesture.service";
+import { createEcogestures } from "./ecogesture/ecogesture.service";
 
 import User, { hashPassword } from "./user/user.entity";
 
@@ -20,7 +20,7 @@ async function reset(): Promise<void> {
 reset().catch(console.error);
 
 async function ecogestureFill(): Promise<void> {
-  await addEcogesture([
+  await createEcogestures([
     {
       name: "fix my bike",
       difficulty: 5,

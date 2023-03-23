@@ -24,8 +24,8 @@ export class UserResolver {
     return await getUsers();
   }
 
-  @Mutation(() => [User])
-  async createUser(@Arg("data") userData: [User]): Promise<User[]> {
+  @Mutation(() => User)
+  async createUser(@Arg("data") userData: UserInput): Promise<User> {
     return await createUser(userData);
   }
 
