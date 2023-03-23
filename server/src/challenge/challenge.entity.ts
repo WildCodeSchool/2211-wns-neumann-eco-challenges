@@ -33,13 +33,13 @@ export class ChallengeInput {
   @MinLength(5)
   name: string;
 
-  @Field({ nullable: true })
+  @Field()
   status?: boolean;
 
-  @Field({ nullable: true })
+  @Field()
   startingDate: Date;
 
-  @Field({ nullable: true })
+  @Field()
   endingDate: Date;
 }
 

@@ -1,5 +1,5 @@
 import Challenge from "./challenge/challenge.entity";
-import { addChallenge } from "./challenge/challenge.service";
+import { createChallenges } from "./challenge/challenge.service";
 import datasource from "./db";
 import User, { hashPassword } from "./user/user.entity";
 
@@ -21,16 +21,33 @@ async function reset(): Promise<void> {
 reset().catch(console.error);
 
 async function challengeFill(): Promise<void> {
-  await addChallenge([
+  await createChallenges([
     {
       name: "Faire 20km en vélo en 1 semaine",
-      startingDate: new Date("2023/03/22 10:22:36"),
-      endingDate: new Date("2023/03/29 10:22:36"),
+      startingDate: new Date("2023/03/22 09:00"),
+      endingDate: new Date("2023/03/29 18:00"),
     },
     {
       name: "Acheter des fruits et légumes de saison",
-      startingDate: new Date("2023/03/22 10:22:36"),
-      endingDate: new Date("2023/03/22 18:22:36"),
+      status: true,
+      startingDate: new Date("2023/03/22 10:00"),
+      endingDate: new Date("2023/03/22 12:00"),
+    },
+    {
+      name: "Nettoyer les rues de la ville",
+      startingDate: new Date("2023-03-26 09:30"),
+      endingDate: new Date("2023-03-26 12:00"),
+    },
+    {
+      name: "Acheter du dentifrice solide",
+      status: true,
+      startingDate: new Date("2023-03-19 14:30"),
+      endingDate: new Date("2023-03-19 15:30"),
+    },
+    {
+      name: "Manger végétarien pendant 1 mois",
+      startingDate: new Date("2023-03-01 09:30"),
+      endingDate: new Date("2023-03-31 21:30"),
     },
   ]);
 }
