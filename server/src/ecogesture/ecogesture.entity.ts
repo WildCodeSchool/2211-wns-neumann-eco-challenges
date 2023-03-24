@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, Int, ObjectType } from "type-graphql";
+import { IsString } from "class-validator";
 
 @Entity()
 @ObjectType()
@@ -30,14 +31,15 @@ export default Ecogesture;
 @InputType()
 export class EcogestureInput {
   @Field()
+  @IsString()
   name: string;
 
-  @Field()
+  @Field((type) => Int)
   difficulty: number;
 
-  @Field()
+  @Field((type) => Int)
   reward: number;
 
-  @Field()
+  @Field((type) => Boolean)
   isProofNeeded?: boolean;
 }

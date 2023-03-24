@@ -1,18 +1,32 @@
 import { ApolloError } from "apollo-server";
 import datasource from "../db";
-import User, { UserInput } from "./user.entity";
+import User, { hashPassword, UserInput } from "./user.entity";
 
 export async function getUsers(): Promise<User[]> {
   return await datasource.getRepository(User).find();
 }
 
-export async function createUser(userData: UserInput): Promise<User> {
-  return await datasource.getRepository(User).save(userData);
+export async function createUsers(userData: UserInput[]): Promise<User[]> {
+  return await Promise.all(
+    userData.map(
+      async (user) =>
+        await datasource.getRepository(User).save({
+          ...user,
+          hashedPassword: await hashPassword(user.password),
+          password: undefined,
+        })
+    )
+  );
 }
 
-export async function deleteUser(userID: string): Promise<boolean> {
-  const affected = datasource.getRepository(User).delete(userID);
-  if (affected === null || affected === undefined) {
-    throw new ApolloError("User not found", "NOT_FOUND");
-  } else return true;
+export async function deleteUsers(userIDs: string[]): Promise<boolean[]> {
+  return await Promise.all(
+    userIDs.map(async (id) => {
+      const { affected } = await datasource.getRepository(User).delete(id);
+      if (affected === 0) {
+        throw new ApolloError("User not found", "NOT_FOUND");
+      }
+      return true;
+    })
+  );
 }

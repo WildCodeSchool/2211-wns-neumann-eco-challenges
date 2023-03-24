@@ -1,11 +1,11 @@
-import User, { UserInput, verifyPassword } from "./user.entity";
+import User, { LoginInput, UserInput, verifyPassword } from "./user.entity";
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import datasource from "../db";
 import { ApolloError } from "apollo-server-errors";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../env";
-import { createUser, deleteUser, getUsers } from "./user.service";
+import { createUsers, deleteUsers, getUsers } from "./user.service";
 
 export interface JWTPayload {
   userId: number;
@@ -24,20 +24,24 @@ export class UserResolver {
     return await getUsers();
   }
 
-  @Mutation(() => User)
-  async createUser(@Arg("data") userData: UserInput): Promise<User> {
-    return await createUser(userData);
+  @Mutation(() => [User])
+  async createUser(
+    @Arg("userInputs", () => [UserInput]) userData: UserInput[]
+  ): Promise<User[]> {
+    return await createUsers(userData);
   }
 
-  @Mutation(() => Boolean)
-  async deleteUser(@Arg("uuid") userID: string): Promise<boolean> {
-    return await deleteUser(userID);
+  @Mutation(() => [Boolean])
+  async deleteUser(
+    @Arg("uuid", () => [String]) userIDs: string[]
+  ): Promise<boolean[]> {
+    return await deleteUsers(userIDs);
   }
 
   // Login - JWT
   @Mutation(() => String)
   async login(
-    @Arg("data") { email, password }: UserInput,
+    @Arg("data") { email, password }: LoginInput,
     @Ctx() { res }: ContextType
   ): Promise<string> {
     const user = await datasource.getRepository(User).findOneBy({ email });

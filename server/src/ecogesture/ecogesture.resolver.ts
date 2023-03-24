@@ -2,7 +2,7 @@ import { Arg, Mutation, Query, Resolver } from "type-graphql";
 
 import Ecogesture, { EcogestureInput } from "./ecogesture.entity";
 import {
-  allEcogestures,
+  getEcogestures,
   deleteEcogestures,
   createEcogestures,
 } from "./ecogesture.service";
@@ -11,21 +11,21 @@ import {
 export class EcogestureResolver {
   @Query(() => [Ecogesture])
   async ecogestures(): Promise<Ecogesture[]> {
-    return await allEcogestures();
+    return await getEcogestures();
   }
 
   @Mutation(() => [Ecogesture])
   async createEcogestures(
-    @Arg("inputs", () => [EcogestureInput])
+    @Arg("ecogestureInputs", () => [EcogestureInput])
     ecogestureData: EcogestureInput[]
-  ): Promise<Ecogesture> {
+  ): Promise<Ecogesture[]> {
     return await createEcogestures(ecogestureData);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => [Boolean])
   async deleteEcogestures(
-    @Arg("ids", () => [String]) ecogestureID: string[]
-  ): Promise<boolean> {
-    return await deleteEcogestures(ecogestureID);
+    @Arg("ids", () => [String]) ecogestureIDs: string[]
+  ): Promise<boolean[]> {
+    return await deleteEcogestures(ecogestureIDs);
   }
 }

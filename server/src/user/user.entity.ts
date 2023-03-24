@@ -1,4 +1,4 @@
-import { IsEmail, MinLength } from "class-validator";
+import { IsEmail, IsString, MinLength } from "class-validator";
 import { Field, InputType, ObjectType } from "type-graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import argon2, { hash, verify } from "argon2";
@@ -28,6 +28,25 @@ class User {
 
 @InputType()
 export class UserInput {
+  @Field()
+  @IsString()
+  firstName: string;
+
+  @Field()
+  @IsString()
+  lastName: string;
+
+  @Field()
+  @IsEmail()
+  email: string;
+
+  @Field()
+  @MinLength(8)
+  password: string;
+}
+
+@InputType()
+export class LoginInput {
   @Field()
   @IsEmail()
   email: string;

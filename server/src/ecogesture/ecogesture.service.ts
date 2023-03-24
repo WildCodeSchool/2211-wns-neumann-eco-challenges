@@ -4,14 +4,16 @@ import Ecogesture, { EcogestureInput } from "./ecogesture.entity";
 
 export async function createEcogestures(
   ecogestures: EcogestureInput[]
-): Promise<Ecogesture> {
-  const { name, difficulty, isProofNeeded, reward } = ecogestures[0];
-  return await datasource
-    .getRepository(Ecogesture)
-    .save({ name, difficulty, isProofNeeded, reward });
+): Promise<Ecogesture[]> {
+  return await Promise.all(
+    ecogestures.map(
+      async (ecogesture) =>
+        await datasource.getRepository(Ecogesture).save({ ...ecogesture })
+    )
+  );
 }
 
-export async function allEcogestures(): Promise<Ecogesture[]> {
+export async function getEcogestures(): Promise<Ecogesture[]> {
   const ecogestures: Ecogesture[] = await datasource
     .getRepository(Ecogesture)
     .find();
@@ -19,10 +21,17 @@ export async function allEcogestures(): Promise<Ecogesture[]> {
 }
 
 export async function deleteEcogestures(
-  ecogestureID: string[]
-): Promise<boolean> {
-  const affected = datasource.getRepository(Ecogesture).delete(ecogestureID);
-  if (affected === null || affected === undefined) {
-    throw new ApolloError("Ecogesture not found", "NOT_FOUND");
-  } else return true;
+  ecogestureIDs: string[]
+): Promise<boolean[]> {
+  return await Promise.all(
+    ecogestureIDs.map(async (id) => {
+      const { affected } = await datasource
+        .getRepository(Ecogesture)
+        .delete(id);
+      if (affected === 0) {
+        throw new ApolloError("Ecogesture not found", "NOT_FOUND");
+      }
+      return true;
+    })
+  );
 }

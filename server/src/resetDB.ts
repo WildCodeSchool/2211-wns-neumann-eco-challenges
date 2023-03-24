@@ -9,6 +9,8 @@ async function reset(): Promise<void> {
   await datasource.getRepository(User).delete({});
   await datasource.getRepository(User).save([
     {
+      firstName: "El Testador",
+      lastName: "De Datador",
       email: "user@app.com",
       hashedPassword: await hashPassword("test@123"),
     },
