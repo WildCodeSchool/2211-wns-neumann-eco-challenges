@@ -28,7 +28,7 @@ export class ChallengeResolver {
   @Mutation(() => Challenge)
   async updateChallenge(
     @Arg("id", () => String) id: string,
-    @Arg("data", () => [ChallengeUpdateInput]) data: ChallengeUpdateInput[]
+    @Arg("data", () => ChallengeUpdateInput) data: ChallengeUpdateInput
   ): Promise<Challenge> {
     return await updateChallenge(id, data);
   }

@@ -26,9 +26,9 @@ export async function createChallenges(
 
 export async function updateChallenge(
   id: string,
-  challenges: ChallengeUpdateInput[]
+  challenges: ChallengeUpdateInput
 ): Promise<Challenge> {
-  const { name, status, startingDate, endingDate } = challenges[0];
+  const { name, status, startingDate, endingDate } = challenges;
   const challengeToUpdate = await datasource.getRepository(Challenge).findOne({
     where: { id },
   });
