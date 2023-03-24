@@ -10,7 +10,7 @@ const datasource = new DataSource({
   password: env.DB_PASS,
   database: env.DB_NAME,
   synchronize: true,
-  entities: [join(__dirname, "/entity/*.ts")],
+  entities: [join(__dirname, "/**/*.entity.ts")],
   logging: ["query", "error"],
 });
 
