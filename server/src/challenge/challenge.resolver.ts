@@ -34,7 +34,7 @@ export class ChallengeResolver {
   }
 
   @Mutation(() => [Boolean])
-  async deleteChallenge(
+  async deleteChallenges(
     @Arg("id", () => [String]) id: string[]
   ): Promise<boolean[]> {
     return await deleteChallenges(id);
