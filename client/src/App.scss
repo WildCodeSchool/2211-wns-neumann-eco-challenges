@@ -1,4 +1,4 @@
-$backgroundColor: #f8fffcec;
+$backgroundColor: rgba(248, 255, 252, 0.95);
 $darkGreyColor: #404040ec;
 $greyColor: #585555;
 $darkBlueColor: #104455;
@@ -54,6 +54,9 @@ $sunsetLinearGradient: linear-gradient(
   background: $seaLinearGradient;
 }
 
+.darkBlueColor {
+  color: $darkBlueColor;
+}
 .ongoingChallengeItem {
   display: flex;
 }
@@ -67,6 +70,9 @@ $sunsetLinearGradient: linear-gradient(
   border-left: 6px solid $lightGreenColor;
 }
 
+.darkGreyColor {
+  color: $darkGreyColor;
+}
 .greyTextColor {
   color: $greyColor;
 }
@@ -96,14 +102,41 @@ $sunsetLinearGradient: linear-gradient(
 }
 
 .App-header {
+  background: $backgroundColor;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  // font-size: calc(10px + 2vmin);
   color: $darkGreyColor;
-  margin: 20px;
+  padding: 20px;
+}
+
+.moreButton:hover .transitionArrow {
+  opacity: 1;
+  transform: translateX(30px);
+}
+.transitionArrow {
+  line-height: 0;
+  color: $darkBlueColor;
+  position: absolute;
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+
+.notificationCircle::after {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  border: 2px solid white;
+  background-color: #3bd8a9;
+
+  content: ""; /* :after will only appear if this content is declared */
 }
 
 .App-link {

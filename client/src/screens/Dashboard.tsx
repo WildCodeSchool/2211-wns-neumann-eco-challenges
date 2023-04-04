@@ -8,9 +8,10 @@ import { OngoingChallenges } from "./components/OngoingChallenges";
 import { ScheduledChallenges } from "./components/ScheduledChallenges";
 export const Dashboard = () => {
   return (
-    <Stack spacing={3}>
-      <HeaderScreen subtitle="Dashboard" title="Green Mates" />
-
+    <Stack gap={4}>
+      <Stack marginBottom={7}>
+        <HeaderScreen subtitle="Dashboard" title="Green Mates" />
+      </Stack>
       <DashboardWrapper
         title={"On going challenges"}
         subtitle={"Save the planet while having fun! 🔥"}
@@ -23,7 +24,7 @@ export const Dashboard = () => {
       />
       <DashboardWrapper
         title={"Contest your friend!"}
-        subtitle={"Don't be shy they gonna love it"}
+        subtitle={"Don't be shy they gonna love it 😍"}
         component={<FriendInvitation />}
       />
     </Stack>
