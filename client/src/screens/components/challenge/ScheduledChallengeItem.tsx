@@ -31,7 +31,7 @@ export const ScheduledChallengeItem = ({
                 {name}
               </Typography>
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={5}>
               <Stack>
                 <Typography
                   fontSize={12}
@@ -76,7 +76,7 @@ export const ScheduledChallengeItem = ({
                 </Typography>
               </Stack>
             </Grid>
-            <Grid xs={4}>
+            <Grid xs={3}>
               <Stack>
                 <Typography
                   fontSize={12}

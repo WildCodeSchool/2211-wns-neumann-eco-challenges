@@ -26,7 +26,7 @@ export const ChallengeTimer = ({
     const dayMs = 60 * 60 * 24;
     const days = Math.floor(durationMs / dayMs);
     if (days > 30) {
-      return startingDateTime.format("YY/MM/DD HH:mm:ss");
+      return startingDateTime.format("MM/DD HH:mm");
     } else {
       durationMs -= days * dayMs;
       const hours = Math.floor(durationMs / (dayMs / 24));

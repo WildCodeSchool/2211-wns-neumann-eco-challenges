@@ -1,5 +1,4 @@
 import Stack from "@mui/material/Stack";
-import moment from "moment";
 import momentTZ from "moment-timezone";
 import { ScheduledChallengeItem } from "./challenge/ScheduledChallengeItem";
 
