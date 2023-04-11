@@ -7,6 +7,8 @@ $lightGreyColor: #8d8d8d;
 $normalRadius: 20px !important;
 $sizeChallengeTimerClock: 20px;
 $rightOffsetChallengeTimerClock: 7px;
+$bottomMenuHeight: 60px;
+
 $nightLinearGradient: linear-gradient(
   0deg,
   rgba(48, 30, 103, 0.8) 0%,
@@ -111,6 +113,11 @@ $sunsetLinearGradient: linear-gradient(
   // font-size: calc(10px + 2vmin);
   color: $darkGreyColor;
   padding: 20px;
+  margin-bottom: $bottomMenuHeight;
+}
+
+.bottomMenu {
+  height: $bottomMenuHeight;
 }
 
 .moreButton:hover .transitionArrow {
