@@ -1,6 +1,6 @@
 import { CardActionArea, Stack, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
-import { OngoingChallengeItemProps } from "../../../interfaces/challenge/challenge.interface";
+import { OngoingChallengeItemProps } from "../../interfaces/challenge/challenge.interface";
 import { ChallengeTimer } from "./ChallengeTimer";
 
 export const OngoingChallengeItem = ({

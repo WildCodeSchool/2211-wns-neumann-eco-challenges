@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { redirect } from "react-router-dom";
-import { ScheduledChallengeItemProps } from "../../../interfaces/challenge/challenge.interface";
+import { ScheduledChallengeItemProps } from "../../interfaces/challenge/challenge.interface";
 import { ChallengeTimer } from "./ChallengeTimer";
 export const ScheduledChallengeItem = ({
   name,

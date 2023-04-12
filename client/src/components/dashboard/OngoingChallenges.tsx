@@ -1,5 +1,5 @@
 import ImageList from "@mui/material/ImageList";
-import { OngoingChallengeItem } from "./challenge/OngoingChallengeItem";
+import { OngoingChallengeItem } from "../challenge/OngoingChallengeItem";
 import moment from "moment";
 const classes = [
   "nightLinearGradient",

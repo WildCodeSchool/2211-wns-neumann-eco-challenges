@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import momentTZ from "moment-timezone";
-import { ScheduledChallengeItem } from "./challenge/ScheduledChallengeItem";
+import { ScheduledChallengeItem } from "../challenge/ScheduledChallengeItem";
 
 const names = [
   "Green walking 17e Paris",

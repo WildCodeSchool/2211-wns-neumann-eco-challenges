@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import momentTZ from "moment-timezone";
 import { useEffect, useState } from "react";
-import { ChallengeTimerProps } from "../../../interfaces/challenge/challenge.interface";
+import { ChallengeTimerProps } from "../../interfaces/challenge/challenge.interface";
 
 export const ChallengeTimer = ({
   startingDateTime,

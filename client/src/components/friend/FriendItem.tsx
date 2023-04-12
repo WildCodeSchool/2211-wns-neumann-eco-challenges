@@ -2,7 +2,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Avatar, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useState } from "react";
-import { FriendItemProps } from "../../../interfaces/friend/friend.interface";
+import { FriendItemProps } from "../../interfaces/friend/friend.interface";
 
 export const FriendItem = ({
   name,

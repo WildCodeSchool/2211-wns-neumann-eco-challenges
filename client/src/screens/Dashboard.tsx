@@ -1,11 +1,11 @@
 import Stack from "@mui/material/Stack";
 import React from "react";
 
-import { DashboardWrapper } from "./components/DashboardWrapper";
-import { FriendInvitation } from "./components/FriendInvitation";
-import { HeaderScreen } from "./components/HeaderScreen";
-import { OngoingChallenges } from "./components/OngoingChallenges";
-import { ScheduledChallenges } from "./components/ScheduledChallenges";
+import { DashboardWrapper } from "../components/dashboard/DashboardWrapper";
+import { FriendInvitation } from "../components/dashboard/FriendInvitation";
+import { HeaderScreen } from "../components/menu/HeaderScreen";
+import { OngoingChallenges } from "../components/dashboard/OngoingChallenges";
+import { ScheduledChallenges } from "../components/dashboard/ScheduledChallenges";
 export const Dashboard = () => {
   return (
     <Stack gap={4}>

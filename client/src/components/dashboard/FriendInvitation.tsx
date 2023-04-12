@@ -1,7 +1,7 @@
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import { FriendChallengeRequest } from "./friend/FriendChallengeRequest";
-import { FriendItem } from "./friend/FriendItem";
+import { FriendChallengeRequest } from "../friend/FriendChallengeRequest";
+import { FriendItem } from "../friend/FriendItem";
 
 const colors = ["#FF9996", "#FFE5CD", "#62B6B7"];
 const names = ["Thibault", "Nonaka", "Luke"];
