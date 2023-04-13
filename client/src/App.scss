@@ -3,6 +3,7 @@ $darkGreyColor: #404040ec;
 $greyColor: #585555;
 $darkBlueColor: #104455;
 $lightGreenColor: #3bd8a9;
+$yellowColor: #f7ce4b;
 $lightGreyColor: #8d8d8d;
 $normalRadius: 20px !important;
 $sizeChallengeTimerClock: 20px;
@@ -84,8 +85,24 @@ $sunsetLinearGradient: linear-gradient(
 .darkBackground {
   background-color: $darkBlueColor;
 }
-.headerTitle {
+.headerTitle,
+.lightGreenColor {
   color: $lightGreenColor;
+}
+
+.bgPeachColor {
+  background-color: rgba(250, 123, 135, 0.8) !important;
+}
+
+.bgLightGreenColor {
+  background-color: $lightGreenColor !important;
+}
+
+.bgYellowColor {
+  background-color: $yellowColor !important;
+}
+.yellowColor {
+  color: $yellowColor;
 }
 
 .headerSubtitle {
@@ -158,9 +175,12 @@ $itemWidth: 100% / 6;
   background: $lightGreenColor;
 }
 
-.activeMenuItem:active,
-.activeMenuItem:focus {
+.activeMenuItem {
   color: $lightGreenColor !important;
+}
+
+.notificationsContainer {
+  min-height: 100vh;
 }
 
 // .activeMenuItem::after {

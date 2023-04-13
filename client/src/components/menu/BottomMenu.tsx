@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import { keyframes } from "@mui/system";
 import withStyles from "@mui/styles/withStyles";
-import Grid from "@mui/material/Grid";
+import { useNavigate } from "react-router-dom";
 
 const StyledBottomNavigationAction = withStyles({
   root: {
@@ -31,6 +31,7 @@ export const BottomMenu = () => {
     handleClickOnMenuItem(0);
   }, []);
 
+  const navigate = useNavigate();
   const initialPositionX =
     (width / 3) * (oldMenuItemIndex + 1) - width / (3 * 2);
   const newPositionX = (width / 3) * (newMenuItemIndex + 1) - width / (3 * 2);
@@ -83,17 +84,18 @@ export const BottomMenu = () => {
         }}
       >
         <StyledBottomNavigationAction
-          className="activeMenuItem"
+          onClick={() => navigate("/dashboard")}
+          className={newMenuItemIndex === 0 ? "activeMenuItem" : ""}
           label="Dashboard"
           icon={<DashboardRounded />}
         ></StyledBottomNavigationAction>
         <StyledBottomNavigationAction
-          className="activeMenuItem"
+          className={newMenuItemIndex === 1 ? "activeMenuItem" : ""}
           label="Create"
           icon={<AddTask />}
         />
         <StyledBottomNavigationAction
-          className="activeMenuItem"
+          className={newMenuItemIndex === 2 ? "activeMenuItem" : ""}
           label="Profile"
           icon={<Face />}
         />
