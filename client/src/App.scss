@@ -1,0 +1,194 @@
+$backgroundColor: rgba(248, 255, 252, 0.95);
+$darkGreyColor: #404040ec;
+$greyColor: #585555;
+$darkBlueColor: #104455;
+$lightGreenColor: #3bd8a9;
+$yellowColor: #f7ce4b;
+$lightGreyColor: #8d8d8d;
+$normalRadius: 20px !important;
+$sizeChallengeTimerClock: 20px;
+$rightOffsetChallengeTimerClock: 7px;
+$bottomMenuHeight: 60px;
+
+$nightLinearGradient: linear-gradient(
+  0deg,
+  rgba(48, 30, 103, 0.8) 0%,
+  rgba(91, 143, 185, 0.8) 100%
+);
+$pinkLinearGradient: linear-gradient(
+  0deg,
+  rgba(250, 123, 135, 0.8) 0%,
+  rgba(255, 219, 247, 0.8) 100%
+);
+$seaLinearGradient: linear-gradient(
+  0deg,
+  rgba(98, 182, 183, 1) 0%,
+  rgba(193, 238, 228, 0.8) 100%
+);
+$sunsetLinearGradient: linear-gradient(
+  0deg,
+  rgba(255, 153, 150, 1) 0%,
+  rgba(255, 229, 205, 1) 100%
+);
+.App {
+  background-color: $backgroundColor;
+}
+
+.sunsetLinearGradient {
+  background: $sunsetLinearGradient;
+}
+
+.paddingOngoingChallengeItem {
+  padding-right: ($sizeChallengeTimerClock + $rightOffsetChallengeTimerClock);
+}
+.challengeTimer {
+  width: $sizeChallengeTimerClock;
+  height: $sizeChallengeTimerClock;
+  border-radius: 50%;
+  position: absolute;
+  top: 7px;
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  right: $rightOffsetChallengeTimerClock;
+}
+.pinkLinearGradient {
+  background: $pinkLinearGradient;
+}
+.seaLinearGradient {
+  background: $seaLinearGradient;
+}
+
+.darkBlueColor {
+  color: $darkBlueColor;
+}
+.ongoingChallengeItem {
+  display: flex;
+}
+.nightLinearGradient {
+  background: $nightLinearGradient;
+}
+.lightTextColor {
+  color: $lightGreyColor;
+}
+.lightGreenLeftBorder {
+  border-left: 6px solid $lightGreenColor;
+}
+
+.darkGreyColor {
+  color: $darkGreyColor;
+}
+.greyTextColor {
+  color: $greyColor;
+}
+.challengeItemContainer {
+  border-radius: $normalRadius;
+}
+.darkBackground {
+  background-color: $darkBlueColor;
+}
+.headerTitle,
+.lightGreenColor {
+  color: $lightGreenColor;
+}
+
+.bgPeachColor {
+  background-color: rgba(250, 123, 135, 0.8) !important;
+}
+
+.bgLightGreenColor {
+  background-color: $lightGreenColor !important;
+}
+
+.bgYellowColor {
+  background-color: $yellowColor !important;
+}
+.yellowColor {
+  color: $yellowColor;
+}
+
+.headerSubtitle {
+  color: $darkBlueColor;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background: $backgroundColor;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  // font-size: calc(10px + 2vmin);
+  color: $darkGreyColor;
+  padding: 20px;
+  margin-bottom: $bottomMenuHeight;
+}
+
+.bottomMenu {
+  height: $bottomMenuHeight;
+}
+
+.moreButton:hover .transitionArrow {
+  opacity: 1;
+  transform: translateX(30px);
+}
+.transitionArrow {
+  line-height: 0;
+  color: $darkBlueColor;
+  position: absolute;
+  opacity: 0;
+  transition: all 0.2s ease-out;
+}
+
+.notificationCircle::after {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  border: 2px solid white;
+  background-color: $lightGreenColor;
+
+  content: ""; /* :after will only appear if this content is declared */
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+$bulletSizePx: 10px;
+$bulletRadius: 50%;
+$itemWidth: 100% / 6;
+
+.colorBullet {
+  background: $lightGreenColor;
+}
+
+.activeMenuItem {
+  color: $lightGreenColor !important;
+}
+
+.notificationsContainer {
+  min-height: 100vh;
+}
+
+// .activeMenuItem::after {
+//   display: block;
+//   width: 10px;
+//   height: 10px;
+//   position: absolute;
+//   top: 1em;
+//   z-index: 10;
+//   content: url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg'><path d='M4 13h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1zm0 8h6c.55 0 1-.45 1-1v-4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1zm10 0h6c.55 0 1-.45 1-1v-8c0-.55-.45-1-1-1h-6c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1zM13 4v4c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1h-6c-.55 0-1 .45-1 1z'/> </svg>");
+// }
