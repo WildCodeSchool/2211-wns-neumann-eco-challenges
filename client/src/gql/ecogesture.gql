@@ -1,0 +1,23 @@
+query Ecogestures {
+  ecogestures {
+    id
+    name
+    difficulty
+    reward
+    isProofNeeded
+  }
+}
+
+mutation CreateEcogesture($ecogestureInputs: [EcogestureInput!]!) {
+  createEcogestures(ecogestureInputs: $ecogestureInputs) {
+    id
+    name
+    difficulty
+    reward
+    isProofNeeded
+  }
+}
+
+mutation DeleteEcoGesture($ids: [String!]!) {
+  deleteEcogestures(ids: $ids)
+}
