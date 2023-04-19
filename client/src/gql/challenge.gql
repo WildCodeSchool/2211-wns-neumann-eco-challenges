@@ -1,0 +1,36 @@
+query Challenges {
+	challenges {
+		id
+		name
+		status
+		startingDate
+		endingDate
+	}
+}
+
+mutation CreateChallenges($inputs: [ChallengeInput!]!) {
+	createChallenges(inputs: $inputs) {
+		id
+		name
+		status
+		startingDate
+		endingDate
+	}
+}
+
+mutation UpdateChallenge(
+	$data: ChallengeUpdateInput!
+	$updateChallengeId: String!
+) {
+	updateChallenge(data: $data, id: $updateChallengeId) {
+		id
+		name
+		status
+		startingDate
+		endingDate
+	}
+}
+
+mutation DeleteChallenges($deleteChallengesId: [String!]!) {
+	deleteChallenges(id: $deleteChallengesId)
+}
