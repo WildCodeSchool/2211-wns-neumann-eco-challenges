@@ -2,11 +2,13 @@ import { StatusBar } from "expo-status-bar"
 import { StyleSheet, Text, View } from "react-native"
 import { ApolloProvider } from "@apollo/client"
 import client from "./gql/client"
+import ChallengesList from "./components/ChallengesList"
 
 export default function App() {
 	return (
 		<ApolloProvider client={client}>
 			<View style={styles.container}>
+				<ChallengesList />
 				<Text>Hello</Text>
 				<StatusBar style="auto" />
 			</View>
