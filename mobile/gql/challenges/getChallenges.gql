@@ -1,0 +1,9 @@
+query Challenges {
+	challenges {
+		id
+		name
+		status
+		startingDate
+		endingDate
+	}
+}
