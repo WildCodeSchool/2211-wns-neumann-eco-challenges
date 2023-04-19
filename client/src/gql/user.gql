@@ -1,0 +1,12 @@
+mutation CreateUser($userInputs: [UserInput!]!) {
+  createUser(userInputs: $userInputs) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+mutation DeleteUser($uuid: [String!]!) {
+  deleteUser(uuid: $uuid)
+}
