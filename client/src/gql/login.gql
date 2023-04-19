@@ -1,3 +1,3 @@
 mutation Mutation($data: LoginInput!) {
-	login(data: $data)
+  login(data: $data)
 }
