@@ -25,14 +25,14 @@ export const OngoingChallenges = () => {
         gridAutoColumns: "minmax(150px, 1fr)",
       }}
     >
-      {Array.from(Array(5).keys()).map((_, index) => (
+      {challenges.map((challenge, index) => (
         <OngoingChallengeItem
           {...{
-            name: challenges[index % challenges.length]?.name,
+            name: challenge?.name,
             backgroundColor: classes[index % classes.length],
-            ranking: index,
-            endingDateTime: moment(challenges[index % challenges.length]?.endingDate).utc(),
-            startingDateTime: moment(challenges[index % challenges.length]?.startingDate).utc(),
+            ranking: 1,
+            endingDateTime: moment(challenge?.endingDate).utc(),
+            startingDateTime: moment(challenge?.startingDate).utc(),
             completion: 99,
           }}
         />
