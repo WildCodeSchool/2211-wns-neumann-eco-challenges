@@ -1,14 +1,8 @@
 import Stack from "@mui/material/Stack";
 import momentTZ from "moment-timezone";
 import { ScheduledChallengeItem } from "../challenge/ScheduledChallengeItem";
+import { useChallengesQuery } from "../../gql/generated/schema";
 
-const names = [
-  "Green walking 17e Paris",
-  "Green walking 18e Paris",
-  "Green walking 20e Paris",
-  "Green walking 3e Lyon",
-  "Green walking 1er Lyon",
-];
 const attendees = [
   [10, 10],
   [1, 12],
@@ -25,12 +19,14 @@ const challengeTime = [
   [momentTZ().utc().add(2, "month"), momentTZ().utc().add(2, "month")],
 ];
 export const ScheduledChallenges = () => {
+  const { data } = useChallengesQuery();
+  const challenges = data?.challenges || [];
   return (
     <Stack spacing={2}>
-      {Array.from(Array(names.length).keys()).map((_, index) => (
+      {Array.from(Array(challenges.length).keys()).map((_, index) => (
         <ScheduledChallengeItem
           key={index}
-          name={names[index]}
+          name={challenges[index]?.name}
           attendees={attendees[index][0]}
           endingDateTime={challengeTime[index][1]}
           startingDateTime={challengeTime[index][0]}

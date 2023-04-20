@@ -1,19 +1,19 @@
 import ImageList from "@mui/material/ImageList";
 import { OngoingChallengeItem } from "../challenge/OngoingChallengeItem";
 import moment from "moment";
+import { useChallengesQuery } from "../../gql/generated/schema";
+
 const classes = [
   "nightLinearGradient",
   "sunsetLinearGradient",
   "pinkLinearGradient",
   "seaLinearGradient",
 ];
-const names = [
-  "Clean walk street and house",
-  "Eat healthy",
-  "Less CO2",
-  "Save water",
-];
+
 export const OngoingChallenges = () => {
+  const { data } = useChallengesQuery();
+  const challenges = data?.challenges || [];
+  
   return (
     <ImageList
       sx={{
@@ -28,11 +28,11 @@ export const OngoingChallenges = () => {
       {Array.from(Array(5).keys()).map((_, index) => (
         <OngoingChallengeItem
           {...{
-            name: names[index % names.length],
+            name: challenges[index % challenges.length]?.name,
             backgroundColor: classes[index % classes.length],
             ranking: index,
-            endingDateTime: moment("2023-04-30T10:07:00").utc(),
-            startingDateTime: moment("2023-03-29T17:06:00").utc(),
+            endingDateTime: moment(challenges[index % challenges.length]?.endingDate).utc(),
+            startingDateTime: moment(challenges[index % challenges.length]?.startingDate).utc(),
             completion: 99,
           }}
         />
