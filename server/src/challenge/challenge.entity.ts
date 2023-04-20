@@ -1,6 +1,14 @@
 import { Field, InputType, ObjectType } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+} from "typeorm";
 import { MaxLength, MinLength } from "class-validator";
+import Ecogesture from "../ecogesture/ecogesture.entity";
+import User from "../user/user.entity";
 
 @Entity()
 @ObjectType()
@@ -24,6 +32,15 @@ class Challenge {
   @Column({ type: "timestamptz", nullable: true })
   @Field()
   endingDate: Date;
+
+  @OneToMany(() => Ecogesture, (ecogesture) => ecogesture.challenge)
+  ecogesture: Ecogesture[];
+
+  @ManyToOne(() => User, (user) => user.challenge, { onDelete: "CASCADE" })
+  user: User;
+
+  @Column({ nullable: true })
+  UserId?: string;
 }
 
 @InputType()
