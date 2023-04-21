@@ -6,16 +6,16 @@ import { createChallenges } from "./challenge/challenge.service";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
-  
+
   // Clear tables
   await datasource.getRepository(User).delete({});
   await datasource.getRepository(Challenge).delete({});
-  
+
   // Fill tables
   await ecogestureFill();
   await userFill();
   await challengeFill();
-  
+
   // Close connection
   await datasource.destroy();
   console.log("done !");
@@ -30,6 +30,24 @@ async function userFill(): Promise<void> {
       lastName: "De Datador",
       email: "user@app.com",
       hashedPassword: await hashPassword("test@123"),
+    },
+    {
+      firstName: "Jessy",
+      lastName: "Matador",
+      email: "user2@app.com",
+      hashedPassword: await hashPassword("test2@123"),
+    },
+    {
+      firstName: "Dugon",
+      lastName: "Morgord",
+      email: "user3@app.com",
+      hashedPassword: await hashPassword("test3@123"),
+    },
+    {
+      firstName: "Francis",
+      lastName: "Molitor",
+      email: "use4@app.com",
+      hashedPassword: await hashPassword("test4@123"),
     },
   ]);
 }
@@ -78,5 +96,6 @@ async function challengeFill(): Promise<void> {
       name: "Manger végétarien pendant 1 mois",
       startingDate: new Date("2023-03-01 09:30"),
       endingDate: new Date("2023-03-31 21:30"),
-    }]);
+    },
+  ]);
 }
