@@ -136,27 +136,6 @@ $sunsetLinearGradient: linear-gradient(
   height: 100vh;
 }
 
-.welcomeVideo {
-  object-fit: cover;
-}
-
-.vignetteVideo {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  // background: radial-gradient(
-  //   circle at center,
-  //   rgba(0, 0, 0, 0) 0,
-  //   rgba(0, 0, 0, 0) 0,
-  //   white 100%
-  // );
-}
-
 .bottomMenu {
   height: $bottomMenuHeight;
 }
@@ -183,7 +162,6 @@ $sunsetLinearGradient: linear-gradient(
   border-radius: 10px;
   border: 2px solid white;
   background-color: $lightGreenColor;
-
   content: ""; /* :after will only appear if this content is declared */
 }
 
@@ -205,33 +183,4 @@ $itemWidth: 100% / 6;
 
 .notificationsContainer {
   min-height: 100vh;
-}
-
-.custom-shape-divider-top-1681485291 {
-  position: absolute;
-  top: -60px;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
-  transform: rotate(0);
-}
-
-.custom-shape-divider-top-1681485291 svg {
-  position: relative;
-  display: block;
-  width: calc(214% + 1.3px);
-  height: 160px;
-}
-
-.custom-shape-divider-top-1681485291 .shape-fill {
-  fill: rgba(255, 255, 255, 0.9);
-}
-
-/** For mobile devices **/
-@media (max-width: 767px) {
-  .custom-shape-divider-top-1681485291 svg {
-    width: calc(110% + 1.3px);
-    height: 60px;
-  }
 }
