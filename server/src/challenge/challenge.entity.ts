@@ -38,9 +38,6 @@ class Challenge {
 
   @ManyToOne(() => User, (user) => user.challenge, { onDelete: "CASCADE" })
   user: User;
-
-  @Column({ nullable: true })
-  UserId?: string;
 }
 
 @InputType()

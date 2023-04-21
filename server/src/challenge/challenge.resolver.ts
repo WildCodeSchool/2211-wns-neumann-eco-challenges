@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import datasource from "../db";
+
 import Challenge, {
   ChallengeInput,
   ChallengeUpdateInput,
@@ -15,12 +15,6 @@ import {
 export class ChallengeResolver {
   @Query(() => [Challenge])
   async challenges(): Promise<Challenge[]> {
-    const challengeWithEcogesture = await datasource
-      .getRepository(Challenge)
-      .find({ relations: { ecogesture: true } });
-
-    // console.log("---------------->", challengeWithEcogesture);
-
     return await allChallenges();
   }
 
