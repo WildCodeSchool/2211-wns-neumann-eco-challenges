@@ -72,8 +72,8 @@ async function challengeFill(): Promise<void> {
   await createChallenges([
     {
       name: "Faire 20km en vélo en 1 semaine",
-      startingDate: new Date("2023/03/22 09:00"),
-      endingDate: new Date("2023/03/29 18:00"),
+      startingDate: new Date("2023/04/12 09:00"),
+      endingDate: new Date("2023/04/24 18:00"),
     },
     {
       name: "Acheter des fruits et légumes de saison",
@@ -83,8 +83,8 @@ async function challengeFill(): Promise<void> {
     },
     {
       name: "Nettoyer les rues de la ville",
-      startingDate: new Date("2023-03-26 09:30"),
-      endingDate: new Date("2023-03-26 12:00"),
+      startingDate: new Date("2023-04-29 09:30"),
+      endingDate: new Date("2023-04-29 12:00"),
     },
     {
       name: "Acheter du dentifrice solide",
@@ -94,8 +94,7 @@ async function challengeFill(): Promise<void> {
     },
     {
       name: "Manger végétarien pendant 1 mois",
-      startingDate: new Date("2023-03-01 09:30"),
-      endingDate: new Date("2023-03-31 21:30"),
-    },
-  ]);
+      startingDate: new Date("2023-04-01 09:30"),
+      endingDate: new Date("2023-04-30 21:30"),
+    }]);
 }

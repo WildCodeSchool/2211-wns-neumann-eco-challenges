@@ -9,6 +9,9 @@ import {
 import { MaxLength, MinLength } from "class-validator";
 import Ecogesture from "../ecogesture/ecogesture.entity";
 import User from "../user/user.entity";
+import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
+import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation";
 
 @Entity()
 @ObjectType()
@@ -38,6 +41,15 @@ class Challenge {
 
   @ManyToOne(() => User, (user) => user.challenge, { onDelete: "CASCADE" })
   user: User;
+
+  @OneToMany(() => UserChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.challenge)
+  userChallengeEcogestures: UserChallengeEcogestures[];
+
+  @OneToMany(() => UserChallengesCreation, (challengeCreation) => challengeCreation.challenge)
+  UserChallengesCreation: UserChallengesCreation[];
+
+  @OneToMany(() => UserChallengesParticipation, (challengeParticipation) => challengeParticipation.challenge)
+  UserChallengesParticipation: UserChallengesParticipation[];
 }
 
 @InputType()
