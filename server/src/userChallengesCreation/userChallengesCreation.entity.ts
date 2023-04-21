@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import Challenge from "../challenge/challenge.entity";
+import User from "../user/user.entity";
 
 @Entity()
 class UserChallengesCreation {
@@ -10,6 +12,12 @@ class UserChallengesCreation {
 
   @Column()
   userId: string;
+
+  @ManyToOne(() => Challenge, (c) => c.UserChallengesCreation, { onDelete: "CASCADE" })
+  challenge: Challenge
+
+  @ManyToOne(() => User, (u) => u.UserChallengesCreation, { onDelete: "CASCADE" })
+  user: User
 }
 
 export default UserChallengesCreation;

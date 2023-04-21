@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { IsString } from "class-validator";
 import Challenge from "../challenge/challenge.entity";
+import userChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity"
 
 @Entity()
 @ObjectType()
@@ -30,6 +31,9 @@ class Ecogesture {
     onDelete: "CASCADE",
   })
   challenge: Challenge;
+
+  @OneToMany(() => userChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.ecogesture)
+  userChallengeEcogestures: userChallengeEcogestures[];
 }
 
 export default Ecogesture;
