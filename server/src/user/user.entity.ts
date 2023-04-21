@@ -1,7 +1,8 @@
 import { IsEmail, IsString, MinLength } from "class-validator";
 import { Field, InputType, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import argon2, { hash, verify } from "argon2";
+import Challenge from "../challenge/challenge.entity";
 
 @Entity()
 @ObjectType()
@@ -24,6 +25,9 @@ class User {
 
   @Column()
   hashedPassword: string;
+
+  @OneToMany(() => Challenge, (challenge) => challenge.user)
+  challenge: Challenge[];
 }
 
 @InputType()

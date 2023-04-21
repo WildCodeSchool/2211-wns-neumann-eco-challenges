@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { IsString } from "class-validator";
+import Challenge from "../challenge/challenge.entity";
 
 @Entity()
 @ObjectType()
@@ -24,6 +25,11 @@ class Ecogesture {
   @Field()
   @Column({ default: false })
   isProofNeeded?: boolean;
+
+  @ManyToOne(() => Challenge, (challenge) => challenge.ecogesture, {
+    onDelete: "CASCADE",
+  })
+  challenge: Challenge;
 }
 
 export default Ecogesture;
