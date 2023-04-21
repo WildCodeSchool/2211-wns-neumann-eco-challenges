@@ -88,7 +88,7 @@ export const BottomMenu = () => {
           className={newMenuItemIndex === 0 ? "activeMenuItem" : ""}
           label="Dashboard"
           icon={<DashboardRounded />}
-        ></StyledBottomNavigationAction>
+        />
         <StyledBottomNavigationAction
           className={newMenuItemIndex === 1 ? "activeMenuItem" : ""}
           label="Create"
