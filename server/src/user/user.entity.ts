@@ -5,7 +5,7 @@ import argon2, { hash, verify } from "argon2";
 import Challenge from "../challenge/challenge.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation"
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity"
 
 @Entity()
 @ObjectType()

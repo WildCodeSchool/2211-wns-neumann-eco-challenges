@@ -11,7 +11,7 @@ import Ecogesture from "../ecogesture/ecogesture.entity";
 import User from "../user/user.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation";
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 
 @Entity()
 @ObjectType()
