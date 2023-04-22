@@ -1,5 +1,4 @@
 import { Route, Routes, useLocation } from "react-router-dom";
-import Login from "./screens/Login";
 import "./App.scss";
 import { Dashboard } from "./screens/Dashboard";
 import Grid from "@mui/material/Grid";

@@ -1,4 +1,4 @@
-mutation CreateUser($userInputs: [UserInput!]!) {
+mutation SignUp($userInputs: [UserInput!]!) {
   createUser(userInputs: $userInputs) {
     id
     firstName
@@ -7,6 +7,14 @@ mutation CreateUser($userInputs: [UserInput!]!) {
   }
 }
 
+mutation SignIn($data: LoginInput!) {
+  login(data: $data)
+}
+
 mutation DeleteUser($uuid: [String!]!) {
   deleteUser(uuid: $uuid)
+}
+
+mutation SignOut {
+  logout
 }
