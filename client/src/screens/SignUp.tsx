@@ -6,7 +6,15 @@ import Typography from "@mui/material/Typography/Typography";
 import { useNavigate } from "react-router-dom";
 import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
+import {
+  SignUpMutationFn,
+  UserInput,
+  useSignUpMutation,
+} from "../gql/generated/schema";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
+const minPasswordLength = 8;
 const getHeader = () => {
   return <GreenMatesLogo format="graphic" size="100px" />;
 };
@@ -31,7 +39,14 @@ const getFooter = (navigate: any) => {
     </Box>
   );
 };
-const getBody = (navigate: any) => {
+const getBody = (
+  register: any,
+  handleSubmit: any,
+  signUp: SignUpMutationFn,
+  [signUpError, setSignUpError]: any,
+  errors: any,
+  navigate: any
+) => {
   return (
     <Box
       flex={3}
@@ -40,14 +55,28 @@ const getBody = (navigate: any) => {
       display={"flex"}
       paddingX={2}
       flexDirection={"column"}
-      onSubmit={(e) => {
-        e.preventDefault();
-        navigate("/dashboard");
-      }}
+      onSubmit={handleSubmit(
+        async ({ email, firstName, lastName, password }: UserInput) => {
+          try {
+            await signUp({
+              variables: {
+                userInputs: {
+                  email,
+                  firstName,
+                  lastName,
+                  password,
+                },
+              },
+            });
+            navigate("/dashboard");
+          } catch (error: any) {
+            setSignUpError(error.message);
+          }
+        }
+      )}
       component="form"
-      autoComplete="off"
       sx={{
-        "& fieldset": {
+        "& fieldset, .MuiOutlinedInput-root": {
           borderRadius: "50px",
         },
         "& .MuiTextField-root": {
@@ -66,35 +95,53 @@ const getBody = (navigate: any) => {
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
-          required
+          error={errors["firstName"] ?? signUpError.length !== 0 ? true : false}
+          helperText={errors["firstName"] ?? false ? "Provide a firstname" : ""}
           id="firstname-required"
           label="Firstname"
           variant="outlined"
           type="text"
+          {...register("firstName", { required: true })}
         />
         <TextField
           fullWidth
-          required
+          error={errors["lastName"] ?? signUpError.length !== 0 ? true : false}
           id="lastname-required"
           label="Lastname"
           type="text"
           variant="outlined"
+          helperText={errors["lastName"] ?? false ? "Provide a lastname" : ""}
+          {...register("lastName", { required: true })}
         />
         <TextField
           fullWidth
-          required
+          error={errors["email"] ?? signUpError.length !== 0 ? true : false}
           id="email-required"
           label="Email"
           variant="outlined"
-          type="email"
+          type="text"
+          helperText={
+            errors["email"] ?? false ? "Provide a correct email address" : ""
+          }
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
         <TextField
           fullWidth
-          required
           id="password-required"
+          error={errors["password"] ?? signUpError.length !== 0 ? true : false}
+          helperText={
+            <div>
+              <div>{`Provide a password with at least ${minPasswordLength} characters.`}</div>
+              <div>{`${signUpError ?? ""}`}</div>
+            </div>
+          }
           label="Password"
           type="password"
           variant="outlined"
+          {...register("password", {
+            required: true,
+            minLength: minPasswordLength,
+          })}
         />
       </Grid>
 
@@ -124,11 +171,26 @@ const getBody = (navigate: any) => {
 };
 
 export const SignUp = () => {
+  const [signUp, { data, loading, error }] = useSignUpMutation();
   const navigate = useNavigate();
+  const [signUpError, setSignUpError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  console.log(error, loading);
   return (
     <WelcomePageTemplate
       header={getHeader()}
-      body={getBody(navigate)}
+      body={getBody(
+        register,
+        handleSubmit,
+        signUp,
+        [signUpError, setSignUpError],
+        errors,
+        navigate
+      )}
       footer={getFooter(navigate)}
     />
   );

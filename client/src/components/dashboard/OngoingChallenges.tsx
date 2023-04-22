@@ -1,6 +1,5 @@
 import ImageList from "@mui/material/ImageList";
 import { OngoingChallengeItem } from "../challenge/OngoingChallengeItem";
-import moment from "moment";
 import { useChallengesQuery } from "../../gql/generated/schema";
 import { getFilteredChallenges } from "../../tools/challenge.tools";
 
