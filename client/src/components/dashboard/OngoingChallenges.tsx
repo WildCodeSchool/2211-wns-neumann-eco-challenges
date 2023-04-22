@@ -2,6 +2,7 @@ import ImageList from "@mui/material/ImageList";
 import { OngoingChallengeItem } from "../challenge/OngoingChallengeItem";
 import moment from "moment";
 import { useChallengesQuery } from "../../gql/generated/schema";
+import { getFilteredChallenges } from "../../tools/challenge.tools";
 
 const classes = [
   "nightLinearGradient",
@@ -13,7 +14,7 @@ const classes = [
 export const OngoingChallenges = () => {
   const { data } = useChallengesQuery();
   const challenges = data?.challenges || [];
-  
+
   return (
     <ImageList
       sx={{
@@ -25,14 +26,15 @@ export const OngoingChallenges = () => {
         gridAutoColumns: "minmax(150px, 1fr)",
       }}
     >
-      {challenges.map((challenge, index) => (
+      {getFilteredChallenges(challenges, "ongoing").map((challenge, index) => (
         <OngoingChallengeItem
+          key={challenge.id}
           {...{
-            name: challenge?.name,
+            name: challenge.name,
             backgroundColor: classes[index % classes.length],
             ranking: 1,
-            endingDateTime: moment(challenge?.endingDate).utc(),
-            startingDateTime: moment(challenge?.startingDate).utc(),
+            endingDateTime: challenge.endingDate,
+            startingDateTime: challenge.startingDate,
             completion: 99,
           }}
         />
