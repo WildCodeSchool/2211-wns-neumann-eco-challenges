@@ -179,7 +179,6 @@ export const SignUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  console.log(error, loading);
   return (
     <WelcomePageTemplate
       header={getHeader()}
