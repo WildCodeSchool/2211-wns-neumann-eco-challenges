@@ -5,11 +5,13 @@ import TextField from "@mui/material/TextField/TextField";
 import Typography from "@mui/material/Typography/Typography";
 import { useNavigate } from "react-router-dom";
 import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
-import { motion } from "framer-motion";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
+import { useForm } from "react-hook-form";
+import { SignInMutationFn, useSignInMutation } from "../gql/generated/schema";
+import { useState } from "react";
 
 const debug = false;
-
+const minPasswordLength = 8;
 const getHeader = () => {
   return <GreenMatesLogo format="graphic" size="100px" />;
 };
@@ -34,7 +36,14 @@ const getFooter = (navigate: any) => {
     </Box>
   );
 };
-const getBody = (navigate: any) => {
+const getBody = (
+  register: any,
+  handleSubmit: any,
+  signIn: SignInMutationFn,
+  [signInError, setSignInError]: any,
+  errors: any,
+  navigate: any
+) => {
   return (
     <Box
       flex={3}
@@ -44,14 +53,19 @@ const getBody = (navigate: any) => {
       paddingX={2}
       flexDirection={"column"}
       bgcolor={!debug ? "none" : "pink"}
-      onSubmit={(e) => {
-        e.preventDefault();
-        navigate("/dashboard");
-      }}
+      onSubmit={handleSubmit(async ({ email, password }: any) => {
+        try {
+          await signIn({ variables: { data: { email, password } } });
+          navigate("/dashboard");
+        } catch (err: any) {
+          setSignInError(err.message);
+        } finally {
+        }
+      })}
       component="form"
       autoComplete="off"
       sx={{
-        "& fieldset": {
+        "& fieldset, .MuiOutlinedInput-root": {
           borderRadius: "50px",
         },
         "& .MuiTextField-root": {
@@ -70,21 +84,44 @@ const getBody = (navigate: any) => {
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
-          required
+          error={signInError || errors["email"] ? true : false}
           id="email-required"
           label="Email"
           variant="outlined"
           type="text"
+          helperText={
+            errors["email"] ?? false ? "Provide a correct email address" : ""
+          }
+          {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
         <TextField
           fullWidth
-          required
           id="password-required"
+          error={signInError || errors["password"] ? true : false}
+          helperText={
+            <div>
+              <div>{`${
+                errors["password"]
+                  ? `Provide a password with at least ${minPasswordLength} characters.`
+                  : ""
+              }`}</div>
+              <div>{`${signInError ?? ""}`}</div>
+            </div>
+          }
           label="Password"
           type="password"
           variant="outlined"
+          {...register("password", {
+            required: true,
+            minLength: minPasswordLength,
+          })}
         />
       </Grid>
+      {/* `${
+            errors["password"]
+              ? `Provide a password with at least ${minPasswordLength} characters.`
+              : ""
+          } ${signInError ?? ""}` */}
 
       <Grid
         item
@@ -113,10 +150,25 @@ const getBody = (navigate: any) => {
 
 export const SignIn = () => {
   const navigate = useNavigate();
+  const [signIn] = useSignInMutation();
+  const [signInError, setSignInError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   return (
     <WelcomePageTemplate
       header={getHeader()}
-      body={getBody(navigate)}
+      body={getBody(
+        register,
+        handleSubmit,
+        signIn,
+        [signInError, setSignInError],
+        errors,
+        navigate
+      )}
       footer={getFooter(navigate)}
     />
   );

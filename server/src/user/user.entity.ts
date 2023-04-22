@@ -5,7 +5,7 @@ import argon2, { hash, verify } from "argon2";
 import Challenge from "../challenge/challenge.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation"
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation";
 
 @Entity()
 @ObjectType()
@@ -32,13 +32,22 @@ class User {
   @OneToMany(() => Challenge, (challenge) => challenge.user)
   challenge: Challenge[];
 
-  @OneToMany(() => UserChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.user)
+  @OneToMany(
+    () => UserChallengeEcogestures,
+    (challengeEcogesture) => challengeEcogesture.user
+  )
   userChallengeEcogestures: UserChallengeEcogestures[];
 
-  @OneToMany(() => UserChallengesCreation, (challengeCreation) => challengeCreation.user)
+  @OneToMany(
+    () => UserChallengesCreation,
+    (challengeCreation) => challengeCreation.user
+  )
   UserChallengesCreation: UserChallengesCreation[];
 
-  @OneToMany(() => UserChallengesParticipation, (challengeParticipation) => challengeParticipation.user)
+  @OneToMany(
+    () => UserChallengesParticipation,
+    (challengeParticipation) => challengeParticipation.user
+  )
   UserChallengesParticipation: UserChallengesParticipation[];
 }
 
