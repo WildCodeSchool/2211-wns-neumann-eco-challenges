@@ -3,28 +3,10 @@ import Challenge from "../challenge/challenge.entity";
 
 import datasource from "../db";
 import User, { hashPassword, UserInput } from "./user.entity";
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 
 export async function getUsers(): Promise<User[]> {
   return await datasource.getRepository(User).find();
-}
-
-export async function addChallengeToUser(
-  challengeId: any
-): Promise<User | null> {
-  const challengeToAdd = await datasource
-    .getRepository(Challenge)
-    .findOneBy({ id: challengeId });
-
-  if (challengeToAdd === null || challengeToAdd === undefined) {
-    return null;
-  }
-  const [user] = await datasource
-    .getRepository(User)
-    .find({ relations: { challenge: true } });
-
-  user.challenge = [...user?.challenge, challengeToAdd];
-
-  return await datasource.getRepository(User).save(user);
 }
 
 export async function createUsers(userData: UserInput[]): Promise<User[]> {

@@ -10,9 +10,9 @@ import UserChallengesParticipation from "../userChallengesParticipation/userChal
 @Entity()
 @ObjectType()
 class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: number;
+  id?: string;
 
   @Field()
   @Column({ nullable: true })
@@ -29,26 +29,26 @@ class User {
   @Column()
   hashedPassword: string;
 
-  @OneToMany(() => Challenge, (challenge) => challenge.user)
-  challenge: Challenge[];
-
+  // One user can realize many ecogestures from a challenge
   @OneToMany(
     () => UserChallengeEcogestures,
     (challengeEcogesture) => challengeEcogesture.user
   )
   userChallengeEcogestures: UserChallengeEcogestures[];
 
+  // One user can create many challenges
   @OneToMany(
     () => UserChallengesCreation,
     (challengeCreation) => challengeCreation.user
   )
-  UserChallengesCreation: UserChallengesCreation[];
+  userChallengesCreation: UserChallengesCreation[];
 
+  // One user can participate to many challenges
   @OneToMany(
     () => UserChallengesParticipation,
     (challengeParticipation) => challengeParticipation.user
   )
-  UserChallengesParticipation: UserChallengesParticipation[];
+  userChallengesParticipation: UserChallengesParticipation[];
 }
 
 @InputType()

@@ -8,7 +8,13 @@ import { ApolloError } from "apollo-server-errors";
 export async function allChallenges(): Promise<Challenge[]> {
   const challenges: Challenge[] = await datasource
     .getRepository(Challenge)
-    .find({ relations: { ecogesture: true } });
+    .find({
+      relations: {
+        challengeEcogestures: true,
+        userChallengesParticipation: { challenge: true, user: true },
+      },
+    });
+
   return challenges;
 }
 

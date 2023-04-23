@@ -8,7 +8,7 @@ import { env } from "../env";
 import { createUsers, deleteUsers, getUsers } from "./user.service";
 
 export interface JWTPayload {
-  userId: number;
+  userId: string;
 }
 
 export interface ContextType {

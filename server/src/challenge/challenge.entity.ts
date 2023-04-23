@@ -1,17 +1,9 @@
 import { Field, InputType, ObjectType } from "type-graphql";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  ManyToOne,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { MaxLength, MinLength } from "class-validator";
-import Ecogesture from "../ecogesture/ecogesture.entity";
-import User from "../user/user.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
-import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
+import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
 
 @Entity()
 @ObjectType()
@@ -36,20 +28,27 @@ class Challenge {
   @Field()
   endingDate: Date;
 
-  @OneToMany(() => Ecogesture, (ecogesture) => ecogesture.challenge)
-  ecogesture: Ecogesture[];
+  // One challenge can have many ecogestures
+  @OneToMany(() => ChallengeEcogestures, (ce) => ce.challenge, {
+    onDelete: "CASCADE",
+  })
+  challengeEcogestures: ChallengeEcogestures[];
 
-  @ManyToOne(() => User, (user) => user.challenge, { onDelete: "CASCADE" })
-  user: User;
-
-  @OneToMany(() => UserChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.challenge)
+  // One challenge can have many realizations (to replae)
+  @OneToMany(() => UserChallengeEcogestures, (uce) => uce.challenge, {
+    onDelete: "CASCADE",
+  })
   userChallengeEcogestures: UserChallengeEcogestures[];
 
-  @OneToMany(() => UserChallengesCreation, (challengeCreation) => challengeCreation.challenge)
-  UserChallengesCreation: UserChallengesCreation[];
-
-  @OneToMany(() => UserChallengesParticipation, (challengeParticipation) => challengeParticipation.challenge)
-  UserChallengesParticipation: UserChallengesParticipation[];
+  // One challenge can have multiple participation
+  @OneToMany(
+    () => UserChallengesParticipation,
+    (challengeParticipation) => challengeParticipation.challenge,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  userChallengesParticipation: UserChallengesParticipation[];
 }
 
 @InputType()

@@ -6,6 +6,7 @@ import Ecogesture from "./ecogesture/ecogesture.entity";
 import UserChallengeEcogestures from "./userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "./userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "./userChallengesParticipation/userChallengesParticipation.entity";
+import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogestures.entity";
 
 const datasource = new DataSource({
   type: "postgres",
@@ -15,7 +16,15 @@ const datasource = new DataSource({
   password: env.DB_PASS,
   database: env.DB_NAME,
   synchronize: true,
-  entities: [User, Challenge, Ecogesture, UserChallengeEcogestures, UserChallengesCreation, UserChallengesParticipation],
+  entities: [
+    User,
+    Challenge,
+    Ecogesture,
+    UserChallengeEcogestures,
+    UserChallengesCreation,
+    UserChallengesParticipation,
+    ChallengeEcogestures,
+  ],
   logging: ["query", "error"],
 });
 
