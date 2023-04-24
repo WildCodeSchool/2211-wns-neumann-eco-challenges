@@ -4,6 +4,29 @@ import User from "../user/user.entity";
 import UserChallengesParticipation from "./userChallengesParticipation.entity";
 import { ApolloError } from "apollo-server-errors";
 
+// Return the list of users invited to the challenge
+export async function getUserChallengeParticipationByChallengeId(
+  challengeId: string
+): Promise<UserChallengesParticipation[]> {
+  const participations = await datasource
+    .getRepository(UserChallengesParticipation)
+    .find({ where: { challengeId }, relations: { user: true } });
+
+  return participations;
+}
+
+// Return the list of challenges the user was invited to.
+export async function getUserChallengeParticipationByUserId(
+  userId: string
+): Promise<UserChallengesParticipation[]> {
+  const participations = await datasource
+    .getRepository(UserChallengesParticipation)
+    .find({ where: { userId }, relations: { challenge: true } });
+
+  return participations;
+}
+
+// Invite a user (userId) to a challenge (challengeId).
 export async function createUserChallengeParticipation(
   challengeId: string,
   userId: string

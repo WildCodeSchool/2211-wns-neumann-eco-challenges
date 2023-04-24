@@ -1,9 +1,6 @@
 import { ApolloError } from "apollo-server";
-import Challenge from "../challenge/challenge.entity";
-
 import datasource from "../db";
 import User, { hashPassword, UserInput } from "./user.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 
 export async function getUsers(): Promise<User[]> {
   return await datasource.getRepository(User).find();

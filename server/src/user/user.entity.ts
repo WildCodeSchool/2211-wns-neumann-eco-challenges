@@ -2,7 +2,6 @@ import { IsEmail, IsString, MinLength } from "class-validator";
 import { Field, InputType, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import argon2, { hash, verify } from "argon2";
-import Challenge from "../challenge/challenge.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
