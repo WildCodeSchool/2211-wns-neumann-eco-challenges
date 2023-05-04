@@ -5,6 +5,7 @@ import { createEcogestures } from "./ecogesture/ecogesture.service";
 import { allChallenges, createChallenges } from "./challenge/challenge.service";
 import { createUserChallengeParticipation } from "./userChallengesParticipation/userChallengesParticipation.service";
 import { getUsers } from "./user/user.service";
+import moment from "moment";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
@@ -91,23 +92,47 @@ async function userChallengesParticipationFill(): Promise<void> {
 }
 
 async function challengeFill(): Promise<void> {
-  const currentDate = new Date();
-  console.log("plop");
-  const month = currentDate.getMonth() + 1;
-  const day = currentDate.getDate() + 1;
-  const hours = currentDate.getHours();
-  const minutes = currentDate.getMinutes();
-  console.log(currentDate);
   await createChallenges([
     {
+      name: "Faire 20km en vélo en 1 semaine",
+      startingDate: new Date("2023/04/12 09:00"),
+      endingDate: new Date("2023/04/24 18:00"),
+    },
+    {
+      name: "Acheter des fruits et légumes de saison",
+      status: true,
+      startingDate: moment().add(2, "month").toDate(),
+      endingDate: moment()
+        .add(6, "month")
+        .add(5, "hour")
+        .add(4, "day")
+        .toDate(),
+    },
+    {
+      name: "Nettoyer les rues de la ville",
+      startingDate: moment().add(-2, "month").toDate(),
+      endingDate: moment().add(1, "hour").toDate(),
+    },
+    {
+      name: "Acheter du dentifrice solide",
+      status: true,
+      startingDate: moment().add(-2, "day").toDate(),
+      endingDate: moment().add(1, "hour").toDate(),
+    },
+    {
+      name: "Manger végétarien pendant 1 mois",
+      startingDate: moment().add(-2, "day").toDate(),
+      endingDate: moment().add(2, "day").toDate(),
+    },
+    {
       name: "Sell unused clothes",
-      startingDate: new Date(`2023/05/04 13:00`),
-      endingDate: new Date(`2023/05/04 16:00`),
+      startingDate: moment().add(1, "day").toDate(),
+      endingDate: moment().add(2, "day").toDate(),
     },
     {
       name: "Repair broken stuff",
-      startingDate: new Date("2023-09-29 09:30"),
-      endingDate: new Date("2023-12-29 12:00"),
+      startingDate: moment().add(1, "minute").toDate(),
+      endingDate: moment().add(4, "day").toDate(),
     },
   ]);
 }

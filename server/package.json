@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/WildCodeSchool/2211-wns-neumann-eco-challenges#readme",
   "dependencies": {
+    "moment": "^2.29.4",
     "apollo-server": "^3.11.1",
     "apollo-server-core": "^3.11.1",
     "apollo-server-errors": "^3.3.1",
