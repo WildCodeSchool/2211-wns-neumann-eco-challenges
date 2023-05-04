@@ -125,6 +125,7 @@ export type Query = {
   __typename?: 'Query';
   challenges: Array<Challenge>;
   ecogestures: Array<Ecogesture>;
+  getProfile?: Maybe<UserProfile>;
   getUserChallengeParticipationByChallengeId: Array<UserChallengesParticipation>;
   getUserChallengeParticipationByUserId: Array<UserChallengesParticipation>;
   profile: User;
@@ -221,7 +222,7 @@ export type DeleteEcoGestureMutation = { __typename?: 'Mutation', deleteEcogestu
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', profile: { __typename?: 'User', id: string, email: string } };
+export type GetProfileQuery = { __typename?: 'Query', getProfile?: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } | null };
 
 export type SignUpMutationVariables = Exact<{
   userInputs: Array<UserInput> | UserInput;
@@ -516,10 +517,15 @@ export type DeleteEcoGestureMutationHookResult = ReturnType<typeof useDeleteEcoG
 export type DeleteEcoGestureMutationResult = Apollo.MutationResult<DeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationOptions = Apollo.BaseMutationOptions<DeleteEcoGestureMutation, DeleteEcoGestureMutationVariables>;
 export const GetProfileDocument = gql`
-    query getProfile {
-  profile {
-    id
-    email
+    query GetProfile {
+  getProfile {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
   }
 }
     `;

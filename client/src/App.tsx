@@ -10,8 +10,10 @@ import { SignIn } from "./screens/SignIn";
 import { SignUp } from "./screens/SignUp";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { ProtectedComponent } from "./components/common/ProtectedComponent";
 function App() {
   const { pathname } = useLocation();
+
   return (
     <Grid
       container
@@ -27,10 +29,15 @@ function App() {
             <AnimatePresence>
               <Routes>
                 <Route path="/" element={<Welcome />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route
+                  path="/dashboard"
+                  element={<ProtectedComponent component={<Dashboard />} />}
+                />
                 <Route
                   path="/notifications"
-                  element={<NotificationsCenter />}
+                  element={
+                    <ProtectedComponent component={<NotificationsCenter />} />
+                  }
                 />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />

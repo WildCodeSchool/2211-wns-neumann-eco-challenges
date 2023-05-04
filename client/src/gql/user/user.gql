@@ -1,3 +1,15 @@
+query GetProfile {
+  getProfile {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
 mutation SignUp($userInputs: [UserInput!]!) {
   createUser(userInputs: $userInputs) {
     id

@@ -4,6 +4,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import {
+  GetProfileDocument,
   LoginInput,
   SignInDocument,
   SignUpDocument,
@@ -12,30 +13,25 @@ import {
   UserProfile,
 } from "../../gql/generated/schema";
 import apolloClient from "../../gql/client";
-import { RootState } from "../../store";
 
 export const userSlice = createSlice({
   name: "user",
   initialState: {
-    loading: "idle",
+    loadings: { getProfile: "idle", signIn: "idle" },
     currentRequestId: "",
     errors: { signIn: undefined, signUp: undefined },
-    user: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      id: "",
-    },
-    token: "",
+    user: null,
+    token: null,
   } as {
-    loading: string;
+    loadings: { getProfile: string; signIn: string };
     currentRequestId: string;
     errors: {
       signIn: SerializedError | undefined;
       signUp: SerializedError | undefined;
+      getProfile: SerializedError | undefined;
     };
-    user: User;
-    token: string;
+    user?: User | null;
+    token?: string | null;
   },
   reducers: {},
   extraReducers(builder) {
@@ -53,16 +49,16 @@ export const userSlice = createSlice({
     // Sign in thunk
     builder.addCase(thunkSignIn.pending, (state, action) => {
       state.errors.signUp = undefined;
-      state.loading = "pending";
+      state.loadings.signIn = "pending";
       state.currentRequestId = action.meta.requestId;
     });
     builder.addCase(thunkSignIn.fulfilled, (state, action) => {
       if (
-        state.loading === "pending" &&
+        state.loadings.signIn === "pending" &&
         state.currentRequestId === action.meta.requestId
       ) {
         state.currentRequestId = "";
-        state.loading = "idle";
+        state.loadings.signIn = "idle";
         state.token = action.payload.token;
         state.user = action.payload.user;
         state.errors.signIn = undefined;
@@ -70,10 +66,31 @@ export const userSlice = createSlice({
     });
     builder.addCase(thunkSignIn.rejected, (state, action) => {
       const { requestId } = action.meta;
-      if (state.loading === "pending" && state.currentRequestId === requestId) {
-        state.loading = "idle";
+      if (
+        state.loadings.signIn === "pending" &&
+        state.currentRequestId === requestId
+      ) {
+        state.loadings.signIn = "idle";
         state.errors.signIn = action.error;
         state.currentRequestId = "";
+      }
+    });
+
+    // Get profile thunk
+    builder.addCase(thunkGetProfile.pending, (state, _) => {
+      state.errors.signIn = undefined;
+      state.loadings.getProfile = "pending";
+    });
+    builder.addCase(thunkGetProfile.rejected, (state, action) => {
+      state.errors.signUp = action.error;
+      state.loadings.getProfile = "idle";
+    });
+    builder.addCase(thunkGetProfile.fulfilled, (state, action) => {
+      state.errors.getProfile = undefined;
+      state.loadings.getProfile = "idle";
+      if (action.payload?.user !== null && action.payload?.token !== null) {
+        state.token = action.payload!.token;
+        state.user = action.payload!.user;
       }
     });
   },
@@ -84,7 +101,7 @@ export const userReducer = userSlice.reducer;
 // Thunks
 // Login thunk
 export const thunkSignIn = createAsyncThunk(
-  "user/signin",
+  "user/signIn",
   async (user: LoginInput): Promise<UserProfile> => {
     const signIn = await apolloClient.mutate({
       mutation: SignInDocument,
@@ -94,9 +111,19 @@ export const thunkSignIn = createAsyncThunk(
   }
 );
 
+export const thunkGetProfile = createAsyncThunk(
+  "user/getProfile",
+  async (): Promise<UserProfile | null> => {
+    const profile = await apolloClient.query({
+      query: GetProfileDocument,
+    });
+    return profile.data?.getProfile;
+  }
+);
+
 // Register thunk
 export const thunkSignUp = createAsyncThunk(
-  "user/signup",
+  "user/signUp",
   async (user: UserInput): Promise<User[] | SerializedError> => {
     const users = await apolloClient.mutate({
       mutation: SignUpDocument,
