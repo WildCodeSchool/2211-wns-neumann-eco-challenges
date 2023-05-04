@@ -47,7 +47,7 @@ export async function createUserChallengeParticipation(
 
   await datasource
     .getRepository(UserChallengesParticipation)
-    .save({ challengeId, userId: user.id as string });
+    .save({ challengeId, userId: user.id });
 
   const userUpdated = await datasource.getRepository(User).findOne({
     where: { id: userId },

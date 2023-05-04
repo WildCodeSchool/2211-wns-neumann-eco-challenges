@@ -11,7 +11,7 @@ import UserChallengesParticipation from "../userChallengesParticipation/userChal
 class User {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id?: string;
+  id: string;
 
   @Field()
   @Column({ nullable: true })
@@ -94,6 +94,15 @@ export async function verifyPassword(
   hashed: string
 ): Promise<boolean> {
   return await verify(hashed, plain, hashingOptions);
+}
+
+@ObjectType()
+export class UserProfile {
+  @Field()
+  token: string;
+
+  @Field()
+  user: User;
 }
 
 export default User;

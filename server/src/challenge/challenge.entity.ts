@@ -10,7 +10,7 @@ import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestur
 class Challenge {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id?: string;
+  id: string;
 
   @Column({ length: 50, type: "varchar", nullable: true })
   @Field()

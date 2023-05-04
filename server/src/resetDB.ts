@@ -2,7 +2,9 @@ import datasource from "./db";
 import Challenge from "./challenge/challenge.entity";
 import User, { hashPassword } from "./user/user.entity";
 import { createEcogestures } from "./ecogesture/ecogesture.service";
-import { createChallenges } from "./challenge/challenge.service";
+import { allChallenges, createChallenges } from "./challenge/challenge.service";
+import { createUserChallengeParticipation } from "./userChallengesParticipation/userChallengesParticipation.service";
+import { getUsers } from "./user/user.service";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
@@ -15,6 +17,7 @@ async function reset(): Promise<void> {
   await ecogestureFill();
   await userFill();
   await challengeFill();
+  await userChallengesParticipationFill();
 
   // Close connection
   await datasource.destroy();
@@ -49,6 +52,12 @@ async function userFill(): Promise<void> {
       email: "use4@app.com",
       hashedPassword: await hashPassword("test4@123"),
     },
+    {
+      firstName: "Bryan",
+      lastName: "Deliencourt",
+      email: "bdeliencourt@gmail.com",
+      hashedPassword: await hashPassword("toulouse31"),
+    },
   ]);
 }
 
@@ -68,33 +77,37 @@ async function ecogestureFill(): Promise<void> {
   ]);
 }
 
+async function userChallengesParticipationFill(): Promise<void> {
+  const { id: userId } = (await getUsers()).find(
+    ({ email }) => email === "bdeliencourt@gmail.com"
+  ) ?? { id: "" };
+
+  const challenges = await allChallenges();
+  await Promise.all(
+    challenges.map(
+      async ({ id }) => await createUserChallengeParticipation(id, userId)
+    )
+  );
+}
+
 async function challengeFill(): Promise<void> {
+  const currentDate = new Date();
+  console.log("plop");
+  const month = currentDate.getMonth() + 1;
+  const day = currentDate.getDate() + 1;
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+  console.log(currentDate);
   await createChallenges([
     {
-      name: "Faire 20km en vélo en 1 semaine",
-      startingDate: new Date("2023/04/12 09:00"),
-      endingDate: new Date("2023/04/24 18:00"),
+      name: "Sell unused clothes",
+      startingDate: new Date(`2023/05/04 13:00`),
+      endingDate: new Date(`2023/05/04 16:00`),
     },
     {
-      name: "Acheter des fruits et légumes de saison",
-      status: true,
-      startingDate: new Date("2023/03/22 10:00"),
-      endingDate: new Date("2023/03/22 12:00"),
+      name: "Repair broken stuff",
+      startingDate: new Date("2023-09-29 09:30"),
+      endingDate: new Date("2023-12-29 12:00"),
     },
-    {
-      name: "Nettoyer les rues de la ville",
-      startingDate: new Date("2023-04-29 09:30"),
-      endingDate: new Date("2023-04-29 12:00"),
-    },
-    {
-      name: "Acheter du dentifrice solide",
-      status: true,
-      startingDate: new Date("2023-03-19 14:30"),
-      endingDate: new Date("2023-03-19 15:30"),
-    },
-    {
-      name: "Manger végétarien pendant 1 mois",
-      startingDate: new Date("2023-04-01 09:30"),
-      endingDate: new Date("2023-04-30 21:30"),
-    }]);
+  ]);
 }
