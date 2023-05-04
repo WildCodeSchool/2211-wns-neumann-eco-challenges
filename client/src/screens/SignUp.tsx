@@ -8,11 +8,14 @@ import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
 import {
   SignUpMutationFn,
+  SignInMutationFn,
   UserInput,
-  useSignUpMutation,
 } from "../gql/generated/schema";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { thunkSignIn, thunkSignUp } from "../reducer/user/user.reducer";
+import { RequestStatus } from "../reducer/requestStatus.enums";
+import { useAppDispatch, useAppSelector } from "../reducer/hooks";
+import { AppDispatch } from "../store";
 
 const minPasswordLength = 8;
 const getHeader = () => {
@@ -42,9 +45,9 @@ const getFooter = (navigate: any) => {
 const getBody = (
   register: any,
   handleSubmit: any,
-  signUp: SignUpMutationFn,
-  [signUpError, setSignUpError]: any,
-  errors: any,
+  signUpError: string,
+  dispatch: AppDispatch,
+  formErrors: any,
   navigate: any
 ) => {
   return (
@@ -57,20 +60,20 @@ const getBody = (
       flexDirection={"column"}
       onSubmit={handleSubmit(
         async ({ email, firstName, lastName, password }: UserInput) => {
-          try {
-            await signUp({
-              variables: {
-                userInputs: {
-                  email,
-                  firstName,
-                  lastName,
-                  password,
-                },
-              },
-            });
-            navigate("/dashboard");
-          } catch (error: any) {
-            setSignUpError(error.message);
+          const {
+            meta: { requestStatus: requestStatusSignUp },
+          } = await dispatch(
+            thunkSignUp({ email, firstName, lastName, password })
+          );
+
+          if (requestStatusSignUp === RequestStatus.fulfilled) {
+            const {
+              meta: { requestStatus: requestSignInStatus },
+            } = await dispatch(thunkSignIn({ email, password }));
+
+            if (requestSignInStatus === RequestStatus.fulfilled) {
+              navigate("/dashboard");
+            }
           }
         }
       )}
@@ -95,8 +98,10 @@ const getBody = (
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
-          error={errors["firstName"] ?? signUpError.length !== 0 ? true : false}
-          helperText={errors["firstName"] ?? false ? "Provide a firstname" : ""}
+          error={formErrors["firstName"] ?? signUpError ? true : false}
+          helperText={
+            formErrors["firstName"] ?? false ? "Provide a firstname" : ""
+          }
           id="firstname-required"
           label="Firstname"
           variant="outlined"
@@ -105,34 +110,38 @@ const getBody = (
         />
         <TextField
           fullWidth
-          error={errors["lastName"] ?? signUpError.length !== 0 ? true : false}
+          error={formErrors["lastName"] ?? signUpError ? true : false}
           id="lastname-required"
           label="Lastname"
           type="text"
           variant="outlined"
-          helperText={errors["lastName"] ?? false ? "Provide a lastname" : ""}
+          helperText={
+            formErrors["lastName"] ?? false ? "Provide a lastname" : ""
+          }
           {...register("lastName", { required: true })}
         />
         <TextField
           fullWidth
-          error={errors["email"] ?? signUpError.length !== 0 ? true : false}
+          error={formErrors["email"] ?? signUpError ? true : false}
           id="email-required"
           label="Email"
           variant="outlined"
           type="text"
           helperText={
-            errors["email"] ?? false ? "Provide a correct email address" : ""
+            formErrors["email"] ?? false
+              ? "Provide a correct email address"
+              : ""
           }
           {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
         />
         <TextField
           fullWidth
           id="password-required"
-          error={errors["password"] ?? signUpError.length !== 0 ? true : false}
+          error={formErrors["password"] ?? signUpError ? true : false}
           helperText={
             <div>
               <div>{`Provide a password with at least ${minPasswordLength} characters.`}</div>
-              <div>{`${signUpError ?? ""}`}</div>
+              <div>{`${signUpError}`}</div>
             </div>
           }
           label="Password"
@@ -171,13 +180,16 @@ const getBody = (
 };
 
 export const SignUp = () => {
-  const [signUp, { data, loading, error }] = useSignUpMutation();
   const navigate = useNavigate();
-  const [signUpError, setSignUpError] = useState("");
+  const dispatch = useAppDispatch();
+  const signUpError = useAppSelector(
+    (state) => state.user.errors.signUp?.message ?? ""
+  );
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm();
   return (
     <WelcomePageTemplate
@@ -185,9 +197,9 @@ export const SignUp = () => {
       body={getBody(
         register,
         handleSubmit,
-        signUp,
-        [signUpError, setSignUpError],
-        errors,
+        signUpError,
+        dispatch,
+        formErrors,
         navigate
       )}
       footer={getFooter(navigate)}

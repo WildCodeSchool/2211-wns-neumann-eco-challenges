@@ -1,8 +1,15 @@
 import Stack from "@mui/material/Stack";
 import { ScheduledChallengeItem } from "../challenge/ScheduledChallengeItem";
-import { useChallengesQuery } from "../../gql/generated/schema";
+import {
+  Challenge,
+  useChallengesQuery,
+  useGetUserChallengeParticipationByUserIdQuery,
+} from "../../gql/generated/schema";
 import moment from "moment";
 import { getFilteredChallenges } from "../../tools/challenge.tools";
+import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
+import { useEffect } from "react";
+import { thunkGetUserChallenges } from "../../reducer/challenge/challenge.reducer";
 
 const attendees = [
   [10, 10],
@@ -13,11 +20,22 @@ const attendees = [
 ];
 
 export const ScheduledChallenges = () => {
-  const { data } = useChallengesQuery();
-  const challenges = data?.challenges || [];
+  const { userId, challenges } = useAppSelector((state) => ({
+    userId: state.user.user.id,
+    challenges: state.challenges.scheduledChallenges,
+  }));
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const getChallenges = async () => {
+      dispatch(thunkGetUserChallenges(userId));
+    };
+    getChallenges();
+  }, []);
+
   return (
     <Stack spacing={2}>
-      {getFilteredChallenges(challenges, "scheduled").map((challenge) => (
+      {challenges.map((challenge) => (
         <ScheduledChallengeItem
           key={challenge.id}
           name={challenge.name}

@@ -8,7 +8,15 @@ mutation SignUp($userInputs: [UserInput!]!) {
 }
 
 mutation SignIn($data: LoginInput!) {
-  login(data: $data)
+  login(data: $data) {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
 }
 
 mutation DeleteUser($uuid: [String!]!) {
