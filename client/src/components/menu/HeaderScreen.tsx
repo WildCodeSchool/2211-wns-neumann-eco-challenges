@@ -5,12 +5,16 @@ export const HeaderScreen = ({
   subtitle,
   component,
   reversed = false,
+  gapBtwTitleAndAfterComponent = 2,
+  gapBtwSubitleAndAfterComponent = 2,
   afterSubtitleComponent,
   afterTitleComponent,
 }: {
   title: string;
   subtitle: string;
   component?: React.ReactNode;
+  gapBtwTitleAndAfterComponent?: number;
+  gapBtwSubitleAndAfterComponent?: number;
   afterTitleComponent?: React.ReactNode;
   afterSubtitleComponent?: React.ReactNode;
   reversed?: boolean;
@@ -25,7 +29,7 @@ export const HeaderScreen = ({
         alignItems={reversed ? "flex-end" : "flex-start"}
       >
         <Stack
-          gap={2}
+          gap={gapBtwTitleAndAfterComponent}
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}
@@ -36,7 +40,7 @@ export const HeaderScreen = ({
           {afterTitleComponent}
         </Stack>
         <Stack
-          gap={2}
+          gap={gapBtwSubitleAndAfterComponent}
           direction={"row"}
           justifyContent={"center"}
           alignItems={"center"}

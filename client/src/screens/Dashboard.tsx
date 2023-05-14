@@ -8,7 +8,9 @@ import { OngoingChallenges } from "../components/dashboard/OngoingChallenges";
 import { ScheduledChallenges } from "../components/dashboard/ScheduledChallenges";
 import { NotificationsCenterButton } from "../components/notification/NotificationsCenterButton";
 import { motion } from "framer-motion";
+import Lottie from "react-lottie";
 import { useAppSelector } from "../reducer/hooks";
+import handshake from "../assets/lotties/handshake.json";
 export const Dashboard = () => {
   const { firstName } = useAppSelector((state: any) => state.user.user);
 
@@ -22,6 +24,18 @@ export const Dashboard = () => {
           <HeaderScreen
             subtitle="Dashboard"
             title={`Hello ${firstName ?? ""}`}
+            gapBtwTitleAndAfterComponent={0}
+            afterTitleComponent={
+              <Lottie
+                options={{
+                  loop: true,
+                  autoplay: true,
+                  animationData: handshake,
+                }}
+                height={50}
+                width={50}
+              />
+            }
             component={<NotificationsCenterButton />}
           />
         </Stack>
