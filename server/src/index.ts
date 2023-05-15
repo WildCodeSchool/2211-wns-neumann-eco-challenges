@@ -10,6 +10,11 @@ import { env } from "./env";
 import { ContextType, JWTPayload } from "./user/user.resolver";
 import User from "./user/user.entity";
 
+const errorMessages = {
+  23505: "An account with this email already exists.",
+  INVALID_CREDS: "Invalid credentials. Check your email and password.",
+};
+
 async function start(): Promise<void> {
   await datasource.initialize();
 
@@ -41,6 +46,34 @@ async function start(): Promise<void> {
 
   const server = new ApolloServer({
     schema,
+    formatError: (error) => {
+      console.log(error);
+      if (error.path?.includes("createUser") ?? false) {
+        return {
+          ...error,
+          message:
+            errorMessages[
+              error.extensions.exception.code as keyof {
+                23505: string;
+                INVALID_CREDS: string;
+              }
+            ],
+        };
+      }
+      if (error.path?.includes("login") ?? false) {
+        return {
+          ...error,
+          message:
+            errorMessages[
+              error.extensions.code as keyof {
+                23505: string;
+                INVALID_CREDS: string;
+              }
+            ],
+        };
+      }
+      return { ...error };
+    },
     csrfPrevention: true,
     cache: "bounded",
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],

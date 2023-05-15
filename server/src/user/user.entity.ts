@@ -32,13 +32,22 @@ class User {
   @OneToMany(() => Challenge, (challenge) => challenge.user)
   challenge: Challenge[];
 
-  @OneToMany(() => UserChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.user)
+  @OneToMany(
+    () => UserChallengeEcogestures,
+    (challengeEcogesture) => challengeEcogesture.user
+  )
   userChallengeEcogestures: UserChallengeEcogestures[];
 
-  @OneToMany(() => UserChallengesCreation, (challengeCreation) => challengeCreation.user)
+  @OneToMany(
+    () => UserChallengesCreation,
+    (challengeCreation) => challengeCreation.user
+  )
   UserChallengesCreation: UserChallengesCreation[];
 
-  @OneToMany(() => UserChallengesParticipation, (challengeParticipation) => challengeParticipation.user)
+  @OneToMany(
+    () => UserChallengesParticipation,
+    (challengeParticipation) => challengeParticipation.user
+  )
   UserChallengesParticipation: UserChallengesParticipation[];
 }
 
