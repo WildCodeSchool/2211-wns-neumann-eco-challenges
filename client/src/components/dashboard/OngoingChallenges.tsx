@@ -17,14 +17,14 @@ const classes = [
 
 export const OngoingChallenges = () => {
   const { userId, challenges } = useAppSelector((state) => ({
-    userId: state.user.user.id,
+    userId: state.user?.user?.id,
     challenges: state.challenges.onGoingChallenges,
   }));
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const getChallenges = async () => {
-      dispatch(thunkGetUserChallenges(userId));
+      dispatch(thunkGetUserChallenges(userId!));
     };
     getChallenges();
   }, []);

@@ -7,12 +7,24 @@ import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
 import { useEffect, useState } from "react";
 import { GreenMatesLogoPage } from "../components/common/GreenMatesLogoPage";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
+import { useAppDispatch } from "../reducer/hooks";
+import { thunkGetProfile } from "../reducer/user/user.reducer";
+import { RequestStatus } from "../reducer/requestStatus.enums";
 
 export const Welcome = () => {
   const navigate = useNavigate();
   const [showLogoPage, setShowLogoPage] = useState(true);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    setTimeout(() => setShowLogoPage(false), 2000);
+    setTimeout(async () => {
+      const getProfile = await dispatch(thunkGetProfile());
+      // We get profile from cookie or plain token
+      // Redirect to dashboard
+      if (getProfile.meta.requestStatus === RequestStatus.fulfilled)
+        navigate("/dashboard");
+      setShowLogoPage(false);
+    }, 2000);
   }, []);
 
   const getHeader = () => {

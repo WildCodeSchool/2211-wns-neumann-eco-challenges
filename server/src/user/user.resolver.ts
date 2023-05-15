@@ -44,6 +44,23 @@ export class UserResolver {
     return await deleteUsers(userIDs);
   }
 
+  @Authorized()
+  @Query(() => UserProfile)
+  async getProfile(
+    @Ctx() { currentUser: user, res }: ContextType
+  ): Promise<UserProfile> {
+    // Should not happen
+    if (user === undefined)
+      throw new ApolloError("Access forbidden", "UNAUTHORIZED");
+
+    const token = jwt.sign({ userId: user.id }, env.JWT_PRIVATE_KEY);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: env.NODE_ENV === "production",
+    });
+    return { user, token };
+  }
+
   // Login - JWT
   @Mutation(() => UserProfile)
   async login(
