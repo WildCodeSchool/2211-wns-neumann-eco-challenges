@@ -6,11 +6,7 @@ import { Notifications } from "../components/notification/Notifications";
 
 export const NotificationsCenter = () => {
   return (
-    <motion.div
-      initial={{ translateX: "100%" }}
-      animate={{ translateX: "0" }}
-      exit={{ translateX: "0" }}
-    >
+    <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
       <Stack gap={4} className="notificationsContainer">
         <HeaderScreen
           title="Notifications"
