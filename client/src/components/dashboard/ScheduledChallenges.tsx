@@ -35,7 +35,7 @@ export const ScheduledChallenges = () => {
 
   return (
     <Stack spacing={2}>
-      {challenges.map((challenge) => (
+      {getFilteredChallenges(challenges, "scheduled").map((challenge) => (
         <ScheduledChallengeItem
           key={challenge.id}
           name={challenge.name}
