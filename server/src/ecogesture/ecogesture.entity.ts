@@ -1,15 +1,22 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { IsString } from "class-validator";
 import Challenge from "../challenge/challenge.entity";
-import userChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity"
+import userChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
+import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
 
 @Entity()
 @ObjectType()
 class Ecogesture {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: string;
+  id?: string;
 
   @Field()
   @Column()
@@ -27,12 +34,15 @@ class Ecogesture {
   @Column({ default: false })
   isProofNeeded?: boolean;
 
-  @ManyToOne(() => Challenge, (challenge) => challenge.ecogesture, {
+  @OneToMany(() => ChallengeEcogestures, (ce) => ce.ecogesture, {
     onDelete: "CASCADE",
   })
-  challenge: Challenge;
+  challengeEcogestures: ChallengeEcogestures[];
 
-  @OneToMany(() => userChallengeEcogestures, (challengeEcogesture) => challengeEcogesture.ecogesture)
+  @OneToMany(
+    () => userChallengeEcogestures,
+    (challengeEcogesture) => challengeEcogesture.ecogesture
+  )
   userChallengeEcogestures: userChallengeEcogestures[];
 }
 

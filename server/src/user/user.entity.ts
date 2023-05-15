@@ -2,17 +2,16 @@ import { IsEmail, IsString, MinLength } from "class-validator";
 import { Field, InputType, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import argon2, { hash, verify } from "argon2";
-import Challenge from "../challenge/challenge.entity";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity"
+import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 
 @Entity()
 @ObjectType()
 class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   @Field()
-  id: number;
+  id: string;
 
   @Field()
   @Column({ nullable: true })
@@ -29,26 +28,26 @@ class User {
   @Column()
   hashedPassword: string;
 
-  @OneToMany(() => Challenge, (challenge) => challenge.user)
-  challenge: Challenge[];
-
+  // One user can realize many ecogestures from a challenge
   @OneToMany(
     () => UserChallengeEcogestures,
     (challengeEcogesture) => challengeEcogesture.user
   )
   userChallengeEcogestures: UserChallengeEcogestures[];
 
+  // One user can create many challenges
   @OneToMany(
     () => UserChallengesCreation,
     (challengeCreation) => challengeCreation.user
   )
-  UserChallengesCreation: UserChallengesCreation[];
+  userChallengesCreation: UserChallengesCreation[];
 
+  // One user can participate to many challenges
   @OneToMany(
     () => UserChallengesParticipation,
     (challengeParticipation) => challengeParticipation.user
   )
-  UserChallengesParticipation: UserChallengesParticipation[];
+  userChallengesParticipation: UserChallengesParticipation[];
 }
 
 @InputType()
@@ -95,6 +94,15 @@ export async function verifyPassword(
   hashed: string
 ): Promise<boolean> {
   return await verify(hashed, plain, hashingOptions);
+}
+
+@ObjectType()
+export class UserProfile {
+  @Field()
+  token: string;
+
+  @Field()
+  user: User;
 }
 
 export default User;

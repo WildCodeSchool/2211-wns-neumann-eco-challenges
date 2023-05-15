@@ -72,7 +72,14 @@ export const ScheduledChallengeItem = ({
                   className="greyTextColor"
                   fontWeight={"600"}
                 >
-                  30m00s
+                  <ChallengeTimer
+                    {...{
+                      endingDateTime,
+                      startingDateTime,
+                      format: "text",
+                      type: "duration",
+                    }}
+                  />
                 </Typography>
               </Stack>
             </Grid>

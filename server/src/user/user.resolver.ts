@@ -1,4 +1,9 @@
-import User, { LoginInput, UserInput, verifyPassword } from "./user.entity";
+import User, {
+  LoginInput,
+  UserInput,
+  UserProfile,
+  verifyPassword,
+} from "./user.entity";
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import datasource from "../db";
 import { ApolloError } from "apollo-server-errors";
@@ -8,7 +13,7 @@ import { env } from "../env";
 import { createUsers, deleteUsers, getUsers } from "./user.service";
 
 export interface JWTPayload {
-  userId: number;
+  userId: string;
 }
 
 export interface ContextType {
@@ -40,11 +45,11 @@ export class UserResolver {
   }
 
   // Login - JWT
-  @Mutation(() => String)
+  @Mutation(() => UserProfile)
   async login(
     @Arg("data") { email, password }: LoginInput,
     @Ctx() { res }: ContextType
-  ): Promise<string> {
+  ): Promise<UserProfile> {
     const user = await datasource.getRepository(User).findOneBy({ email });
 
     if (user === null || !(await verifyPassword(password, user.hashedPassword)))
@@ -55,7 +60,7 @@ export class UserResolver {
       httpOnly: true,
       secure: env.NODE_ENV === "production",
     });
-    return token;
+    return { user, token };
   }
 
   @Mutation(() => Boolean)

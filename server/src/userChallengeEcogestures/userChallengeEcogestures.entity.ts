@@ -5,8 +5,8 @@ import User from "../user/user.entity";
 
 @Entity()
 class UserChallengeEcogestures {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id?: string;
 
   @Column()
   challengeId: string;
@@ -26,14 +26,20 @@ class UserChallengeEcogestures {
   @Column()
   reward: number;
 
-  @ManyToOne(() => User, (u) => u.userChallengeEcogestures, { onDelete: "CASCADE" })
-  user: User
+  @ManyToOne(() => User, (u) => u.userChallengeEcogestures, {
+    onDelete: "CASCADE",
+  })
+  user: User;
 
-  @ManyToOne(() => Challenge, (c) => c.userChallengeEcogestures, { onDelete: "CASCADE" })
-  challenge: Challenge
+  @ManyToOne(() => Challenge, (c) => c.userChallengeEcogestures, {
+    onDelete: "CASCADE",
+  })
+  challenge: Challenge;
 
-  @ManyToOne(() => Ecogesture, (e) => e.userChallengeEcogestures, { onDelete: "CASCADE" })
-  ecogesture: Ecogesture
+  @ManyToOne(() => Ecogesture, (e) => e.userChallengeEcogestures, {
+    onDelete: "CASCADE",
+  })
+  ecogesture: Ecogesture;
 }
 
 export default UserChallengeEcogestures;

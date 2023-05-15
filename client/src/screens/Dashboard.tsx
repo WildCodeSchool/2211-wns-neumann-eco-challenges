@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import React from "react";
+import React, { useContext } from "react";
 
 import { DashboardWrapper } from "../components/dashboard/DashboardWrapper";
 import { FriendInvitation } from "../components/dashboard/FriendInvitation";
@@ -8,7 +8,10 @@ import { OngoingChallenges } from "../components/dashboard/OngoingChallenges";
 import { ScheduledChallenges } from "../components/dashboard/ScheduledChallenges";
 import { NotificationsCenterButton } from "../components/notification/NotificationsCenterButton";
 import { motion } from "framer-motion";
+import { useAppSelector } from "../reducer/hooks";
 export const Dashboard = () => {
+  const { firstName } = useAppSelector((state: any) => state.user.user);
+
   return (
     <motion.div
       initial={{ translateX: "-100%" }}
@@ -18,7 +21,7 @@ export const Dashboard = () => {
         <Stack marginBottom={7}>
           <HeaderScreen
             subtitle="Dashboard"
-            title="Green Mates"
+            title={`Hello ${firstName ?? ""}`}
             component={<NotificationsCenterButton />}
           />
         </Stack>

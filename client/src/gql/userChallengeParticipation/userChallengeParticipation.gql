@@ -1,0 +1,23 @@
+query GetUserChallengeParticipationByUserId($userId: String!) {
+  getUserChallengeParticipationByUserId(userId: $userId) {
+    challenge {
+      id
+      name
+      status
+      startingDate
+      endingDate
+    }
+  }
+}
+
+mutation CreateUserChallengeParticipation(
+  $userId: String!
+  $challengeId: String!
+) {
+  createUserChallengeParticipation(userId: $userId, challengeId: $challengeId) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
