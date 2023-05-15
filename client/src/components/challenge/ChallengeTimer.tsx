@@ -1,5 +1,4 @@
 import moment, { Moment } from "moment";
-import momentTZ from "moment-timezone";
 import { useEffect, useState } from "react";
 import { ChallengeTimerProps } from "../../interfaces/challenge/challenge.interface";
 
@@ -18,15 +17,14 @@ export const ChallengeTimer = ({
   };
 
   const formatDate = (startingDateTime: Moment) => {
-    let durationMs = momentTZ(startingDateTime).diff(
-      momentTZ().utc(),
-      "seconds"
-    );
+    let durationMs = moment(startingDateTime)
+      .utc()
+      .diff(moment().utc(), "seconds");
     // Higher than a month : display full date
     const dayMs = 60 * 60 * 24;
     const days = Math.floor(durationMs / dayMs);
     if (days > 30) {
-      return startingDateTime.format("MM/DD HH:mm");
+      return moment(startingDateTime, "MM/DD HH:mm").toLocaleString();
     } else {
       durationMs -= days * dayMs;
       const hours = Math.floor(durationMs / (dayMs / 24));
@@ -50,9 +48,11 @@ export const ChallengeTimer = ({
 
   const [displayedTime, setDisplayedTime] = useState("");
   useEffect(() => {
-    const elapsedTime = moment().diff(moment(startingDateTime));
-    const durationTime = moment(endingDateTime).diff(moment(startingDateTime));
-    const remainingTime = moment(endingDateTime).diff(moment());
+    const elapsedTime = moment().utc().diff(moment(startingDateTime).utc());
+    const durationTime = moment(endingDateTime)
+      .utc()
+      .diff(moment(startingDateTime).utc());
+    const remainingTime = moment(endingDateTime).utc().diff(moment().utc());
 
     const timeToDisplay = (
       type === "remaining"

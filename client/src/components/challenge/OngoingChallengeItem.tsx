@@ -40,6 +40,8 @@ export const OngoingChallengeItem = ({
               fontWeight={700}
               style={{
                 color: "white",
+                overflow: "hidden",
+                height: "70px",
                 textShadow: "rgba(0,0,0,0.3) 0 1px 3px",
               }}
             >
