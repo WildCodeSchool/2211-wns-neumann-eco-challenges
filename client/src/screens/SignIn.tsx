@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { thunkSignIn } from "../reducer/user/user.reducer";
 import { AppDispatch } from "../store";
-import { useAppSelector } from "../reducer/hooks";
+import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 
 const debug = false;
@@ -158,7 +158,7 @@ export const SignIn = () => {
   const signInError = useAppSelector(
     (state) => state.user.errors.signIn?.message ?? ""
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const {
     register,

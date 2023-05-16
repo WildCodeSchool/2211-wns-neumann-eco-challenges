@@ -11,6 +11,10 @@ import { SignUp } from "./screens/SignUp";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { ProtectedComponent } from "./components/common/ProtectedComponent";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { CreateChallenge } from "./screens/challengeCreationFlow/CreateChallenge";
+
 function App() {
   const { pathname } = useLocation();
 
@@ -23,30 +27,39 @@ function App() {
           : "App-header"
       }
     >
-      <Provider store={store}>
-        <main>
-          <Grid>
-            <AnimatePresence>
-              <Routes>
-                <Route path="/" element={<Welcome />} />
-                <Route
-                  path="/dashboard"
-                  element={<ProtectedComponent component={<Dashboard />} />}
-                />
-                <Route
-                  path="/notifications"
-                  element={
-                    <ProtectedComponent component={<NotificationsCenter />} />
-                  }
-                />
-                <Route path="/signin" element={<SignIn />} />
-                <Route path="/signup" element={<SignUp />} />
-              </Routes>
-            </AnimatePresence>
-            {pathname.includes("dashboard") && <BottomMenu />}
-          </Grid>
-        </main>
-      </Provider>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <Provider store={store}>
+          <main>
+            <Grid>
+              <AnimatePresence>
+                <Routes>
+                  <Route path="/" element={<Welcome />} />
+                  <Route
+                    path="/dashboard"
+                    element={<ProtectedComponent component={<Dashboard />} />}
+                  />
+                  <Route
+                    path="/notifications"
+                    element={
+                      <ProtectedComponent component={<NotificationsCenter />} />
+                    }
+                  />
+                  <Route
+                    path="/create-challenge"
+                    element={
+                      <CreateChallenge />
+                      // <ProtectedComponent component={<CreateChallenge />} />
+                    }
+                  />
+                  <Route path="/signin" element={<SignIn />} />
+                  <Route path="/signup" element={<SignUp />} />
+                </Routes>
+              </AnimatePresence>
+              {pathname.includes("dashboard") && <BottomMenu />}
+            </Grid>
+          </main>
+        </Provider>
+      </LocalizationProvider>
     </Grid>
   );
 }
