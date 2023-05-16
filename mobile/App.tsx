@@ -18,11 +18,8 @@ export default function App() {
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
-
               if (route.name === 'Dashboard') {
-                iconName = focused
-                  ? 'leaf'
-                  : 'leaf-outline';
+                iconName = focused ? 'leaf' : 'leaf-outline';
               } else if (route.name === 'Notifications') {
                 iconName = focused ? 'notifications' : 'notifications-outline';
               } else if (route.name === 'Challenge photo') {

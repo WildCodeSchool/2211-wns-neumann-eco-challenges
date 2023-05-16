@@ -1,4 +1,4 @@
-mutation Login($data: LoginInput!) {
+mutation SignIn($data: LoginInput!) {
   login(data: $data) {
     token
     user {
