@@ -1,9 +1,11 @@
 import { ApolloError } from "apollo-server-errors";
 import datasource from "../db";
 import User from "../user/user.entity";
-import Friend from "./firend.entity";
+import Friend, { FriendRelationship } from "./friend.entity";
 
-export async function getFriends(userId: string): Promise<User[]> {
+export async function getFriends(
+  userId: string
+): Promise<FriendRelationship[]> {
   const user = await datasource
     .getRepository(User)
     .findOne({ where: { id: userId }, relations: { friends: true } });
@@ -12,13 +14,22 @@ export async function getFriends(userId: string): Promise<User[]> {
 
   const { friends } = user;
 
-  const friendIds = friends.map(({ friendId }) => friendId);
+  const friendIdsAndStatus = friends.map(({ friendId, status }) => ({
+    friendId,
+    status,
+  }));
 
-// return friendIds.map(
-//     async (id) =>
-//       await datasource.getRepository(User).findOne({ where: { id } })
-//   ) as User[];
- 
+  const friendList = await Promise.all(
+    friendIdsAndStatus.map(async ({ friendId, status }) => {
+      const friend = (await datasource.getRepository(User).findOne({
+        where: { id: friendId },
+        // check good practice
+      })) as FriendRelationship["friend"];
+      return { friend, status };
+    })
+  );
+  return friendList;
+}
 
 export async function addFriend(
   userId: string,

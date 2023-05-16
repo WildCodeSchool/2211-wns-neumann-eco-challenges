@@ -7,7 +7,7 @@ import UserChallengeEcogestures from "./userChallengeEcogestures/userChallengeEc
 import UserChallengesCreation from "./userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "./userChallengesParticipation/userChallengesParticipation.entity";
 import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogestures.entity";
-import Friend from "./friend/firend.entity";
+import Friend from "./friend/friend.entity";
 
 const datasource = new DataSource({
   type: "postgres",

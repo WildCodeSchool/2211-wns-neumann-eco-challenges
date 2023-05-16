@@ -19,10 +19,17 @@ class Friend {
 
   @Field()
   @Column({ default: "pending" })
-  status?: "accepted" | "pending" | "declined";
+  status: "accepted" | "pending" | "declined";
 
   @ManyToOne(() => User, (user) => user.friends)
   user: User[];
 }
-
 export default Friend;
+@ObjectType()
+export class FriendRelationship {
+  @Field()
+  friend: User;
+
+  @Field()
+  status: "accepted" | "pending" | "declined";
+}
