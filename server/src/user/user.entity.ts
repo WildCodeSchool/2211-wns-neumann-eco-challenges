@@ -5,6 +5,7 @@ import argon2, { hash, verify } from "argon2";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
+import Friend from "../friend/firend.entity";
 
 @Entity()
 @ObjectType()
@@ -24,6 +25,9 @@ class User {
   @Field()
   @Column({ unique: true })
   email: string;
+
+  @OneToMany(() => Friend, (friend) => friend.user)
+  friends: Friend[];
 
   @Column()
   hashedPassword: string;
