@@ -9,13 +9,16 @@ import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const ChallengeDetail = ({
   updateStepStatus,
 }: {
   updateStepStatus: (status: "next" | "back") => void;
 }) => {
-  const navigate = useNavigate();
+  const [startingDate, setStartingDate] = useState<moment.Moment>(moment());
+  const [endingDate, setEndingDate] = useState<moment.Moment>(moment());
+
   return (
     <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
       <Grid
@@ -88,18 +91,38 @@ export const ChallengeDetail = ({
             />
             <DesktopDateTimePicker
               label="Starting Date"
-              format="YYYY/MM/DD [at] hh:mm:ss"
-              defaultValue={moment()}
+              format="YYYY/MM/DD [at] HH:mm"
+              value={startingDate}
               ampm={false}
-              slotProps={{ textField: { fullWidth: true } }}
+              onChange={(date) => {
+                if (date! > endingDate) setEndingDate(date!);
+                setStartingDate(date!);
+              }}
+              formatDensity="spacious"
+              minDateTime={moment()}
+              // sx={{
+              //   "& .MuiCalendarPicker-select": {
+              //     backgroundColor: "red",
+              //   },
+              // }}
+              slotProps={{
+                textField: { fullWidth: true },
+                day: { className: "datePicker" },
+              }}
             />{" "}
             <DesktopDateTimePicker
               label="Ending Date"
               ampm={false}
-              format="YYYY/MM/DD [at] hh:mm:ss"
-              defaultValue={moment()}
+              format="YYYY/MM/DD [at] HH:mm"
               ampmInClock={true}
-              slotProps={{ textField: { fullWidth: true } }}
+              formatDensity="spacious"
+              value={endingDate}
+              minDate={startingDate}
+              onChange={(date) => setEndingDate(date!)}
+              slotProps={{
+                textField: { fullWidth: true },
+                day: { className: "datePicker" },
+              }}
             />
             <Button
               onClick={() => {

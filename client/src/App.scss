@@ -121,7 +121,6 @@ $sunsetLinearGradient: linear-gradient(
 }
 
 .App-header {
-  background: $backgroundColor;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -190,5 +189,20 @@ $itemWidth: 100% / 6;
 }
 
 .lightPurpleBackground {
-  filter: brightness(100) sepia(1) hue-rotate(261deg) saturate(6);
+  filter: brightness(100) sepia(1) hue-rotate(261deg) saturate(50);
+}
+
+.activeCheckbox:active {
+  color: $lightGreenColor !important;
+}
+
+.dashboard {
+  background: $backgroundColor;
+}
+
+.datePicker:focus,
+.datePicker:active,
+.datePicker:hover,
+.datePicker:visited {
+  background-color: $lightGreenColor !important;
 }

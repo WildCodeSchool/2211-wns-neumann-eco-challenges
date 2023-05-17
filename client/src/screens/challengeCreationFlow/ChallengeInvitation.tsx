@@ -8,6 +8,15 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers/DesktopDateTimePicker
 import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
+import { FriendInvitation } from "../../components/dashboard/FriendInvitation";
+import Typography from "@mui/material/Typography";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import { Search } from "@mui/icons-material";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import { FriendInvitationEnhanced } from "../../components/dashboard/FriendInvitationEnhanced";
 
 export const ChallengeInvitation = ({
   updateStepStatus,
@@ -17,7 +26,7 @@ export const ChallengeInvitation = ({
   return (
     <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
       <Grid
-        height={"100vh"}
+        minHeight={"100vh"}
         display={"flex"}
         container
         flexDirection={"column"}
@@ -80,34 +89,55 @@ export const ChallengeInvitation = ({
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Grid item container paddingX={3} justifyContent={"center"} gap={3}>
-            <TextField
-              fullWidth
-              label="Challenge name"
-              InputLabelProps={{ shrink: true }}
-              type="text"
+          <Grid
+            item
+            container
+            paddingX={3}
+            marginTop={8}
+            justifyContent={"center"}
+          >
+            <Grid item container>
+              <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
+                Invite your friends
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                fontWeight={600}
+                width={"80%"}
+                color={"#858585"}
+              >
+                Pick-up the challengers you want to compete against{" "}
+              </Typography>
+            </Grid>
+
+            <FormControl
+              sx={{ width: "100%", marginTop: 5 }}
               variant="outlined"
-              placeholder="Enter your challenge name"
-            />
-            <DesktopDateTimePicker
-              label="Starting Date"
-              format="YYYY/MM/DD [at] hh:mm:ss"
-              defaultValue={moment()}
-              ampm={false}
-              slotProps={{ textField: { fullWidth: true } }}
-            />{" "}
-            <DesktopDateTimePicker
-              label="Ending Date"
-              ampm={false}
-              format="YYYY/MM/DD [at] hh:mm:ss"
-              defaultValue={moment()}
-              ampmInClock={true}
-              slotProps={{ textField: { fullWidth: true } }}
-            />
+            >
+              <InputLabel>Look for a friend</InputLabel>
+              <OutlinedInput
+                fullWidth
+                label="Look for a friend"
+                placeholder="Enter your friend name"
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconButton edge="start">
+                      <Search />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+
+            <Grid item container marginTop={4}>
+              <FriendInvitationEnhanced />
+            </Grid>
             <Button
               onClick={() => {}}
               variant="contained"
-              style={{
+              sx={{
+                marginTop: 8,
                 textTransform: "uppercase",
                 borderRadius: "25px",
                 fontSize: "1em",
