@@ -20,7 +20,7 @@ export default function SignIn() {
     const { data: currentUser, client } = useGetProfileQuery({
       errorPolicy: "ignore",
     });
-
+    
   return (
     <View style={styles.container}>
       {currentUser?.profile ? (
@@ -61,9 +61,10 @@ export default function SignIn() {
               try {
                 setError("");
                 const res = await login({ variables: { data: credentials } });
-                SecureStore.setItemAsync("token", res.data?.__typename as string);
+                await SecureStore.setItemAsync("token", res.data?.login.token as string);
               } catch (err) {
                 setError("invalid credentials");
+                console.log({err})
               } finally {
                 client.resetStore();
               }
