@@ -23,7 +23,7 @@ export const FriendItemEnhanced = ({
       <div style={{ flexBasis: "70px" }}>
         <Avatar
           style={{
-            border: `3px solid ${borderColor}`,
+            border: `4px solid ${borderColor}`,
             width: "50px",
             height: "50px",
           }}

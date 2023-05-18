@@ -14,48 +14,50 @@ import {
   Typography,
 } from "@mui/material";
 import { CheckCircle, RadioButtonUnchecked } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useEcogesturesQuery } from "../../gql/generated/schema";
+import { useAppDispatch } from "../../reducer/hooks";
+import { setChallengeEcogestures } from "../../reducer/challenge/challenge.reducer";
 
-const ecogestures = [
-  { id: "sdmfsdmf", name: "Empty trashes", reward: 4, checked: false },
-  { id: "lvqsdqsdqs", name: "Bike 20km in a week", reward: 4, checked: false },
-  {
-    id: "sqlflfdmgsdlm",
-    name: "Buy 5 clothes on vinted",
-    reward: 4,
-    checked: false,
-  },
-  { id: "sdmfssdmf", name: "Empty trashes", reward: 4, checked: false },
-  { id: "lvqssdqsdqs", name: "Bike 20km in a week", reward: 4, checked: false },
-  {
-    id: "sqlflfsdmgsdlm",
-    name: "Buy 5 clothes on vinted",
-    reward: 4,
-    checked: false,
-  },
-];
 export const ChallengeEcogesture = ({
   updateStepStatus,
+  goingTo,
 }: {
   updateStepStatus: (status: "next" | "back") => void;
+  goingTo: "next" | "back";
 }) => {
-  const [selectedEcogestures, setSelectedEcogestures] = useState(ecogestures);
+  const { data, loading, error } = useEcogesturesQuery();
+  const [selectedEcogestures, setSelectedEcogestures] = useState(
+    data?.ecogestures.map((gesture) => ({ ...gesture, checked: false })) ?? []
+  );
+
+  useEffect(() => {
+    setSelectedEcogestures(
+      data?.ecogestures.map((gesture) => ({ ...gesture, checked: false })) ?? []
+    );
+  }, [data]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors },
+  } = useForm();
 
   const handleSelectionUpdate = (id: string, status: boolean) => {
-    console.log({ id, status });
-    console.log(
-      selectedEcogestures.map((e: any) =>
-        e.id === id ? { ...e, checked: status } : e
-      )
-    );
     setSelectedEcogestures(
       selectedEcogestures.map((e: any) =>
         e.id === id ? { ...e, checked: status } : e
       )
     );
   };
+
+  const dispatch = useAppDispatch();
+
   return (
-    <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
+    <motion.div
+      initial={{ translateX: goingTo === "back" ? "-100%" : "100%" }}
+      animate={{ translateX: "0" }}
+    >
       <Grid
         minHeight={"100vh"}
         display={"flex"}
@@ -122,8 +124,25 @@ export const ChallengeEcogesture = ({
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
+          component="form"
+          onSubmit={handleSubmit(() => {
+            dispatch(
+              setChallengeEcogestures(
+                selectedEcogestures
+                  .filter(({ checked }) => checked)
+                  .map(({ id }) => id)
+              )
+            );
+            updateStepStatus("next");
+          })}
         >
-          <Grid item container paddingX={1} justifyContent={"center"} gap={3}>
+          <Grid
+            item
+            container
+            justifyContent={"center"}
+            paddingX={3}
+            marginTop={5}
+          >
             <Grid item container>
               <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
                 Available tasks
@@ -131,7 +150,6 @@ export const ChallengeEcogesture = ({
               <Typography
                 variant="subtitle2"
                 fontWeight={600}
-                width={"80%"}
                 color={"#858585"}
               >
                 Choose as many tasks you want among the following list
@@ -140,7 +158,14 @@ export const ChallengeEcogesture = ({
 
             <Grid item container position={"relative"}>
               <FormGroup
+                {...register("list", {
+                  validate: {
+                    atLeastOneSelected: () =>
+                      selectedEcogestures.some((gesture) => gesture.checked),
+                  },
+                })}
                 sx={{
+                  marginTop: 5,
                   width: "100%",
                 }}
               >
@@ -151,7 +176,7 @@ export const ChallengeEcogesture = ({
                       margin: 0,
                       display: "flex",
                       flexDirection: "column",
-                      gap: "10px",
+                      gap: "12px",
                     }}
                     control={
                       <Card
@@ -163,6 +188,7 @@ export const ChallengeEcogesture = ({
                           paddingY: 1,
                           display: "flex",
                           alignItems: "center",
+                          wordBreak: "break-word",
                         }}
                       >
                         <Checkbox
@@ -194,11 +220,11 @@ export const ChallengeEcogesture = ({
                               bgcolor: gesture.checked ? "black" : "white",
                               color: gesture.checked ? "white" : "black",
                               border: `1px solid black`,
-                              width: 42,
-                              height: 42,
+                              width: 38,
+                              height: 38,
                             }}
                           >
-                            <Typography variant="h5" fontWeight={700}>
+                            <Typography variant="h6" fontWeight={700}>
                               {gesture.reward}
                             </Typography>
                           </Avatar>
@@ -208,12 +234,25 @@ export const ChallengeEcogesture = ({
                     label={""}
                   />
                 ))}
+                {formErrors["list"] && (
+                  <Typography
+                    variant="caption"
+                    color="#ba000d"
+                    display="block"
+                    gutterBottom
+                    paddingLeft={"14px"}
+                  >
+                    Select at least one ecogesture.
+                  </Typography>
+                )}
               </FormGroup>
             </Grid>
             <Button
-              onClick={() => updateStepStatus("next")}
               variant="contained"
-              style={{
+              type="submit"
+              sx={{
+                marginTop: 8,
+                boxShadow: "none",
                 textTransform: "uppercase",
                 borderRadius: "25px",
                 fontSize: "1em",

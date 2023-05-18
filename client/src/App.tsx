@@ -14,10 +14,11 @@ import { ProtectedComponent } from "./components/common/ProtectedComponent";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { CreateChallenge } from "./screens/challengeCreationFlow/CreateChallenge";
+import { GenericDialog } from "./screens/GenericDialog";
+import { useAppSelector } from "./reducer/hooks";
 
 function App() {
   const { pathname } = useLocation();
-
   return (
     <Grid
       container
@@ -31,35 +32,7 @@ function App() {
     >
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <Provider store={store}>
-          <main>
-            <Grid>
-              <AnimatePresence>
-                <Routes>
-                  <Route path="/" element={<Welcome />} />
-                  <Route
-                    path="/dashboard"
-                    element={<ProtectedComponent component={<Dashboard />} />}
-                  />
-                  <Route
-                    path="/notifications"
-                    element={
-                      <ProtectedComponent component={<NotificationsCenter />} />
-                    }
-                  />
-                  <Route
-                    path="/create-challenge"
-                    element={
-                      <CreateChallenge />
-                      // <ProtectedComponent component={<CreateChallenge />} />
-                    }
-                  />
-                  <Route path="/signin" element={<SignIn />} />
-                  <Route path="/signup" element={<SignUp />} />
-                </Routes>
-              </AnimatePresence>
-              {pathname.includes("dashboard") && <BottomMenu />}
-            </Grid>
-          </main>
+          <AppContent />
         </Provider>
       </LocalizationProvider>
     </Grid>
@@ -67,3 +40,44 @@ function App() {
 }
 
 export default App;
+
+const AppContent = () => {
+  const { pathname } = useLocation();
+  const event = useAppSelector((store) => store.event);
+  return (
+    <AnimatePresence>
+      <main>
+        <Grid position={"relative"}>
+          {event.id !== null && (
+            <GenericDialog
+              title={event.title!}
+              body={event.body}
+              show={true}
+              redirectUrl={event.redirectUrl}
+            />
+          )}
+          <Routes>
+            <Route path="/" element={<Welcome />} />
+            <Route
+              path="/dashboard"
+              element={<ProtectedComponent component={<Dashboard />} />}
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedComponent component={<NotificationsCenter />} />
+              }
+            />
+            <Route
+              path="/create-challenge"
+              element={<ProtectedComponent component={<CreateChallenge />} />}
+            />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Routes>
+          {pathname.includes("dashboard") && <BottomMenu />}
+        </Grid>
+      </main>
+    </AnimatePresence>
+  );
+};

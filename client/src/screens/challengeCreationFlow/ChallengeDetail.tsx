@@ -8,19 +8,37 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers/DesktopDateTimePicker
 import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Typography from "@mui/material/Typography/Typography";
+import { useAppDispatch } from "../../reducer/hooks";
+import { setChallengeDetails } from "../../reducer/challenge/challenge.reducer";
 
 export const ChallengeDetail = ({
   updateStepStatus,
+  goingTo,
 }: {
   updateStepStatus: (status: "next" | "back") => void;
+  goingTo: "next" | "back";
 }) => {
   const [startingDate, setStartingDate] = useState<moment.Moment>(moment());
   const [endingDate, setEndingDate] = useState<moment.Moment>(moment());
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors },
+  } = useForm();
+  const dispatch = useAppDispatch();
+
+  // useEffect(() => {
+  //   const
+  // }, []);
 
   return (
-    <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
+    <motion.div
+      initial={{ translateX: goingTo === "back" ? "-100%" : "100%" }}
+      animate={{ translateX: "0" }}
+    >
       <Grid
         height={"100vh"}
         display={"flex"}
@@ -79,17 +97,45 @@ export const ChallengeDetail = ({
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
+          component="form"
+          onSubmit={handleSubmit(({ endingDate, startingDate, name }) => {
+            dispatch(
+              setChallengeDetails({
+                endingDate,
+                startingDate,
+                name,
+                status: false,
+              })
+            );
+            updateStepStatus("next");
+          })}
         >
           <Grid item container paddingX={3} justifyContent={"center"} gap={3}>
+            <Grid item container>
+              <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
+                Configure your challenge
+              </Typography>
+              <Typography
+                variant="subtitle2"
+                fontWeight={600}
+                color={"#858585"}
+              >
+                Give it a name, a starting and ending dates!
+              </Typography>
+            </Grid>
             <TextField
+              {...register("name", { required: true })}
               fullWidth
               label="Challenge name"
               InputLabelProps={{ shrink: true }}
               type="text"
               variant="outlined"
               placeholder="Enter your challenge name"
+              error={formErrors["name"] ? true : false}
+              helperText={formErrors["name"] ? "Provide a challenge name" : ""}
             />
             <DesktopDateTimePicker
+              {...register("startingDate", { required: true })}
               label="Starting Date"
               format="YYYY/MM/DD [at] HH:mm"
               value={startingDate}
@@ -99,7 +145,7 @@ export const ChallengeDetail = ({
                 setStartingDate(date!);
               }}
               formatDensity="spacious"
-              minDateTime={moment()}
+              minDateTime={moment().add(-1, "minutes")}
               // sx={{
               //   "& .MuiCalendarPicker-select": {
               //     backgroundColor: "red",
@@ -109,8 +155,14 @@ export const ChallengeDetail = ({
                 textField: { fullWidth: true },
                 day: { className: "datePicker" },
               }}
-            />{" "}
+            />
             <DesktopDateTimePicker
+              {...register("endingDate", {
+                required: true,
+                validate: {
+                  checkDates: () => endingDate > startingDate,
+                },
+              })}
               label="Ending Date"
               ampm={false}
               format="YYYY/MM/DD [at] HH:mm"
@@ -120,16 +172,21 @@ export const ChallengeDetail = ({
               minDate={startingDate}
               onChange={(date) => setEndingDate(date!)}
               slotProps={{
-                textField: { fullWidth: true },
+                textField: {
+                  fullWidth: true,
+                  helperText: formErrors["endingDate"]
+                    ? "The ending date must starts after the starting date"
+                    : "",
+                  error: formErrors["endingDate"] ? true : false,
+                },
                 day: { className: "datePicker" },
               }}
             />
             <Button
-              onClick={() => {
-                updateStepStatus("next");
-              }}
+              type="submit"
               variant="contained"
               style={{
+                boxShadow: "none",
                 textTransform: "uppercase",
                 borderRadius: "25px",
                 fontSize: "1em",

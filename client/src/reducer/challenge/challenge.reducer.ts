@@ -8,9 +8,10 @@ import {
 import apolloClient from "../../gql/client";
 import {
   Challenge,
+  ChallengeCreationInput,
+  ChallengeInput,
   GetUserChallengeParticipationByUserIdDocument,
 } from "../../gql/generated/schema";
-import { ScheduledChallenges } from "../../components/dashboard/ScheduledChallenges";
 import { getFilteredChallenges } from "../../tools/challenge.tools";
 
 const challengesSlice = createSlice({
@@ -18,13 +19,37 @@ const challengesSlice = createSlice({
   initialState: {
     onGoingChallenges: [],
     scheduledChallenges: [],
+    challengeCreation: undefined,
     error: undefined,
   } as {
     onGoingChallenges: Challenge[];
     scheduledChallenges: Challenge[];
     error?: SerializedError;
+    challengeCreation?: Partial<ChallengeCreationInput>;
   },
-  reducers: {},
+  reducers: {
+    setChallengeDetails: (state, action: PayloadAction<ChallengeInput>) => {
+      state.challengeCreation = {
+        challenge: { ...action.payload, status: false },
+      };
+    },
+    setChallengeEcogestures: (state, action: PayloadAction<string[]>) => {
+      state.challengeCreation = {
+        ...state.challengeCreation,
+        ecogesturesId: action.payload,
+      };
+    },
+    setChallengeChallengers: (state, action: PayloadAction<string[]>) => {
+      state.challengeCreation = {
+        ...state.challengeCreation,
+        challengersId: action.payload,
+      };
+    },
+
+    clearChallengeCreation: (state) => {
+      state.challengeCreation = undefined;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(thunkGetUserChallenges.fulfilled, (state, action) => {
       state.onGoingChallenges = getFilteredChallenges(
@@ -50,7 +75,12 @@ const challengesSlice = createSlice({
 });
 
 export const challengesReducer = challengesSlice.reducer;
-
+export const {
+  clearChallengeCreation,
+  setChallengeChallengers,
+  setChallengeDetails,
+  setChallengeEcogestures,
+} = challengesSlice.actions;
 // Thunks
 
 // Get challenges for the current user

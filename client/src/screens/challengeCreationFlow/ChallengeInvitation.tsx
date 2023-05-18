@@ -1,30 +1,34 @@
 import Grid from "@mui/material/Grid";
 import peopleFlying from "../../assets/challenge/create-challenge/peopleflying.svg";
 import backshape from "../../assets/challenge/create-challenge/backshape.svg";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import moment from "moment-timezone";
-import { DesktopDateTimePicker } from "@mui/x-date-pickers/DesktopDateTimePicker";
 import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
-import { FriendInvitation } from "../../components/dashboard/FriendInvitation";
 import Typography from "@mui/material/Typography";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import { Search } from "@mui/icons-material";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import { FriendInvitationEnhanced } from "../../components/dashboard/FriendInvitationEnhanced";
+import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
+import { setEvent } from "../../reducer/event/event.reducer";
+import { useCreateChallengesMutation } from "../../gql/generated/schema";
 
 export const ChallengeInvitation = ({
   updateStepStatus,
+  goingTo,
 }: {
   updateStepStatus: (status: "next" | "back") => void;
+  goingTo: "next" | "back";
 }) => {
+  const dispatch = useAppDispatch();
+  const challengeCreation = useAppSelector(
+    (store) => store.challenges.challengeCreation
+  );
+  const [createChallengesMutation, { data, loading, error }] =
+    useCreateChallengesMutation();
   return (
-    <motion.div initial={{ translateX: "100%" }} animate={{ translateX: "0" }}>
+    <motion.div
+      initial={{ translateX: goingTo === "back" ? "-100%" : "100%" }}
+      animate={{ translateX: "0" }}
+    >
       <Grid
         minHeight={"100vh"}
         display={"flex"}
@@ -93,7 +97,7 @@ export const ChallengeInvitation = ({
             item
             container
             paddingX={3}
-            marginTop={8}
+            marginTop={5}
             justifyContent={"center"}
           >
             <Grid item container>
@@ -103,41 +107,30 @@ export const ChallengeInvitation = ({
               <Typography
                 variant="subtitle2"
                 fontWeight={600}
-                width={"80%"}
                 color={"#858585"}
               >
                 Pick-up the challengers you want to compete against{" "}
               </Typography>
             </Grid>
 
-            <FormControl
-              sx={{ width: "100%", marginTop: 5 }}
-              variant="outlined"
-            >
-              <InputLabel>Look for a friend</InputLabel>
-              <OutlinedInput
-                fullWidth
-                label="Look for a friend"
-                placeholder="Enter your friend name"
-                type="text"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <IconButton edge="start">
-                      <Search />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-
-            <Grid item container marginTop={4}>
+            <Grid item container marginTop={3}>
               <FriendInvitationEnhanced />
             </Grid>
             <Button
-              onClick={() => {}}
+              onClick={() => {
+                dispatch(
+                  setEvent({
+                    id: "challengeCreation",
+                    title: "Congratulations!",
+                    body: "Good job mate. We notified your friends to join your challenge!Be ready to challenge them.",
+                    redirectUrl: "/dashboard",
+                  })
+                );
+              }}
               variant="contained"
               sx={{
                 marginTop: 8,
+                boxShadow: "none",
                 textTransform: "uppercase",
                 borderRadius: "25px",
                 fontSize: "1em",
