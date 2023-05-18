@@ -99,9 +99,7 @@ const getBody = (
         <TextField
           fullWidth
           error={formErrors["firstName"] ?? signUpError ? true : false}
-          helperText={
-            formErrors["firstName"] ?? false ? "Provide a firstname" : ""
-          }
+          helperText={formErrors["firstName"] ? "Provide a firstname" : ""}
           id="firstname-required"
           label="Firstname"
           variant="outlined"

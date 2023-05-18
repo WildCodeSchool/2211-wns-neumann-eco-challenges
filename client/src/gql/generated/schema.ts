@@ -25,6 +25,12 @@ export type Challenge = {
   status: Scalars['Boolean'];
 };
 
+export type ChallengeCreationInput = {
+  challenge: ChallengeInput;
+  challengersId: Array<Scalars['String']>;
+  ecogesturesId: Array<Scalars['String']>;
+};
+
 export type ChallengeInput = {
   endingDate: Scalars['DateTime'];
   name: Scalars['String'];
@@ -76,7 +82,7 @@ export type Mutation = {
 
 
 export type MutationCreateChallengesArgs = {
-  inputs: Array<ChallengeInput>;
+  challenges: Array<ChallengeCreationInput>;
 };
 
 
@@ -125,7 +131,7 @@ export type Query = {
   __typename?: 'Query';
   challenges: Array<Challenge>;
   ecogestures: Array<Ecogesture>;
-  getProfile?: Maybe<UserProfile>;
+  getProfile: UserProfile;
   getUserChallengeParticipationByChallengeId: Array<UserChallengesParticipation>;
   getUserChallengeParticipationByUserId: Array<UserChallengesParticipation>;
   profile: User;
@@ -179,7 +185,7 @@ export type ChallengesQueryVariables = Exact<{ [key: string]: never; }>;
 export type ChallengesQuery = { __typename?: 'Query', challenges: Array<{ __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }> };
 
 export type CreateChallengesMutationVariables = Exact<{
-  inputs: Array<ChallengeInput> | ChallengeInput;
+  challenges: Array<ChallengeCreationInput> | ChallengeCreationInput;
 }>;
 
 
@@ -222,7 +228,7 @@ export type DeleteEcoGestureMutation = { __typename?: 'Mutation', deleteEcogestu
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', getProfile?: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } | null };
+export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } };
 
 export type SignUpMutationVariables = Exact<{
   userInputs: Array<UserInput> | UserInput;
@@ -305,8 +311,8 @@ export type ChallengesQueryHookResult = ReturnType<typeof useChallengesQuery>;
 export type ChallengesLazyQueryHookResult = ReturnType<typeof useChallengesLazyQuery>;
 export type ChallengesQueryResult = Apollo.QueryResult<ChallengesQuery, ChallengesQueryVariables>;
 export const CreateChallengesDocument = gql`
-    mutation CreateChallenges($inputs: [ChallengeInput!]!) {
-  createChallenges(inputs: $inputs) {
+    mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
+  createChallenges(challenges: $challenges) {
     id
     name
     status
@@ -330,7 +336,7 @@ export type CreateChallengesMutationFn = Apollo.MutationFunction<CreateChallenge
  * @example
  * const [createChallengesMutation, { data, loading, error }] = useCreateChallengesMutation({
  *   variables: {
- *      inputs: // value for 'inputs'
+ *      challenges: // value for 'challenges'
  *   },
  * });
  */

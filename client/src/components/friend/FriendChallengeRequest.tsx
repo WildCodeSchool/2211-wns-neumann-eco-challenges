@@ -1,4 +1,4 @@
-import { Button, Icon, IconButton, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { withStyles } from "@mui/styles";
 import SendIcon from "@mui/icons-material/Send";

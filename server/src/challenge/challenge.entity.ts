@@ -4,6 +4,7 @@ import { MaxLength, MinLength } from "class-validator";
 import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
+import User from "../user/user.entity";
 
 @Entity()
 @ObjectType()
@@ -66,6 +67,18 @@ export class ChallengeInput {
 
   @Field()
   endingDate: Date;
+}
+
+@InputType()
+export class ChallengeCreationInput {
+  @Field(() => ChallengeInput)
+  challenge: ChallengeInput;
+
+  @Field(() => [String])
+  ecogesturesId: string[];
+
+  @Field(() => [String])
+  challengersId: string[];
 }
 
 @InputType()

@@ -6,7 +6,7 @@ import User from "../user/user.entity";
 @Entity()
 class UserChallengeEcogestures {
   @PrimaryGeneratedColumn("uuid")
-  id?: string;
+  id: string;
 
   @Column()
   challengeId: string;

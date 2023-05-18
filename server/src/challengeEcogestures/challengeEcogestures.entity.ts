@@ -5,7 +5,7 @@ import Ecogesture from "../ecogesture/ecogesture.entity";
 @Entity()
 export class ChallengeEcogestures {
   @PrimaryGeneratedColumn("uuid")
-  id?: string;
+  id: string;
 
   @Column()
   challengeId: string;
