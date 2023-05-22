@@ -11,7 +11,7 @@ class Friend {
 
   @Field()
   @Column()
-  userId!: string;
+  userId: string;
 
   @Field()
   @Column()
@@ -25,9 +25,10 @@ class Friend {
   user: User[];
 }
 export default Friend;
+
 @ObjectType()
 export class FriendRelationship {
-  @Field()
+  @Field(() => User)
   friend: User;
 
   @Field()

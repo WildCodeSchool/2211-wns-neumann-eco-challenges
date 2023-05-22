@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
+import { v4 as uuid } from "uuid";
 import { Dashboard } from "./screens/Dashboard";
 import Grid from "@mui/material/Grid";
 import { BottomMenu } from "./components/menu/BottomMenu";
@@ -16,6 +17,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { CreateChallenge } from "./screens/challengeCreationFlow/CreateChallenge";
 import { GenericDialog } from "./screens/GenericDialog";
 import { useAppSelector } from "./reducer/hooks";
+import { ScrollTopScreen } from "./screens/ScrollTopScreen";
 
 function App() {
   const { pathname } = useLocation();
@@ -60,20 +62,44 @@ const AppContent = () => {
             <Route path="/" element={<Welcome />} />
             <Route
               path="/dashboard"
-              element={<ProtectedComponent component={<Dashboard />} />}
+              element={
+                <ScrollTopScreen
+                  key={uuid()}
+                  screen={<ProtectedComponent component={<Dashboard />} />}
+                />
+              }
             />
             <Route
               path="/notifications"
               element={
-                <ProtectedComponent component={<NotificationsCenter />} />
+                <ScrollTopScreen
+                  key={uuid()}
+                  screen={
+                    <ProtectedComponent component={<NotificationsCenter />} />
+                  }
+                />
               }
             />
             <Route
               path="/create-challenge"
-              element={<ProtectedComponent component={<CreateChallenge />} />}
+              element={
+                <ScrollTopScreen
+                  key={uuid()}
+                  screen={
+                    <ProtectedComponent component={<CreateChallenge />} />
+                  }
+                />
+              }
             />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/signin"
+              element={<ScrollTopScreen key={uuid()} screen={<SignIn />} />}
+            />
+
+            <Route
+              path="/signup"
+              element={<ScrollTopScreen key={uuid()} screen={<SignUp />} />}
+            />
           </Routes>
           {pathname.includes("dashboard") && <BottomMenu />}
         </Grid>

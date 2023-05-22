@@ -10,6 +10,7 @@ import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
 import { useAppDispatch } from "../reducer/hooks";
 import { thunkGetProfile } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
+import { scrollToTop } from "../tools/render.tools";
 
 export const Welcome = () => {
   const navigate = useNavigate();
@@ -110,7 +111,11 @@ export const Welcome = () => {
           <Button
             onClick={() => navigate("/signup")}
             variant="contained"
-            style={{
+            sx={{
+              "&:hover, &:focus, &:active ": {
+                background: "black",
+              },
+              boxShadow: "none",
               textTransform: "uppercase",
               borderRadius: "25px",
               padding: "0.7em 2em 0.7em 2em",

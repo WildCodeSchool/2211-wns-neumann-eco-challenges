@@ -13,7 +13,6 @@ export async function getFriends(
   if (user === null) throw new ApolloError("User not found", "NOT_FOUND");
 
   const { friends } = user;
-
   const friendIdsAndStatus = friends.map(({ friendId, status }) => ({
     friendId,
     status,

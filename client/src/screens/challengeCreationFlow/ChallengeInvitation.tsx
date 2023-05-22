@@ -9,7 +9,13 @@ import Typography from "@mui/material/Typography";
 import { FriendInvitationEnhanced } from "../../components/dashboard/FriendInvitationEnhanced";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 import { setEvent } from "../../reducer/event/event.reducer";
-import { useCreateChallengesMutation } from "../../gql/generated/schema";
+import {
+  ChallengeCreationInput,
+  useCreateChallengesMutation,
+  useGetFriendsQuery,
+} from "../../gql/generated/schema";
+import { useEffect, useState } from "react";
+import { setChallengeChallengers } from "../../reducer/challenge/challenge.reducer";
 
 export const ChallengeInvitation = ({
   updateStepStatus,
@@ -22,8 +28,27 @@ export const ChallengeInvitation = ({
   const challengeCreation = useAppSelector(
     (store) => store.challenges.challengeCreation
   );
-  const [createChallengesMutation, { data, loading, error }] =
-    useCreateChallengesMutation();
+
+  const { data, loading, error } = useGetFriendsQuery();
+  const [friends, setFriends] = useState(
+    data?.getFriends.map((friend) => ({ ...friend, invite: false })) ?? []
+  );
+
+  useEffect(() => {
+    setFriends(
+      data?.getFriends.map((friend) => ({ ...friend, invite: false })) ?? []
+    );
+  }, [data]);
+
+  const updateFriendInvitation = (id: string, invite: boolean) => {
+    setFriends(
+      friends.map((friend) =>
+        friend.friend.id === id ? { ...friend, invite } : friend
+      )
+    );
+  };
+
+  const [createChallengesMutation] = useCreateChallengesMutation();
   return (
     <motion.div
       initial={{ translateX: goingTo === "back" ? "-100%" : "100%" }}
@@ -99,6 +124,33 @@ export const ChallengeInvitation = ({
             paddingX={3}
             marginTop={5}
             justifyContent={"center"}
+            component={"form"}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const challengersId = friends
+                .filter(({ invite }) => invite)
+                .map(({ friend: { id } }) => id);
+              dispatch(setChallengeChallengers(challengersId));
+
+              await createChallengesMutation({
+                variables: {
+                  challenges: [
+                    {
+                      ...challengeCreation,
+                      challengersId,
+                    } as ChallengeCreationInput,
+                  ],
+                },
+              });
+              dispatch(
+                setEvent({
+                  id: "challengeCreation",
+                  title: "Congratulations!",
+                  body: "Good job mate. We notified your friends to join your challenge! Be ready to challenge them.",
+                  redirectUrl: "/dashboard",
+                })
+              );
+            }}
           >
             <Grid item container>
               <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
@@ -114,21 +166,18 @@ export const ChallengeInvitation = ({
             </Grid>
 
             <Grid item container marginTop={3}>
-              <FriendInvitationEnhanced />
+              <FriendInvitationEnhanced
+                updateFriendInvitation={updateFriendInvitation}
+                friends={friends}
+              />
             </Grid>
             <Button
-              onClick={() => {
-                dispatch(
-                  setEvent({
-                    id: "challengeCreation",
-                    title: "Congratulations!",
-                    body: "Good job mate. We notified your friends to join your challenge!Be ready to challenge them.",
-                    redirectUrl: "/dashboard",
-                  })
-                );
-              }}
+              type="submit"
               variant="contained"
               sx={{
+                "&:hover, &:focus, &:active ": {
+                  background: "black",
+                },
                 marginTop: 8,
                 boxShadow: "none",
                 textTransform: "uppercase",

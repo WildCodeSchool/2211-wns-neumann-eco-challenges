@@ -1,17 +1,18 @@
-import LoadingButton from "@mui/lab/LoadingButton";
 import { Avatar, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { useState } from "react";
-import { FriendItemProps } from "../../interfaces/friend/friend.interface";
+import { FriendItemEnhancedProps } from "../../interfaces/friend/friend.interface";
 
 export const FriendItemEnhanced = ({
   name,
   avatar,
   challengedNTimes,
-  url,
+  id,
+  isInvited,
   borderColor,
-}: FriendItemProps) => {
-  const [sentInvitation, setSentInvitation] = useState(false);
+  updateFriendInvitation,
+}: FriendItemEnhancedProps & {
+  updateFriendInvitation: (id: string, invite: boolean) => void;
+}) => {
   return (
     <Grid
       container
@@ -46,7 +47,7 @@ export const FriendItemEnhanced = ({
       </Grid>
       <Button
         onClick={() => {
-          setSentInvitation(!sentInvitation);
+          updateFriendInvitation(id, !isInvited);
         }}
         variant="contained"
         style={{
@@ -54,12 +55,12 @@ export const FriendItemEnhanced = ({
           borderRadius: "25px",
           textTransform: "capitalize",
           fontWeight: 500,
-          color: sentInvitation ? "black" : "white",
-          background: sentInvitation ? "#DADADA" : "black",
+          color: isInvited ? "black" : "white",
+          background: isInvited ? "#DADADA" : "black",
         }}
       >
         <Typography variant="subtitle2" fontWeight={700}>
-          {sentInvitation ? "cancel" : "invite"}
+          {isInvited ? "cancel" : "invite"}
         </Typography>
       </Button>
     </Grid>

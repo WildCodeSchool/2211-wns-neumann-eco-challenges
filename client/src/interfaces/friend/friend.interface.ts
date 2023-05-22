@@ -5,3 +5,12 @@ export interface FriendItemProps {
   challengedNTimes: number;
   borderColor: string;
 }
+
+export interface FriendItemEnhancedProps {
+  name: string;
+  avatar: string;
+  id: string;
+  isInvited: boolean;
+  challengedNTimes: number;
+  borderColor: string;
+}

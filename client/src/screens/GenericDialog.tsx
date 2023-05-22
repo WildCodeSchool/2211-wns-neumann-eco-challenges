@@ -37,9 +37,9 @@ export const GenericDialog = ({
     setTimeout(() => {
       if (redirectUrl !== null && redirectUrl !== undefined) {
         navigate(redirectUrl);
-        dispatch(clearEvent());
       }
-    }, 5000);
+      dispatch(clearEvent());
+    }, 8000);
   }, []);
   return (
     <div>
@@ -65,7 +65,7 @@ export const GenericDialog = ({
           width={"150%"}
           height={"200%"}
           style={{
-            zIndex: 0,
+            zIndex: 5,
             position: "absolute",
           }}
           options={{
@@ -94,8 +94,8 @@ export const GenericDialog = ({
             }}
           >
             <img
+              alt="congratulation icon"
               style={{
-                paddingTop: "10%",
                 width: "50%",
                 height: "50%",
                 color: "black",
@@ -109,9 +109,17 @@ export const GenericDialog = ({
             className="lightGreenBackground"
             width={"100%"}
             height="100%"
+            alt="back shape"
           />
         </Stack>
-        <Stack width={"80%"} gap={1} marginTop={"-15%"}>
+        <Stack
+          width={"80%"}
+          gap={1}
+          marginTop={"-15%"}
+          position="relative"
+          zIndex={8}
+          bgcolor={"white"}
+        >
           <Typography
             textAlign={"center"}
             color="#565656"

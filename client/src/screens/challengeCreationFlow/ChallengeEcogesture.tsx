@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { useEcogesturesQuery } from "../../gql/generated/schema";
 import { useAppDispatch } from "../../reducer/hooks";
 import { setChallengeEcogestures } from "../../reducer/challenge/challenge.reducer";
+import { scrollToTop } from "../../tools/render.tools";
 
 export const ChallengeEcogesture = ({
   updateStepStatus,
@@ -34,9 +35,12 @@ export const ChallengeEcogesture = ({
 
   useEffect(() => {
     setSelectedEcogestures(
-      data?.ecogestures.map((gesture) => ({ ...gesture, checked: false })) ?? []
+      data?.ecogestures
+        .map((gesture) => ({ ...gesture, checked: false }))
+        .sort(({ reward: rA }, { reward: rB }) => (rA < rB ? 0 : 1)) ?? []
     );
   }, [data]);
+
   const {
     register,
     handleSubmit,
@@ -171,6 +175,7 @@ export const ChallengeEcogesture = ({
               >
                 {selectedEcogestures.map((gesture) => (
                   <FormControlLabel
+                    key={gesture.id}
                     style={{
                       width: "100%",
                       margin: 0,
@@ -251,6 +256,9 @@ export const ChallengeEcogesture = ({
               variant="contained"
               type="submit"
               sx={{
+                "&:hover, &:focus, &:active ": {
+                  background: "black",
+                },
                 marginTop: 8,
                 boxShadow: "none",
                 textTransform: "uppercase",

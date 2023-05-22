@@ -16,7 +16,7 @@ export async function createEcogestures(
 export async function getEcogestures(): Promise<Ecogesture[]> {
   const ecogestures: Ecogesture[] = await datasource
     .getRepository(Ecogesture)
-    .find();
+    .find({ order: { reward: { direction: "ASC" } } });
   return ecogestures;
 }
 

@@ -16,7 +16,7 @@ import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestur
 class Ecogesture {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id?: string;
+  id: string;
 
   @Field()
   @Column()

@@ -32,7 +32,6 @@ export const ChallengeTimer = ({
       const minutes = Math.floor(durationMs / (dayMs / 24 / 60));
       durationMs -= minutes * (dayMs / 24 / 60);
 
-      console.log({ days, hours, minutes });
       const formatedDate = [
         formatDateValueElement(days, "d"),
         formatDateValueElement(hours, "h"),

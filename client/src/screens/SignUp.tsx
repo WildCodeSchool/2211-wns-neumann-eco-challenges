@@ -16,6 +16,8 @@ import { thunkSignIn, thunkSignUp } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
+import { useEffect } from "react";
+import { scrollToTop } from "../tools/render.tools";
 
 const minPasswordLength = 8;
 const getHeader = () => {
@@ -162,7 +164,11 @@ const getBody = (
         <Button
           type="submit"
           variant="contained"
-          style={{
+          sx={{
+            "&:hover, &:focus, &:active ": {
+              background: "black",
+            },
+            boxShadow: "none",
             textTransform: "uppercase",
             borderRadius: "25px",
             padding: "0.7em 2em 0.7em 2em",
@@ -189,6 +195,7 @@ export const SignUp = () => {
     handleSubmit,
     formState: { errors: formErrors },
   } = useForm();
+
   return (
     <WelcomePageTemplate
       header={getHeader()}

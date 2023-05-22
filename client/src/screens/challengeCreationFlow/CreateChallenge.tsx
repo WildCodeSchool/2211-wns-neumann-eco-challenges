@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { ChallengeDetail } from "./ChallengeDetail";
 import { ChallengeEcogesture } from "./ChallengeEcogesture";
 import { ChallengeInvitation } from "./ChallengeInvitation";
-import { ChallengeCompleted } from "./ChallengeCompleted";
+import { ScrollTopScreen } from "../ScrollTopScreen";
 
-const steps = ["detail", "ecogesture", "invitation", "completed"];
+const steps = ["detail", "ecogesture", "invitation"];
 
 export const CreateChallenge = () => {
   const [step, setStep] = useState("detail");
@@ -21,32 +22,50 @@ export const CreateChallenge = () => {
   switch (step) {
     case "detail":
       return (
-        <ChallengeDetail
-          updateStepStatus={updateStepStatus}
-          goingTo={goingTo}
+        <ScrollTopScreen
+          key={uuid()}
+          screen={
+            <ChallengeDetail
+              updateStepStatus={updateStepStatus}
+              goingTo={goingTo}
+            />
+          }
         />
       );
     case "ecogesture":
       return (
-        <ChallengeEcogesture
-          updateStepStatus={updateStepStatus}
-          goingTo={goingTo}
+        <ScrollTopScreen
+          key={uuid()}
+          screen={
+            <ChallengeEcogesture
+              updateStepStatus={updateStepStatus}
+              goingTo={goingTo}
+            />
+          }
         />
       );
     case "invitation":
       return (
-        <ChallengeInvitation
-          updateStepStatus={updateStepStatus}
-          goingTo={goingTo}
+        <ScrollTopScreen
+          key={uuid()}
+          screen={
+            <ChallengeInvitation
+              updateStepStatus={updateStepStatus}
+              goingTo={goingTo}
+            />
+          }
         />
       );
-    case "completed":
-      return <ChallengeCompleted />;
     default:
       return (
-        <ChallengeDetail
-          updateStepStatus={updateStepStatus}
-          goingTo={goingTo}
+        <ScrollTopScreen
+          key={uuid()}
+          screen={
+            <ChallengeDetail
+              updateStepStatus={updateStepStatus}
+              goingTo={goingTo}
+            />
+          }
         />
       );
   }

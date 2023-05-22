@@ -61,6 +61,20 @@ export type EcogestureInput = {
   reward: Scalars['Int'];
 };
 
+export type Friend = {
+  __typename?: 'Friend';
+  friendId: Scalars['String'];
+  id: Scalars['String'];
+  status: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+export type FriendRelationship = {
+  __typename?: 'FriendRelationship';
+  friend: User;
+  status: Scalars['String'];
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -68,16 +82,23 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addFriend: User;
   createChallenges: Array<Challenge>;
   createEcogestures: Array<Ecogesture>;
   createUser: Array<User>;
   createUserChallengeParticipation: User;
   deleteChallenges: Array<Scalars['Boolean']>;
   deleteEcogestures: Array<Scalars['Boolean']>;
+  deleteFriend: User;
   deleteUser: Array<Scalars['Boolean']>;
   login: UserProfile;
   logout: Scalars['Boolean'];
   updateChallenge: Challenge;
+};
+
+
+export type MutationAddFriendArgs = {
+  friendId: Scalars['String'];
 };
 
 
@@ -112,6 +133,11 @@ export type MutationDeleteEcogesturesArgs = {
 };
 
 
+export type MutationDeleteFriendArgs = {
+  friendId: Scalars['String'];
+};
+
+
 export type MutationDeleteUserArgs = {
   uuid: Array<Scalars['String']>;
 };
@@ -131,6 +157,7 @@ export type Query = {
   __typename?: 'Query';
   challenges: Array<Challenge>;
   ecogestures: Array<Ecogesture>;
+  getFriends: Array<FriendRelationship>;
   getProfile: UserProfile;
   getUserChallengeParticipationByChallengeId: Array<UserChallengesParticipation>;
   getUserChallengeParticipationByUserId: Array<UserChallengesParticipation>;
@@ -224,6 +251,11 @@ export type DeleteEcoGestureMutationVariables = Exact<{
 
 
 export type DeleteEcoGestureMutation = { __typename?: 'Mutation', deleteEcogestures: Array<boolean> };
+
+export type GetFriendsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -522,6 +554,46 @@ export function useDeleteEcoGestureMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEcoGestureMutationHookResult = ReturnType<typeof useDeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationResult = Apollo.MutationResult<DeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationOptions = Apollo.BaseMutationOptions<DeleteEcoGestureMutation, DeleteEcoGestureMutationVariables>;
+export const GetFriendsDocument = gql`
+    query GetFriends {
+  getFriends {
+    friend {
+      id
+      firstName
+      lastName
+      email
+    }
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFriendsQuery(baseOptions?: Apollo.QueryHookOptions<GetFriendsQuery, GetFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendsQuery, GetFriendsQueryVariables>(GetFriendsDocument, options);
+      }
+export function useGetFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendsQuery, GetFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendsQuery, GetFriendsQueryVariables>(GetFriendsDocument, options);
+        }
+export type GetFriendsQueryHookResult = ReturnType<typeof useGetFriendsQuery>;
+export type GetFriendsLazyQueryHookResult = ReturnType<typeof useGetFriendsLazyQuery>;
+export type GetFriendsQueryResult = Apollo.QueryResult<GetFriendsQuery, GetFriendsQueryVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {

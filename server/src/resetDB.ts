@@ -1,24 +1,39 @@
 import datasource from "./db";
 import Challenge from "./challenge/challenge.entity";
 import User, { hashPassword } from "./user/user.entity";
-import { createEcogestures } from "./ecogesture/ecogesture.service";
+import {
+  createEcogestures,
+  getEcogestures,
+} from "./ecogesture/ecogesture.service";
 import { allChallenges, createChallenges } from "./challenge/challenge.service";
 import { createUserChallengeParticipation } from "./userChallengesParticipation/userChallengesParticipation.service";
 import { getUsers } from "./user/user.service";
 import moment from "moment";
+import Friend from "./friend/friend.entity";
+import Ecogesture from "./ecogesture/ecogesture.entity";
+import UserChallengesParticipation from "./userChallengesParticipation/userChallengesParticipation.entity";
+import UserChallengeEcogestures from "./userChallengeEcogestures/userChallengeEcogestures.entity";
+import UserChallengesCreation from "./userChallengesCreation/userChallengesCreation.entity";
+import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogestures.entity";
 
 async function reset(): Promise<void> {
   await datasource.initialize();
 
   // Clear tables
+  await datasource.getRepository(UserChallengesParticipation).delete({});
+  await datasource.getRepository(UserChallengeEcogestures).delete({});
+  await datasource.getRepository(UserChallengesCreation).delete({});
+  await datasource.getRepository(ChallengeEcogestures).delete({});
   await datasource.getRepository(User).delete({});
   await datasource.getRepository(Challenge).delete({});
+  await datasource.getRepository(Ecogesture).delete({});
+  await datasource.getRepository(Friend).delete({});
 
   // Fill tables
   await ecogestureFill();
   await userFill();
+  await friendFill();
   await challengeFill();
-  await userChallengesParticipationFill();
 
   // Close connection
   await datasource.destroy();
@@ -62,17 +77,61 @@ async function userFill(): Promise<void> {
   ]);
 }
 
+async function friendFill(): Promise<void> {
+  const users = await getUsers();
+  const userId =
+    users.find(({ email }) => email === "bdeliencourt@gmail.com")?.id ?? "";
+
+  const friendsId = users
+    .filter((user) => user.email !== "bdeliencourt@gmail.com")
+    .map((user) => user.id);
+
+  await Promise.all(
+    friendsId.map(
+      async (friendId) =>
+        await datasource.getRepository(Friend).save({ userId, friendId })
+    )
+  );
+}
+
 async function ecogestureFill(): Promise<void> {
   await createEcogestures([
     {
-      name: "fix my bike",
+      name: "Empty trashes",
+      difficulty: 5,
+      reward: 1,
+    },
+    {
+      name: "Recycle your trash",
       difficulty: 5,
       reward: 2,
     },
     {
-      name: "clean streets",
+      name: "Use TooGoodToGo twice",
+      difficulty: 5,
+      reward: 3,
+    },
+    {
+      name: "Bike 20 kilometers",
+      difficulty: 5,
+      reward: 3,
+    },
+    {
+      name: "Repair a broken stuff",
       difficulty: 7,
-      reward: 2,
+      reward: 4,
+      isProofNeeded: true,
+    },
+    {
+      name: "Collect 5L bag from street",
+      difficulty: 7,
+      reward: 4,
+      isProofNeeded: true,
+    },
+    {
+      name: "Sell 5 clothes on Vinted",
+      difficulty: 7,
+      reward: 5,
       isProofNeeded: true,
     },
   ]);
@@ -92,47 +151,73 @@ async function userChallengesParticipationFill(): Promise<void> {
 }
 
 async function challengeFill(): Promise<void> {
-  await createChallenges([
+  const { id: userId } = (await getUsers()).find(
+    ({ email }) => email === "bdeliencourt@gmail.com"
+  ) ?? { id: "" };
+
+  const ecogesturesId = (await getEcogestures()).map(({ id }) => id);
+  await createChallenges(userId, [
     {
-      name: "Faire 20km en vélo en 1 semaine",
-      startingDate: new Date("2023/04/12 09:00"),
-      endingDate: new Date("2023/04/24 18:00"),
+      challengersId: [],
+      ecogesturesId,
+      challenge: {
+        name: "Make your street cleaner",
+        status: true,
+        startingDate: moment().add(-2, "week").toDate(),
+        endingDate: moment().add(5, "hour").add(4, "day").toDate(),
+      },
     },
     {
-      name: "Acheter des fruits et légumes de saison",
-      status: true,
-      startingDate: moment().add(2, "month").toDate(),
-      endingDate: moment()
-        .add(6, "month")
-        .add(5, "hour")
-        .add(4, "day")
-        .toDate(),
+      challengersId: [],
+      ecogesturesId,
+      challenge: {
+        name: "Eat and buy wisely",
+        status: true,
+        startingDate: moment().add(1, "hour").add(2, "days").toDate(),
+        endingDate: moment().add(4, "day").toDate(),
+      },
     },
     {
-      name: "Nettoyer les rues de la ville",
-      startingDate: moment().add(-2, "month").toDate(),
-      endingDate: moment().add(1, "hour").toDate(),
+      challengersId: [],
+      ecogesturesId,
+      challenge: {
+        name: "Upcycling",
+        status: true,
+        startingDate: moment().add(-2, "month").toDate(),
+        endingDate: moment()
+          .add(6, "month")
+          .add(5, "hour")
+          .add(4, "day")
+          .toDate(),
+      },
     },
     {
-      name: "Acheter du dentifrice solide",
-      status: true,
-      startingDate: moment().add(-2, "day").toDate(),
-      endingDate: moment().add(1, "hour").toDate(),
+      challengersId: [],
+      ecogesturesId,
+      challenge: {
+        name: "Home staging",
+        status: true,
+        startingDate: moment().add(-2, "month").toDate(),
+        endingDate: moment()
+          .add(6, "month")
+          .add(5, "hour")
+          .add(4, "day")
+          .toDate(),
+      },
     },
     {
-      name: "Manger végétarien pendant 1 mois",
-      startingDate: moment().add(-2, "day").toDate(),
-      endingDate: moment().add(2, "day").toDate(),
-    },
-    {
-      name: "Sell unused clothes",
-      startingDate: moment().add(1, "day").toDate(),
-      endingDate: moment().add(2, "day").toDate(),
-    },
-    {
-      name: "Repair broken stuff",
-      startingDate: moment().add(1, "minute").toDate(),
-      endingDate: moment().add(4, "day").toDate(),
+      challengersId: [],
+      ecogesturesId,
+      challenge: {
+        name: "Less electronics",
+        status: true,
+        startingDate: moment().add(57, "minutes").toDate(),
+        endingDate: moment()
+          .add(2, "month")
+          .add(5, "hour")
+          .add(4, "day")
+          .toDate(),
+      },
     },
   ]);
 }

@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
-import React, { useContext } from "react";
-
+import React, { useContext, useEffect } from "react";
+import { v4 as uuid } from "uuid";
 import { DashboardWrapper } from "../components/dashboard/DashboardWrapper";
 import { FriendInvitation } from "../components/dashboard/FriendInvitation";
 import { HeaderScreen } from "../components/menu/HeaderScreen";
@@ -11,13 +11,16 @@ import { motion } from "framer-motion";
 import Lottie from "react-lottie";
 import { useAppSelector } from "../reducer/hooks";
 import handshake from "../assets/lotties/handshake.json";
+import { ScrollTopScreen } from "./ScrollTopScreen";
 export const Dashboard = () => {
   const { firstName } = useAppSelector((state: any) => state.user.user);
 
   return (
     <motion.div
       initial={{ translateX: "-100%" }}
-      animate={{ translateX: "0", transitionDuration: "0.1s" }}
+      animate={{
+        translateX: "0",
+      }}
     >
       <Stack gap={4}>
         <Stack marginBottom={7}>
@@ -36,7 +39,12 @@ export const Dashboard = () => {
                 width={50}
               />
             }
-            component={<NotificationsCenterButton />}
+            component={
+              <ScrollTopScreen
+                key={uuid()}
+                screen={<NotificationsCenterButton />}
+              />
+            }
           />
         </Stack>
         <DashboardWrapper

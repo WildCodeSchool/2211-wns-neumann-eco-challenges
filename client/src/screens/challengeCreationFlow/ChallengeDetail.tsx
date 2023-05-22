@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import Typography from "@mui/material/Typography/Typography";
 import { useAppDispatch } from "../../reducer/hooks";
 import { setChallengeDetails } from "../../reducer/challenge/challenge.reducer";
+import { scrollToTop } from "../../tools/render.tools";
 
 export const ChallengeDetail = ({
   updateStepStatus,
@@ -21,8 +22,12 @@ export const ChallengeDetail = ({
   updateStepStatus: (status: "next" | "back") => void;
   goingTo: "next" | "back";
 }) => {
-  const [startingDate, setStartingDate] = useState<moment.Moment>(moment());
-  const [endingDate, setEndingDate] = useState<moment.Moment>(moment());
+  const [startingDate, setStartingDate] = useState<moment.Moment>(
+    moment().add(1, "minute")
+  );
+  const [endingDate, setEndingDate] = useState<moment.Moment>(
+    moment().add(2, "minutes")
+  );
   const {
     register,
     handleSubmit,
@@ -30,17 +35,13 @@ export const ChallengeDetail = ({
   } = useForm();
   const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const
-  // }, []);
-
   return (
     <motion.div
       initial={{ translateX: goingTo === "back" ? "-100%" : "100%" }}
       animate={{ translateX: "0" }}
     >
       <Grid
-        height={"100vh"}
+        minHeight={"100vh"}
         display={"flex"}
         container
         flexDirection={"column"}
@@ -98,11 +99,11 @@ export const ChallengeDetail = ({
           justifyContent={"center"}
           alignItems={"center"}
           component="form"
-          onSubmit={handleSubmit(({ endingDate, startingDate, name }) => {
+          onSubmit={handleSubmit(({ name }) => {
             dispatch(
               setChallengeDetails({
-                endingDate,
-                startingDate,
+                endingDate: endingDate.toISOString(),
+                startingDate: startingDate.toISOString(),
                 name,
                 status: false,
               })
@@ -110,7 +111,14 @@ export const ChallengeDetail = ({
             updateStepStatus("next");
           })}
         >
-          <Grid item container paddingX={3} justifyContent={"center"} gap={3}>
+          <Grid
+            item
+            container
+            paddingX={3}
+            justifyContent={"center"}
+            gap={3}
+            marginTop={5}
+          >
             <Grid item container>
               <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
                 Configure your challenge
@@ -127,9 +135,10 @@ export const ChallengeDetail = ({
               {...register("name", { required: true })}
               fullWidth
               label="Challenge name"
-              InputLabelProps={{ shrink: true }}
               type="text"
+              InputLabelProps={{ shrink: true }}
               variant="outlined"
+              autoComplete="false"
               placeholder="Enter your challenge name"
               error={formErrors["name"] ? true : false}
               helperText={formErrors["name"] ? "Provide a challenge name" : ""}
@@ -185,7 +194,11 @@ export const ChallengeDetail = ({
             <Button
               type="submit"
               variant="contained"
-              style={{
+              sx={{
+                "&:hover, &:focus, &:active ": {
+                  background: "black",
+                },
+                marginTop: 8,
                 boxShadow: "none",
                 textTransform: "uppercase",
                 borderRadius: "25px",

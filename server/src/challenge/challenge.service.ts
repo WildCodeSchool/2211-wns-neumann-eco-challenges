@@ -4,7 +4,6 @@ import UserChallengesCreation from "../userChallengesCreation/userChallengesCrea
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import Challenge, {
   ChallengeCreationInput,
-  ChallengeInput,
   ChallengeUpdateInput,
 } from "./challenge.entity";
 import { ApolloError } from "apollo-server-errors";
@@ -27,6 +26,7 @@ export async function createChallenges(
   challenges: ChallengeCreationInput[]
 ): Promise<Challenge[]> {
   return await Promise.all(
+    // For each challenge
     challenges.map(
       async ({
         challenge: { name, status, startingDate, endingDate },
@@ -58,8 +58,7 @@ export async function createChallenges(
           .getRepository(UserChallengesParticipation)
           .save({ challengeId: challenge.id, userId });
 
-        // Handle friend invitation
-
+        // Handle friend invitation - send notification
         return challenge;
       }
     )

@@ -30,7 +30,10 @@ const challengesSlice = createSlice({
   reducers: {
     setChallengeDetails: (state, action: PayloadAction<ChallengeInput>) => {
       state.challengeCreation = {
-        challenge: { ...action.payload, status: false },
+        challenge: {
+          ...action.payload,
+          status: false,
+        },
       };
     },
     setChallengeEcogestures: (state, action: PayloadAction<string[]>) => {
