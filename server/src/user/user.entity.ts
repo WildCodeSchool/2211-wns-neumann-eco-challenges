@@ -28,6 +28,9 @@ class User {
   @Column()
   hashedPassword: string;
 
+  @Column({ nullable: true })
+  expoNotificationToken?: string;
+
   // One user can realize many ecogestures from a challenge
   @OneToMany(
     () => UserChallengeEcogestures,
@@ -105,4 +108,13 @@ export class UserProfile {
   user: User;
 }
 
+@InputType()
+export class UpdateUserExpoToken {
+  @Field({ nullable: true })
+  @IsEmail()
+  email: string;
+
+  @Field({ nullable: true })
+  expoNotificationToken: string;
+}
 export default User;
