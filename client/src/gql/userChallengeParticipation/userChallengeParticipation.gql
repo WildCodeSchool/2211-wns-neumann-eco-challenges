@@ -1,5 +1,9 @@
 query GetUserChallengeParticipationByUserId($userId: String!) {
   getUserChallengeParticipationByUserId(userId: $userId) {
+    completionPercentage
+    rank
+    invitedChallengers
+    participatingChallengers
     challenge {
       id
       name

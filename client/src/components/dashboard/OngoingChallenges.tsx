@@ -1,11 +1,7 @@
 import ImageList from "@mui/material/ImageList";
 import { OngoingChallengeItem } from "../challenge/OngoingChallengeItem";
-import { Challenge } from "../../gql/generated/schema";
-import { getFilteredChallenges } from "../../tools/challenge.tools";
-import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { thunkGetUserChallenges } from "../../reducer/challenge/challenge.reducer";
-import { AppDispatch, RootState } from "../../store";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 
 const classes = [
@@ -37,19 +33,23 @@ export const OngoingChallenges = () => {
         maxWidth: "900px !important",
         gridTemplateColumns: "repeat(auto-fit, minmax(150px,1fr)) !important",
         gridAutoColumns: "minmax(150px, 1fr)",
+        "&::-webkit-scrollbar": { display: "none" },
+        msOverflowStyle: "none",
+        scrollbarWidth: "none",
       }}
     >
-      {challenges.map((challenge, index) => {
+      {challenges.map((challengeDetails, index) => {
         return (
           <OngoingChallengeItem
-            key={challenge.id}
+            key={challengeDetails.challenge.id}
             {...{
-              name: challenge.name,
+              id: challengeDetails.challenge.id,
+              name: challengeDetails.challenge.name,
               backgroundColor: classes[index % classes.length],
-              ranking: 1,
-              endingDateTime: challenge.endingDate,
-              startingDateTime: challenge.startingDate,
-              completion: 99,
+              ranking: challengeDetails.rank + 1,
+              endingDateTime: challengeDetails.challenge.endingDate,
+              startingDateTime: challengeDetails.challenge.startingDate,
+              completion: challengeDetails.completionPercentage,
             }}
           />
         );

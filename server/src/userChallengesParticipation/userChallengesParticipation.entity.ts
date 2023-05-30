@@ -1,7 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import Challenge from "../challenge/challenge.entity";
 import User from "../user/user.entity";
+import moment from "moment";
 
 @Entity()
 @ObjectType()
@@ -22,6 +30,9 @@ class UserChallengesParticipation {
   @Column({ default: "pending" })
   status?: "pending" | "accepted" | "declined";
 
+  @UpdateDateColumn()
+  updatedDate: Date;
+
   @ManyToOne(() => Challenge, (c) => c.userChallengesParticipation, {
     onDelete: "CASCADE",
   })
@@ -33,6 +44,27 @@ class UserChallengesParticipation {
   })
   @Field(() => User, { nullable: true })
   user: User;
+}
+
+@ObjectType({
+  description:
+    "Define all the challenges the user participates to. Also contains details such as the user rank, completion percentage",
+})
+export class UserChallengeParticipationDetails {
+  @Field(() => Challenge)
+  challenge: Challenge;
+
+  @Field()
+  completionPercentage: number;
+
+  @Field()
+  rank: number;
+
+  @Field()
+  invitedChallengers: number;
+
+  @Field()
+  participatingChallengers: number;
 }
 
 export default UserChallengesParticipation;

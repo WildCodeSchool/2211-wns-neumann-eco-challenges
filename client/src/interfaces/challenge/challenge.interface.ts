@@ -11,6 +11,7 @@ export interface ScheduledChallengeItemProps extends ChallengeProps {
   expectedAttendees: number;
 }
 export interface ChallengeProps extends ChallengeTimerProps {
+  id: string;
   name: string;
 }
 

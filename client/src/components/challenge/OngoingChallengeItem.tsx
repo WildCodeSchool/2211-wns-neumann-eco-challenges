@@ -2,8 +2,11 @@ import { CardActionArea, Stack, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import { OngoingChallengeItemProps } from "../../interfaces/challenge/challenge.interface";
 import { ChallengeTimer } from "./ChallengeTimer";
+import { useNavigate } from "react-router-dom";
+import { formatRankToReadable } from "../../tools/challenge.tools";
 
 export const OngoingChallengeItem = ({
+  id,
   name,
   completion,
   ranking,
@@ -11,8 +14,10 @@ export const OngoingChallengeItem = ({
   endingDateTime,
   backgroundColor,
 }: OngoingChallengeItemProps) => {
+  const navigate = useNavigate();
   return (
     <Card
+      onClick={() => navigate(`/challenge/${id}`)}
       className={backgroundColor}
       style={{
         width: 130,
@@ -62,7 +67,7 @@ export const OngoingChallengeItem = ({
             style={{ color: "rgba(255,255,255, 0.50)" }}
             fontSize={40}
           >
-            {ranking}th
+            {formatRankToReadable(ranking)}
           </Typography>
           <ChallengeTimer
             {...{

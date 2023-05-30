@@ -15,6 +15,7 @@ export class EcogestureResolver {
     return await getEcogestures();
   }
 
+  @Authorized()
   @Mutation(() => [Ecogesture])
   async createEcogestures(
     @Arg("ecogestureInputs", () => [EcogestureInput])

@@ -1,24 +1,73 @@
-import { Badge, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { redirect, useNavigate } from "react-router-dom";
+import { Grid, Stack, Typography } from "@mui/material";
+import { Variant } from "@mui/material/styles/createTypography";
+import React from "react";
+
 export const HeaderScreen = ({
   title,
+  titleVariant = "h4",
+  subtitleVariant = "h6",
   subtitle,
   component,
   reversed = false,
+  reversedTitles = false,
+  reversedColor = false,
   gapBtwTitleAndAfterComponent = 2,
   gapBtwSubitleAndAfterComponent = 2,
   afterSubtitleComponent,
   afterTitleComponent,
 }: {
   title: string;
-  subtitle: string;
+  titleVariant?: Variant;
+  subtitleVariant?: Variant;
+  subtitle: string | React.ReactNode;
   component?: React.ReactNode;
   gapBtwTitleAndAfterComponent?: number;
   gapBtwSubitleAndAfterComponent?: number;
   afterTitleComponent?: React.ReactNode;
   afterSubtitleComponent?: React.ReactNode;
   reversed?: boolean;
+  reversedColor?: boolean;
+  reversedTitles?: boolean;
 }) => {
+  const getTitlesOrdered = () => {
+    const titleColor = reversedColor ? "headerSubtitle" : "headerTitle";
+    const subtitleColor = reversedColor ? "headerTitle" : "headerSubtitle";
+    const titles = [
+      <Stack
+        gap={gapBtwTitleAndAfterComponent}
+        direction={"row"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Typography
+          className={titleColor}
+          fontWeight={800}
+          variant={titleVariant}
+        >
+          {title}
+        </Typography>
+        {afterTitleComponent}
+      </Stack>,
+      <Stack
+        gap={gapBtwSubitleAndAfterComponent}
+        direction={"row"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Typography
+          className={subtitleColor}
+          fontWeight={700}
+          variant={subtitleVariant}
+          lineHeight={0.5}
+        >
+          {subtitle}
+        </Typography>
+        {afterSubtitleComponent}
+      </Stack>,
+    ];
+
+    return reversedTitles ? titles.reverse() : titles;
+  };
   const getComponentsOrdered = () => {
     const components = [
       <Grid
@@ -28,33 +77,7 @@ export const HeaderScreen = ({
         flexDirection={"column"}
         alignItems={reversed ? "flex-end" : "flex-start"}
       >
-        <Stack
-          gap={gapBtwTitleAndAfterComponent}
-          direction={"row"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Typography className="headerTitle" fontWeight={800} variant="h4">
-            {title}
-          </Typography>
-          {afterTitleComponent}
-        </Stack>
-        <Stack
-          gap={gapBtwSubitleAndAfterComponent}
-          direction={"row"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Typography
-            className="headerSubtitle"
-            fontWeight={700}
-            variant="h6"
-            lineHeight={0.5}
-          >
-            {subtitle}
-          </Typography>
-          {afterSubtitleComponent}
-        </Stack>
+        {getTitlesOrdered()}
       </Grid>,
       <Grid
         item

@@ -2,22 +2,23 @@ import { CardActionArea, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ScheduledChallengeItemProps } from "../../interfaces/challenge/challenge.interface";
 import { ChallengeTimer } from "./ChallengeTimer";
 export const ScheduledChallengeItem = ({
+  id,
   name,
   startingDateTime,
   endingDateTime,
   attendees,
   expectedAttendees,
 }: ScheduledChallengeItemProps) => {
-  const redirectChallengeDetails = () => redirect("http://www.google.com/");
+  const navigate = useNavigate();
   return (
     <Paper elevation={4} className="challengeItemContainer">
       <CardActionArea
         className="challengeItemContainer"
-        onClick={() => redirectChallengeDetails()}
+        onClick={() => navigate(`/challenge/${id}`)}
       >
         <Stack direction="row" marginY={1.5} marginX={2}>
           <div className="lightGreenLeftBorder"></div>

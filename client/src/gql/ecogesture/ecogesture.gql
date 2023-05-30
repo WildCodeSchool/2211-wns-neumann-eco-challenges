@@ -5,6 +5,10 @@ query Ecogestures {
     difficulty
     reward
     isProofNeeded
+    category {
+      id
+      name
+    }
   }
 }
 

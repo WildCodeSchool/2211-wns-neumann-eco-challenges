@@ -1,10 +1,14 @@
-import { Field, InputType, ObjectType } from "type-graphql";
+import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { MaxLength, MinLength } from "class-validator";
-import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
+import UserChallengeEcogestures, {
+  UserChallengeScore,
+} from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
 import User from "../user/user.entity";
+import Ecogesture from "../ecogesture/ecogesture.entity";
+import Category from "../category/category.entity";
 
 @Entity()
 @ObjectType()
@@ -50,6 +54,30 @@ class Challenge {
     }
   )
   userChallengesParticipation: UserChallengesParticipation[];
+}
+
+@ObjectType()
+export class ChallengeDetails {
+  @Field(() => Challenge)
+  challenge: Challenge;
+
+  @Field(() => [UserChallengeScore])
+  challengersScore: UserChallengeScore[];
+
+  @Field(() => [Ecogesture])
+  ecogestures: Ecogesture[];
+
+  @Field(() => Int)
+  totalEcogesturesScore: number;
+
+  @Field(() => [User])
+  challengers: User[];
+
+  @Field(() => [UserChallengeEcogestures])
+  userEcogestures: UserChallengeEcogestures[];
+
+  @Field(() => [Category])
+  categories: Category[];
 }
 
 @InputType()

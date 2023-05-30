@@ -18,6 +18,7 @@ import { CreateChallenge } from "./screens/challengeCreationFlow/CreateChallenge
 import { GenericDialog } from "./screens/GenericDialog";
 import { useAppSelector } from "./reducer/hooks";
 import { ScrollTopScreen } from "./screens/ScrollTopScreen";
+import { Challenge } from "./screens/Challenge";
 
 function App() {
   const { pathname } = useLocation();
@@ -29,6 +30,8 @@ function App() {
           ? "App-header welcome"
           : pathname.includes("/dashboard")
           ? "App-header dashboard"
+          : pathname.includes("/challenge")
+          ? "App-header challenge dashboard"
           : "App-header"
       }
     >
@@ -68,6 +71,10 @@ const AppContent = () => {
                   screen={<ProtectedComponent component={<Dashboard />} />}
                 />
               }
+            />
+            <Route
+              path="/challenge/:id"
+              element={<ScrollTopScreen key={uuid()} screen={<Challenge />} />}
             />
             <Route
               path="/notifications"

@@ -1,28 +1,44 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from "typeorm";
 import Challenge from "../challenge/challenge.entity";
 import Ecogesture from "../ecogesture/ecogesture.entity";
 import User from "../user/user.entity";
+import { ObjectType } from "type-graphql/dist/decorators/ObjectType";
+import { Field } from "type-graphql/dist/decorators/Field";
 
 @Entity()
+@ObjectType()
 class UserChallengeEcogestures {
+  @Field()
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Field()
   @Column()
   challengeId: string;
 
+  @Field()
   @Column()
   userId: string;
 
+  @Field()
   @Column()
   ecogestureId: string;
 
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   proof: string;
 
-  @Column()
+  @Field()
+  @CreateDateColumn()
   completionDate: Date;
 
+  @Field()
   @Column()
   reward: number;
 
@@ -40,6 +56,24 @@ class UserChallengeEcogestures {
     onDelete: "CASCADE",
   })
   ecogesture: Ecogesture;
+}
+
+@ObjectType()
+export class UserChallengeScore {
+  @Field()
+  id: string;
+
+  @Field()
+  score: number;
+}
+
+@ObjectType()
+export class UserEcogesturesWithChallengersScore {
+  @Field(() => [UserChallengeScore])
+  challengersScore: UserChallengeScore[];
+
+  @Field(() => [UserChallengeEcogestures])
+  userEcogestures: UserChallengeEcogestures[];
 }
 
 export default UserChallengeEcogestures;
