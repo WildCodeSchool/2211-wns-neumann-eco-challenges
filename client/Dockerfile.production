@@ -21,5 +21,5 @@ COPY codegen.yml .
 ARG REACT_APP_GRAPHQL_API_URL
 ENV REACT_APP_GRAPHQL_API_URL ${REACT_APP_GRAPHQL_API_URL}
 
-RUN pnpm run build
+RUN npm run build
 CMD serve -s build
