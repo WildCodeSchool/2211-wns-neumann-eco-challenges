@@ -6,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import User from "../user/user.entity";
+import { Field } from "type-graphql/dist/decorators/Field";
+import { InputType } from "type-graphql/dist/decorators/InputType";
 
 @Entity()
 export default class Notification {
@@ -32,4 +34,15 @@ export default class Notification {
 
   @ManyToOne(() => User, (user) => user.notifications)
   user: User;
+}
+@InputType()
+export class NotificationInput {
+  @Field()
+  title: string;
+
+  @Field()
+  body: string;
+
+  @Field({ nullable: true })
+  data?: string;
 }

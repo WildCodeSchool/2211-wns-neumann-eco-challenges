@@ -20,10 +20,9 @@ export async function getFriends(
 
   const friendList = await Promise.all(
     friendIdsAndStatus.map(async ({ friendId, status }) => {
-      const friend = (await datasource.getRepository(User).findOne({
+      const friend = await datasource.getRepository(User).findOneOrFail({
         where: { id: friendId },
-        // check good practice
-      })) as FriendRelationship["friend"];
+      });
       return { friend, status };
     })
   );

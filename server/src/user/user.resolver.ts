@@ -1,5 +1,6 @@
 import User, {
   LoginInput,
+  UpdateUserExpoToken,
   UserInput,
   UserProfile,
   verifyPassword,
@@ -11,7 +12,9 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../env";
 import { createUsers, deleteUsers, getUsers } from "./user.service";
-
+import { NotificationInput } from "../notification/notification.entity";
+import { Expo } from "expo-server-sdk";
+const expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
 export interface JWTPayload {
   userId: string;
 }
@@ -89,5 +92,51 @@ export class UserResolver {
   @Query(() => User)
   async profile(@Ctx() { currentUser }: ContextType): Promise<User> {
     return currentUser as User;
+  }
+
+  @Mutation(() => User)
+  async updateUserExpoToken(
+    @Arg("data") data: UpdateUserExpoToken,
+    @Ctx() { currentUser }: ContextType
+  ): Promise<User> {
+    return await datasource
+      .getRepository(User)
+      .save({ ...currentUser, ...data });
+  }
+
+  // Authorize only for admin
+  // @Authorized()
+  @Mutation(() => Boolean)
+  async sendExpoNotification(
+    @Arg("userId") userId: string,
+    @Arg("notificationPayload", () => NotificationInput, { validate: false })
+    notificationPayload: NotificationInput
+  ): Promise<boolean> {
+    const user = await datasource
+      .getRepository(User)
+      .findOne({ where: { id: userId } });
+
+    if (user === null || typeof user === "undefined")
+      throw new ApolloError("User not found", "NOT_FOUND");
+
+    if (
+      user.expoNotificationToken === null ||
+      typeof user.expoNotificationToken === "undefined"
+    )
+      throw new ApolloError("User needs a token first", "EXPO_TOKEN_NOT_FOUND");
+
+      await expo.sendPushNotificationsAsync([
+        {
+          to: user.expoNotificationToken,
+          body: notificationPayload.body,
+          title: notificationPayload.title,
+          data:
+            typeof notificationPayload.data === "string"
+              ? JSON.parse(notificationPayload.data)
+              : undefined,
+        },
+      ]);
+
+    return true;
   }
 }
