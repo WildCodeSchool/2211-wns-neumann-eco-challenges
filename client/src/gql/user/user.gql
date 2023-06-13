@@ -1,0 +1,40 @@
+query GetProfile {
+  getProfile {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+mutation SignUp($userInputs: [UserInput!]!) {
+  createUser(userInputs: $userInputs) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+mutation SignIn($data: LoginInput!) {
+  login(data: $data) {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+mutation DeleteUser($uuid: [String!]!) {
+  deleteUser(uuid: $uuid)
+}
+
+mutation SignOut {
+  logout
+}

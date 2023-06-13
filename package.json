@@ -1,0 +1,11 @@
+{
+  "name": "green-mates",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "integration-tests": "docker compose -f docker-compose.integration-tests.yml up --build --exit-code-from testrunner",
+    "integration-tests:backend-only": "docker compose -f docker-compose.integration-tests.yml up testDB backend",
+    "start": "docker compose -f docker-compose.yml up --build",
+    "start:all": "npm start --prefix ./server & npm start --prefix ./client && npm run codegen --prefix ./client"
+  }
+}
