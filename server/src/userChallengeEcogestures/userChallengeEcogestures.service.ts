@@ -63,7 +63,6 @@ export async function updateUserChallengeEcogesture(
     challengersId
   );
 
-  console.log({ userEcogestures });
   return { challengersScore, userEcogestures };
 }
 
@@ -92,9 +91,6 @@ export async function getChallengersScore(
           ({ userId: challengerId }) => userId === challengerId
         )?.updatedDate ??
         moment();
-
-      const [{ firstName }] = (await getUsersById([userId])).flat();
-      console.log({ lastCompletionDate, firstName });
 
       return {
         lastCompletionDate,

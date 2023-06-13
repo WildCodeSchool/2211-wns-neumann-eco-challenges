@@ -42,7 +42,7 @@ const getGoldenPodium = (name: string, score: number, avatar: string) => {
           vertical: "top",
           horizontal: "right",
         }}
-        badgeContent={<img src={goldCrown}></img>}
+        badgeContent={<img src={goldCrown} alt="golden crown"></img>}
         sx={{
           "& .MuiBadge-badge": {
             right: 0,
@@ -122,7 +122,7 @@ const getSilverPodium = (name: string, score: number, avatar: string) => {
           vertical: "top",
           horizontal: "left",
         }}
-        badgeContent={<img src={silverCrown}></img>}
+        badgeContent={<img src={silverCrown} alt="silver crown"></img>}
         sx={{
           "& .MuiBadge-badge": {
             left: 0,
@@ -202,7 +202,7 @@ const getBronzePodium = (name: string, score: number, avatar: string) => {
           vertical: "top",
           horizontal: "right",
         }}
-        badgeContent={<img src={bronzeCrown}></img>}
+        badgeContent={<img src={bronzeCrown} alt="bronze crown"></img>}
         sx={{
           "& .MuiBadge-badge": {
             right: 0,
@@ -266,7 +266,7 @@ export const Challenge = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("all");
   const [categories, setCategories] = useState<Category[]>([]);
   const dispatch = useAppDispatch();
-  const { userId, challengeDetails, status } = useAppSelector((state) => ({
+  const { challengeDetails, status } = useAppSelector((state) => ({
     userId: state.user?.user?.id,
     challengeDetails: state.challenges.challengeDetails,
     status: state.challenges.status.find(
@@ -282,7 +282,6 @@ export const Challenge = () => {
           ({ id }) => id === idChallenger
         );
 
-        console.log({ rank, challengers: challengeDetails!.challengers });
         if (rank === 1)
           return getSilverPodium(
             challenger!.firstName,
@@ -330,7 +329,7 @@ export const Challenge = () => {
         {
           id: "all",
           name: "all",
-          icon: "toto",
+          icon: "all", // Find an icon
         },
         ...challengeDetails!.categories,
       ]);
@@ -448,15 +447,6 @@ export const Challenge = () => {
               flexDirection={"column"}
               gap={2}
             >
-              {/* <img
-            style={{
-              position: "absolute",
-              zIndex: 10,
-              transform: "translateY(-40%)",
-            }}
-            width={"100%"}
-            src={bottomFlowers}
-          /> */}
               <Stack width={"80%"} marginTop={3}>
                 <Typography variant="subtitle1" fontWeight={600} lineHeight={1}>
                   Ranking

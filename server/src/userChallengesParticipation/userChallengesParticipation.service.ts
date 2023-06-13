@@ -77,7 +77,6 @@ export async function getUserChallengeParticipationByUserId(
       };
     })
   );
-  console.log(participationsDetailed);
   return participationsDetailed;
 }
 

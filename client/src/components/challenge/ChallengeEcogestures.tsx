@@ -20,8 +20,6 @@ export const ChallengeEcogestures = ({
     formState: { errors: formErrors },
   } = useForm();
 
-  console.log({ ecogestures, selectedEcogesturesId });
-
   return (
     <Grid item>
       <FormGroup
