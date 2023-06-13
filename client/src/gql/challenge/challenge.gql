@@ -1,0 +1,84 @@
+query Challenges {
+  challenges {
+    id
+    name
+    status
+    startingDate
+    endingDate
+  }
+}
+
+mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
+  createChallenges(challenges: $challenges) {
+    id
+    name
+    status
+    startingDate
+    endingDate
+  }
+}
+
+mutation UpdateChallenge(
+  $data: ChallengeUpdateInput!
+  $updateChallengeId: String!
+) {
+  updateChallenge(data: $data, id: $updateChallengeId) {
+    id
+    name
+    status
+    startingDate
+    endingDate
+  }
+}
+
+query ChallengeDetails($challengeId: String!) {
+  challengeDetails(challengeId: $challengeId) {
+    challenge {
+      id
+      name
+      status
+      startingDate
+      endingDate
+    }
+    challengersScore {
+      id
+      score
+    }
+    ecogestures {
+      id
+      name
+      difficulty
+      reward
+      isProofNeeded
+      category {
+        id
+        name
+      }
+    }
+    totalEcogesturesScore
+    challengers {
+      id
+      firstName
+      lastName
+      email
+    }
+    userEcogestures {
+      id
+      challengeId
+      userId
+      ecogestureId
+      proof
+      completionDate
+      reward
+    }
+    categories {
+      id
+      name
+      icon
+    }
+  }
+}
+
+mutation DeleteChallenges($deleteChallengesId: [String!]!) {
+  deleteChallenges(id: $deleteChallengesId)
+}

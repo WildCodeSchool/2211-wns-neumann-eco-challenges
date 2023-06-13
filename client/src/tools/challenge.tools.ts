@@ -1,13 +1,30 @@
 import moment from "moment";
-import { Challenge } from "../gql/generated/schema";
+import {
+  Challenge,
+  UserChallengeParticipationDetails,
+} from "../gql/generated/schema";
 
 type ChallengeFilters = "ongoing" | "all" | "scheduled";
 
+export const formatRankToReadable = (rank: number) => {
+  const rankString = rank.toString();
+  const lastDigit = rankString.at(rankString.length - 1);
+
+  return `${rankString}${
+    lastDigit === "1"
+      ? "st"
+      : lastDigit === "2"
+      ? "nd"
+      : lastDigit === "3"
+      ? "rd"
+      : "th"
+  }`;
+};
 export const getFilteredChallenges = (
-  challenges: Challenge[],
+  challenges: UserChallengeParticipationDetails[],
   filter: ChallengeFilters
-): Challenge[] => {
-  return challenges.filter(({ startingDate, endingDate }) =>
+): UserChallengeParticipationDetails[] => {
+  return challenges.filter(({ challenge: { startingDate, endingDate } }) =>
     isSelected(moment(startingDate).utc(), moment(endingDate).utc(), filter)
   );
 };

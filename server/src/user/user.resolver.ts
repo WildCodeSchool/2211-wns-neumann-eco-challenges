@@ -89,7 +89,6 @@ export class UserResolver {
     return true;
   }
 
-  @Authorized()
   @Query(() => User)
   async profile(@Ctx() { currentUser }: ContextType): Promise<User> {
     return currentUser as User;

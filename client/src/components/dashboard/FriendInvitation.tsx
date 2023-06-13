@@ -16,6 +16,7 @@ export const FriendInvitation = () => {
       <Stack padding={2} spacing={0.5}>
         {Array.from(Array(10).keys()).map((_, index) => (
           <FriendItem
+            key={index}
             {...{
               name: names[index % names.length],
               avatar: avatars[index % avatars.length],

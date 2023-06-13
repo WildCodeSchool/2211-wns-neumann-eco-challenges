@@ -12,8 +12,8 @@ export const ChallengeTimer = ({
   type: "remaining" | "elapsed" | "untilBeginning" | "duration";
 }) => {
   const formatDateValueElement = (value: number, suffix: string) => {
-    const stringValue = value < 10 ? `0${value}` : value.toString();
-    return stringValue + suffix;
+    const slicedValue = value.toString().slice(0, 2);
+    return `${value < 10 ? 0 : ""}${slicedValue}${suffix}`;
   };
 
   const formatDate = (
@@ -21,9 +21,11 @@ export const ChallengeTimer = ({
     type: "remaining" | "elapsed" | "untilBeginning" | "duration"
   ) => {
     // Higher than a month : display full date
-    const dayMs = 60 * 60 * 24;
+    const dayMs = 1000 * 60 * 60 * 24;
     const days = Math.floor(durationMs / dayMs);
-    if (days > 30 && type !== "duration") {
+    // If duration above 30 days, we display the date, except for duration and
+    // text with remaining time
+    if (days > 30 && !["duration", "remaining"].includes(type)) {
       return moment(startingDateTime).format("MM/DD HH:mm");
     } else {
       durationMs -= days * dayMs;
@@ -32,7 +34,6 @@ export const ChallengeTimer = ({
       const minutes = Math.floor(durationMs / (dayMs / 24 / 60));
       durationMs -= minutes * (dayMs / 24 / 60);
 
-      console.log({ days, hours, minutes });
       const formatedDate = [
         formatDateValueElement(days, "d"),
         formatDateValueElement(hours, "h"),
@@ -43,11 +44,14 @@ export const ChallengeTimer = ({
       let startIndex = formatedDate.findIndex((value) => !value.includes("00"));
       if (startIndex === -1) return "Undefined date";
       if (startIndex === formatedDate.length - 1) startIndex -= 1;
-      return formatedDate.slice(startIndex, startIndex + 2).join("");
+
+      const endIndex = type === "remaining" ? undefined : startIndex + 2;
+      return formatedDate.slice(startIndex, endIndex).join("");
     }
   };
 
   const [displayedTime, setDisplayedTime] = useState("");
+
   useEffect(() => {
     const elapsedTime = moment().utc().diff(moment(startingDateTime).utc());
     const durationTime = moment(endingDateTime)
@@ -56,16 +60,19 @@ export const ChallengeTimer = ({
     const remainingTime = moment(endingDateTime).utc().diff(moment().utc());
 
     let timeToDisplay: string;
-    if (type === "remaining") timeToDisplay = remainingTime.toString();
-    else if (type === "elapsed")
+    if (type === "remaining") {
+      if (format === "graphic") timeToDisplay = remainingTime.toString();
+      if (format === "text")
+        timeToDisplay = `${formatDate(remainingTime, type)} left`;
+    } else if (type === "elapsed")
       if (format === "text")
         timeToDisplay = (elapsedTime / durationTime).toString();
       else timeToDisplay = ((elapsedTime / durationTime) * 100).toString();
     else if (type === "duration")
-      timeToDisplay = formatDate(durationTime / 1000, type).toString();
+      timeToDisplay = formatDate(durationTime, type).toString();
     else
       timeToDisplay = formatDate(
-        moment(startingDateTime).utc().diff(moment().utc(), "seconds"),
+        moment(startingDateTime).utc().diff(moment().utc()),
         type
       ).toString();
 

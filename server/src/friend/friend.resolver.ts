@@ -1,31 +1,41 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, Ctx, Authorized } from "type-graphql";
 import User from "../user/user.entity";
-
+import { ApolloError } from "apollo-server-errors";
 import Friend, { FriendRelationship } from "./friend.entity";
 import { addFriend, deleteFriend, getFriends } from "./friend.service";
+import { ContextType } from "../user/user.resolver";
 
 @Resolver(() => Friend)
 export class FriendResolver {
-  @Query(() => [User])
+  @Authorized()
+  @Query(() => [FriendRelationship])
   async getFriends(
-    @Arg("userId") userId: string
+    @Ctx() { currentUser }: ContextType
   ): Promise<FriendRelationship[]> {
-    return await getFriends(userId);
+    if (currentUser === null || currentUser === undefined)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await getFriends(currentUser.id);
   }
 
+  @Authorized()
   @Mutation(() => User)
   async addFriend(
-    @Arg("userId") userId: string,
+    @Ctx() { currentUser }: ContextType,
     @Arg("friendId") friendId: string
   ): Promise<User> {
-    return await addFriend(userId, friendId);
+    if (currentUser === null || currentUser === undefined)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await addFriend(currentUser.id, friendId);
   }
 
+  @Authorized()
   @Mutation(() => User)
   async deleteFriend(
-    @Arg("userId") userId: string,
-    @Arg("friendId") friendId: string
+    @Arg("friendId") friendId: string,
+    @Ctx() { currentUser }: ContextType
   ): Promise<User> {
-    return await deleteFriend(userId, friendId);
+    if (currentUser === null || currentUser === undefined)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await deleteFriend(currentUser.id, friendId);
   }
 }

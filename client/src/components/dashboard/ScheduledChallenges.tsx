@@ -35,16 +35,19 @@ export const ScheduledChallenges = () => {
 
   return (
     <Stack spacing={2}>
-      {getFilteredChallenges(challenges, "scheduled").map((challenge) => (
-        <ScheduledChallengeItem
-          key={challenge.id}
-          name={challenge.name}
-          attendees={attendees[0][0]}
-          endingDateTime={challenge.endingDate}
-          startingDateTime={challenge.startingDate}
-          expectedAttendees={attendees[0][1]}
-        />
-      ))}
+      {getFilteredChallenges(challenges, "scheduled").map(
+        (challengeDetails) => (
+          <ScheduledChallengeItem
+            id={challengeDetails.challenge.id}
+            key={challengeDetails.challenge.id}
+            name={challengeDetails.challenge.name}
+            attendees={challengeDetails.participatingChallengers}
+            endingDateTime={challengeDetails.challenge.endingDate}
+            startingDateTime={challengeDetails.challenge.startingDate}
+            expectedAttendees={challengeDetails.invitedChallengers}
+          />
+        )
+      )}
     </Stack>
   );
 };

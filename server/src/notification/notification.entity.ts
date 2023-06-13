@@ -1,6 +1,40 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import User from "../user/user.entity";
 import { Field } from "type-graphql/dist/decorators/Field";
 import { InputType } from "type-graphql/dist/decorators/InputType";
 
+@Entity()
+export default class Notification {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @Column()
+  senderId: string;
+
+  @Column()
+  receiverId: string;
+
+  @CreateDateColumn()
+  date: Date;
+
+  @Column()
+  type: string;
+
+  @Column()
+  content: string;
+
+  @Column({ default: false })
+  hasBeenSeen?: boolean;
+
+  @ManyToOne(() => User, (user) => user.notifications)
+  user: User;
+}
 @InputType()
 export class NotificationInput {
   @Field()

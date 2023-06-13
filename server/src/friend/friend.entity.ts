@@ -11,7 +11,7 @@ class Friend {
 
   @Field()
   @Column()
-  userId!: string;
+  userId: string;
 
   @Field()
   @Column()
@@ -21,7 +21,7 @@ class Friend {
   @Column({ default: "pending" })
   status: "accepted" | "pending" | "declined";
 
-  @ManyToOne(() => User, (user) => user.friends)
+  @ManyToOne(() => User, (user) => user.friends, { onDelete: "CASCADE" })
   user: User[];
 }
 export default Friend;

@@ -1,0 +1,23 @@
+mutation UpdateUserChallengeEcogesture(
+  $ecogestureId: String!
+  $challengeId: String!
+) {
+  updateUserChallengeEcogesture(
+    ecogestureId: $ecogestureId
+    challengeId: $challengeId
+  ) {
+    challengersScore {
+      id
+      score
+    }
+    userEcogestures {
+      id
+      challengeId
+      userId
+      ecogestureId
+      proof
+      completionDate
+      reward
+    }
+  }
+}

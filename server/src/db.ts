@@ -8,6 +8,8 @@ import UserChallengesCreation from "./userChallengesCreation/userChallengesCreat
 import UserChallengesParticipation from "./userChallengesParticipation/userChallengesParticipation.entity";
 import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogestures.entity";
 import Friend from "./friend/friend.entity";
+import Notification from "./notification/notification.entity";
+import Category from "./category/category.entity";
 
 const datasource = new DataSource({
   type: "postgres",
@@ -17,6 +19,7 @@ const datasource = new DataSource({
   password: env.DB_PASS,
   database: env.DB_NAME,
   synchronize: true,
+
   entities: [
     User,
     Challenge,
@@ -26,6 +29,8 @@ const datasource = new DataSource({
     UserChallengesParticipation,
     ChallengeEcogestures,
     Friend,
+    Notification,
+    Category,
   ],
   logging: ["query", "error"],
 });

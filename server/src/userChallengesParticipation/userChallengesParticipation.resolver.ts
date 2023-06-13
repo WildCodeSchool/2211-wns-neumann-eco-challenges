@@ -5,10 +5,12 @@ import {
   getUserChallengeParticipationByChallengeId,
   getUserChallengeParticipationByUserId,
 } from "./userChallengesParticipation.service";
-import UserChallengesParticipation from "./userChallengesParticipation.entity";
+import UserChallengesParticipation, {
+  UserChallengeParticipationDetails,
+} from "./userChallengesParticipation.entity";
 
-@Resolver(userChallengesParticipationResolver)
-export class userChallengesParticipationResolver {
+@Resolver(UserChallengesParticipationResolver)
+export class UserChallengesParticipationResolver {
   @Mutation(() => User)
   async createUserChallengeParticipation(
     @Arg("challengeId") challengeId: string,
@@ -17,10 +19,10 @@ export class userChallengesParticipationResolver {
     return await createUserChallengeParticipation(challengeId, userId);
   }
 
-  @Query(() => [UserChallengesParticipation])
+  @Query(() => [UserChallengeParticipationDetails])
   async getUserChallengeParticipationByUserId(
     @Arg("userId") userId: string
-  ): Promise<UserChallengesParticipation[]> {
+  ): Promise<UserChallengeParticipationDetails[]> {
     return await getUserChallengeParticipationByUserId(userId);
   }
 

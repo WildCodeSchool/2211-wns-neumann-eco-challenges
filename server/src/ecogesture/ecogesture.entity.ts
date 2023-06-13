@@ -1,22 +1,23 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import { IsString } from "class-validator";
-import Challenge from "../challenge/challenge.entity";
-import userChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
 import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
+import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
+import Category from "../category/category.entity";
 
 @Entity()
 @ObjectType()
 class Ecogesture {
   @PrimaryGeneratedColumn("uuid")
   @Field()
-  id?: string;
+  id: string;
 
   @Field()
   @Column()
@@ -40,10 +41,21 @@ class Ecogesture {
   challengeEcogestures: ChallengeEcogestures[];
 
   @OneToMany(
-    () => userChallengeEcogestures,
-    (challengeEcogesture) => challengeEcogesture.ecogesture
+    () => UserChallengeEcogestures,
+    (challengeEcogesture) => challengeEcogesture.ecogesture,
+    {
+      onDelete: "CASCADE",
+    }
   )
-  userChallengeEcogestures: userChallengeEcogestures[];
+  userChallengeEcogestures: UserChallengeEcogestures[];
+
+  // Many ecogestures have one category
+  @ManyToOne(() => Category, (category) => category, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
+  @Field(() => Category)
+  category: Category;
 }
 
 export default Ecogesture;
@@ -54,12 +66,15 @@ export class EcogestureInput {
   @IsString()
   name: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   difficulty: number;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   reward: number;
 
-  @Field((type) => Boolean)
+  @Field(() => Boolean)
   isProofNeeded?: boolean;
+
+  @Field(() => String)
+  categoryId: string;
 }

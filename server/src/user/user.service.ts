@@ -6,6 +6,15 @@ export async function getUsers(): Promise<User[]> {
   return await datasource.getRepository(User).find();
 }
 
+export async function getUsersById(usersId: string[]): Promise<User[]> {
+  const users = await Promise.all(
+    usersId.map(
+      async (id) => await datasource.getRepository(User).find({ where: { id } })
+    )
+  );
+  return users.flat();
+}
+
 export async function createUsers(userData: UserInput[]): Promise<User[]> {
   return await Promise.all(
     userData.map(

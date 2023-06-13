@@ -7,12 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
 import { useForm } from "react-hook-form";
-import { SignInMutationFn, useSignInMutation } from "../gql/generated/schema";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { thunkSignIn } from "../reducer/user/user.reducer";
 import { AppDispatch } from "../store";
-import { useAppSelector } from "../reducer/hooks";
+import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 
 const debug = false;
@@ -138,7 +135,11 @@ const getBody = (
         <Button
           type="submit"
           variant="contained"
-          style={{
+          sx={{
+            "&:hover, &:focus, &:active ": {
+              background: "black",
+            },
+            boxShadow: "none",
             textTransform: "uppercase",
             borderRadius: "25px",
             padding: "0.7em 2em 0.7em 2em",
@@ -158,8 +159,7 @@ export const SignIn = () => {
   const signInError = useAppSelector(
     (state) => state.user.errors.signIn?.message ?? ""
   );
-  const dispatch = useDispatch();
-
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,

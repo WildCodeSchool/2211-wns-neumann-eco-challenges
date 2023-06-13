@@ -90,6 +90,7 @@ export const BottomMenu = () => {
           icon={<DashboardRounded />}
         />
         <StyledBottomNavigationAction
+          onClick={() => navigate("/create-challenge")}
           className={newMenuItemIndex === 1 ? "activeMenuItem" : ""}
           label="Create"
           icon={<AddTask />}

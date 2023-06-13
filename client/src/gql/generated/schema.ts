@@ -16,6 +16,13 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type Category = {
+  __typename?: 'Category';
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type Challenge = {
   __typename?: 'Challenge';
   endingDate: Scalars['DateTime'];
@@ -23,6 +30,23 @@ export type Challenge = {
   name: Scalars['String'];
   startingDate: Scalars['DateTime'];
   status: Scalars['Boolean'];
+};
+
+export type ChallengeCreationInput = {
+  challenge: ChallengeInput;
+  challengersId: Array<Scalars['String']>;
+  ecogesturesId: Array<Scalars['String']>;
+};
+
+export type ChallengeDetails = {
+  __typename?: 'ChallengeDetails';
+  categories: Array<Category>;
+  challenge: Challenge;
+  challengers: Array<User>;
+  challengersScore: Array<UserChallengeScore>;
+  ecogestures: Array<Ecogesture>;
+  totalEcogesturesScore: Scalars['Int'];
+  userEcogestures: Array<UserChallengeEcogestures>;
 };
 
 export type ChallengeInput = {
@@ -41,6 +65,7 @@ export type ChallengeUpdateInput = {
 
 export type Ecogesture = {
   __typename?: 'Ecogesture';
+  category: Category;
   difficulty: Scalars['Float'];
   id: Scalars['String'];
   isProofNeeded: Scalars['Boolean'];
@@ -49,10 +74,25 @@ export type Ecogesture = {
 };
 
 export type EcogestureInput = {
+  categoryId: Scalars['String'];
   difficulty: Scalars['Int'];
   isProofNeeded: Scalars['Boolean'];
   name: Scalars['String'];
   reward: Scalars['Int'];
+};
+
+export type Friend = {
+  __typename?: 'Friend';
+  friendId: Scalars['String'];
+  id: Scalars['String'];
+  status: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+export type FriendRelationship = {
+  __typename?: 'FriendRelationship';
+  friend: User;
+  status: Scalars['String'];
 };
 
 export type LoginInput = {
@@ -62,21 +102,29 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addFriend: User;
   createChallenges: Array<Challenge>;
   createEcogestures: Array<Ecogesture>;
   createUser: Array<User>;
   createUserChallengeParticipation: User;
   deleteChallenges: Array<Scalars['Boolean']>;
   deleteEcogestures: Array<Scalars['Boolean']>;
+  deleteFriend: User;
   deleteUser: Array<Scalars['Boolean']>;
   login: UserProfile;
   logout: Scalars['Boolean'];
   updateChallenge: Challenge;
+  updateUserChallengeEcogesture: UserEcogesturesWithChallengersScore;
+};
+
+
+export type MutationAddFriendArgs = {
+  friendId: Scalars['String'];
 };
 
 
 export type MutationCreateChallengesArgs = {
-  inputs: Array<ChallengeInput>;
+  challenges: Array<ChallengeCreationInput>;
 };
 
 
@@ -106,6 +154,11 @@ export type MutationDeleteEcogesturesArgs = {
 };
 
 
+export type MutationDeleteFriendArgs = {
+  friendId: Scalars['String'];
+};
+
+
 export type MutationDeleteUserArgs = {
   uuid: Array<Scalars['String']>;
 };
@@ -121,15 +174,28 @@ export type MutationUpdateChallengeArgs = {
   id: Scalars['String'];
 };
 
+
+export type MutationUpdateUserChallengeEcogestureArgs = {
+  challengeId: Scalars['String'];
+  ecogestureId: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  challengeDetails: ChallengeDetails;
   challenges: Array<Challenge>;
   ecogestures: Array<Ecogesture>;
-  getProfile?: Maybe<UserProfile>;
+  getFriends: Array<FriendRelationship>;
+  getProfile: UserProfile;
   getUserChallengeParticipationByChallengeId: Array<UserChallengesParticipation>;
-  getUserChallengeParticipationByUserId: Array<UserChallengesParticipation>;
+  getUserChallengeParticipationByUserId: Array<UserChallengeParticipationDetails>;
   profile: User;
   users: Array<User>;
+};
+
+
+export type QueryChallengeDetailsArgs = {
+  challengeId: Scalars['String'];
 };
 
 
@@ -150,6 +216,33 @@ export type User = {
   lastName: Scalars['String'];
 };
 
+export type UserChallengeEcogestures = {
+  __typename?: 'UserChallengeEcogestures';
+  challengeId: Scalars['String'];
+  completionDate: Scalars['DateTime'];
+  ecogestureId: Scalars['String'];
+  id: Scalars['String'];
+  proof?: Maybe<Scalars['String']>;
+  reward: Scalars['Float'];
+  userId: Scalars['String'];
+};
+
+/** Define all the challenges the user participates to. Also contains details such as the user rank, completion percentage */
+export type UserChallengeParticipationDetails = {
+  __typename?: 'UserChallengeParticipationDetails';
+  challenge: Challenge;
+  completionPercentage: Scalars['Float'];
+  invitedChallengers: Scalars['Float'];
+  participatingChallengers: Scalars['Float'];
+  rank: Scalars['Float'];
+};
+
+export type UserChallengeScore = {
+  __typename?: 'UserChallengeScore';
+  id: Scalars['String'];
+  score: Scalars['Float'];
+};
+
 export type UserChallengesParticipation = {
   __typename?: 'UserChallengesParticipation';
   challenge?: Maybe<Challenge>;
@@ -158,6 +251,12 @@ export type UserChallengesParticipation = {
   status: Scalars['String'];
   user?: Maybe<User>;
   userId: Scalars['String'];
+};
+
+export type UserEcogesturesWithChallengersScore = {
+  __typename?: 'UserEcogesturesWithChallengersScore';
+  challengersScore: Array<UserChallengeScore>;
+  userEcogestures: Array<UserChallengeEcogestures>;
 };
 
 export type UserInput = {
@@ -179,7 +278,7 @@ export type ChallengesQueryVariables = Exact<{ [key: string]: never; }>;
 export type ChallengesQuery = { __typename?: 'Query', challenges: Array<{ __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }> };
 
 export type CreateChallengesMutationVariables = Exact<{
-  inputs: Array<ChallengeInput> | ChallengeInput;
+  challenges: Array<ChallengeCreationInput> | ChallengeCreationInput;
 }>;
 
 
@@ -193,6 +292,13 @@ export type UpdateChallengeMutationVariables = Exact<{
 
 export type UpdateChallengeMutation = { __typename?: 'Mutation', updateChallenge: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any } };
 
+export type ChallengeDetailsQueryVariables = Exact<{
+  challengeId: Scalars['String'];
+}>;
+
+
+export type ChallengeDetailsQuery = { __typename?: 'Query', challengeDetails: { __typename?: 'ChallengeDetails', totalEcogesturesScore: number, challenge: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }, challengersScore: Array<{ __typename?: 'UserChallengeScore', id: string, score: number }>, ecogestures: Array<{ __typename?: 'Ecogesture', id: string, name: string, difficulty: number, reward: number, isProofNeeded: boolean, category: { __typename?: 'Category', id: string, name: string } }>, challengers: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string }>, userEcogestures: Array<{ __typename?: 'UserChallengeEcogestures', id: string, challengeId: string, userId: string, ecogestureId: string, proof?: string | null, completionDate: any, reward: number }>, categories: Array<{ __typename?: 'Category', id: string, name: string, icon?: string | null }> } };
+
 export type DeleteChallengesMutationVariables = Exact<{
   deleteChallengesId: Array<Scalars['String']> | Scalars['String'];
 }>;
@@ -203,7 +309,7 @@ export type DeleteChallengesMutation = { __typename?: 'Mutation', deleteChalleng
 export type EcogesturesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EcogesturesQuery = { __typename?: 'Query', ecogestures: Array<{ __typename?: 'Ecogesture', id: string, name: string, difficulty: number, reward: number, isProofNeeded: boolean }> };
+export type EcogesturesQuery = { __typename?: 'Query', ecogestures: Array<{ __typename?: 'Ecogesture', id: string, name: string, difficulty: number, reward: number, isProofNeeded: boolean, category: { __typename?: 'Category', id: string, name: string } }> };
 
 export type CreateEcogestureMutationVariables = Exact<{
   ecogestureInputs: Array<EcogestureInput> | EcogestureInput;
@@ -219,10 +325,15 @@ export type DeleteEcoGestureMutationVariables = Exact<{
 
 export type DeleteEcoGestureMutation = { __typename?: 'Mutation', deleteEcogestures: Array<boolean> };
 
+export type GetFriendsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
+
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', getProfile?: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } | null };
+export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } };
 
 export type SignUpMutationVariables = Exact<{
   userInputs: Array<UserInput> | UserInput;
@@ -250,12 +361,20 @@ export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type SignOutMutation = { __typename?: 'Mutation', logout: boolean };
 
+export type UpdateUserChallengeEcogestureMutationVariables = Exact<{
+  ecogestureId: Scalars['String'];
+  challengeId: Scalars['String'];
+}>;
+
+
+export type UpdateUserChallengeEcogestureMutation = { __typename?: 'Mutation', updateUserChallengeEcogesture: { __typename?: 'UserEcogesturesWithChallengersScore', challengersScore: Array<{ __typename?: 'UserChallengeScore', id: string, score: number }>, userEcogestures: Array<{ __typename?: 'UserChallengeEcogestures', id: string, challengeId: string, userId: string, ecogestureId: string, proof?: string | null, completionDate: any, reward: number }> } };
+
 export type GetUserChallengeParticipationByUserIdQueryVariables = Exact<{
   userId: Scalars['String'];
 }>;
 
 
-export type GetUserChallengeParticipationByUserIdQuery = { __typename?: 'Query', getUserChallengeParticipationByUserId: Array<{ __typename?: 'UserChallengesParticipation', challenge?: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any } | null }> };
+export type GetUserChallengeParticipationByUserIdQuery = { __typename?: 'Query', getUserChallengeParticipationByUserId: Array<{ __typename?: 'UserChallengeParticipationDetails', completionPercentage: number, rank: number, invitedChallengers: number, participatingChallengers: number, challenge: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any } }> };
 
 export type CreateUserChallengeParticipationMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -305,8 +424,8 @@ export type ChallengesQueryHookResult = ReturnType<typeof useChallengesQuery>;
 export type ChallengesLazyQueryHookResult = ReturnType<typeof useChallengesLazyQuery>;
 export type ChallengesQueryResult = Apollo.QueryResult<ChallengesQuery, ChallengesQueryVariables>;
 export const CreateChallengesDocument = gql`
-    mutation CreateChallenges($inputs: [ChallengeInput!]!) {
-  createChallenges(inputs: $inputs) {
+    mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
+  createChallenges(challenges: $challenges) {
     id
     name
     status
@@ -330,7 +449,7 @@ export type CreateChallengesMutationFn = Apollo.MutationFunction<CreateChallenge
  * @example
  * const [createChallengesMutation, { data, loading, error }] = useCreateChallengesMutation({
  *   variables: {
- *      inputs: // value for 'inputs'
+ *      challenges: // value for 'challenges'
  *   },
  * });
  */
@@ -379,6 +498,83 @@ export function useUpdateChallengeMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateChallengeMutationHookResult = ReturnType<typeof useUpdateChallengeMutation>;
 export type UpdateChallengeMutationResult = Apollo.MutationResult<UpdateChallengeMutation>;
 export type UpdateChallengeMutationOptions = Apollo.BaseMutationOptions<UpdateChallengeMutation, UpdateChallengeMutationVariables>;
+export const ChallengeDetailsDocument = gql`
+    query ChallengeDetails($challengeId: String!) {
+  challengeDetails(challengeId: $challengeId) {
+    challenge {
+      id
+      name
+      status
+      startingDate
+      endingDate
+    }
+    challengersScore {
+      id
+      score
+    }
+    ecogestures {
+      id
+      name
+      difficulty
+      reward
+      isProofNeeded
+      category {
+        id
+        name
+      }
+    }
+    totalEcogesturesScore
+    challengers {
+      id
+      firstName
+      lastName
+      email
+    }
+    userEcogestures {
+      id
+      challengeId
+      userId
+      ecogestureId
+      proof
+      completionDate
+      reward
+    }
+    categories {
+      id
+      name
+      icon
+    }
+  }
+}
+    `;
+
+/**
+ * __useChallengeDetailsQuery__
+ *
+ * To run a query within a React component, call `useChallengeDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChallengeDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChallengeDetailsQuery({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useChallengeDetailsQuery(baseOptions: Apollo.QueryHookOptions<ChallengeDetailsQuery, ChallengeDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChallengeDetailsQuery, ChallengeDetailsQueryVariables>(ChallengeDetailsDocument, options);
+      }
+export function useChallengeDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChallengeDetailsQuery, ChallengeDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChallengeDetailsQuery, ChallengeDetailsQueryVariables>(ChallengeDetailsDocument, options);
+        }
+export type ChallengeDetailsQueryHookResult = ReturnType<typeof useChallengeDetailsQuery>;
+export type ChallengeDetailsLazyQueryHookResult = ReturnType<typeof useChallengeDetailsLazyQuery>;
+export type ChallengeDetailsQueryResult = Apollo.QueryResult<ChallengeDetailsQuery, ChallengeDetailsQueryVariables>;
 export const DeleteChallengesDocument = gql`
     mutation DeleteChallenges($deleteChallengesId: [String!]!) {
   deleteChallenges(id: $deleteChallengesId)
@@ -418,6 +614,10 @@ export const EcogesturesDocument = gql`
     difficulty
     reward
     isProofNeeded
+    category {
+      id
+      name
+    }
   }
 }
     `;
@@ -516,6 +716,46 @@ export function useDeleteEcoGestureMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteEcoGestureMutationHookResult = ReturnType<typeof useDeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationResult = Apollo.MutationResult<DeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationOptions = Apollo.BaseMutationOptions<DeleteEcoGestureMutation, DeleteEcoGestureMutationVariables>;
+export const GetFriendsDocument = gql`
+    query GetFriends {
+  getFriends {
+    friend {
+      id
+      firstName
+      lastName
+      email
+    }
+    status
+  }
+}
+    `;
+
+/**
+ * __useGetFriendsQuery__
+ *
+ * To run a query within a React component, call `useGetFriendsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFriendsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFriendsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFriendsQuery(baseOptions?: Apollo.QueryHookOptions<GetFriendsQuery, GetFriendsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFriendsQuery, GetFriendsQueryVariables>(GetFriendsDocument, options);
+      }
+export function useGetFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFriendsQuery, GetFriendsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFriendsQuery, GetFriendsQueryVariables>(GetFriendsDocument, options);
+        }
+export type GetFriendsQueryHookResult = ReturnType<typeof useGetFriendsQuery>;
+export type GetFriendsLazyQueryHookResult = ReturnType<typeof useGetFriendsLazyQuery>;
+export type GetFriendsQueryResult = Apollo.QueryResult<GetFriendsQuery, GetFriendsQueryVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {
@@ -692,9 +932,62 @@ export function useSignOutMutation(baseOptions?: Apollo.MutationHookOptions<Sign
 export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
 export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
 export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
+export const UpdateUserChallengeEcogestureDocument = gql`
+    mutation UpdateUserChallengeEcogesture($ecogestureId: String!, $challengeId: String!) {
+  updateUserChallengeEcogesture(
+    ecogestureId: $ecogestureId
+    challengeId: $challengeId
+  ) {
+    challengersScore {
+      id
+      score
+    }
+    userEcogestures {
+      id
+      challengeId
+      userId
+      ecogestureId
+      proof
+      completionDate
+      reward
+    }
+  }
+}
+    `;
+export type UpdateUserChallengeEcogestureMutationFn = Apollo.MutationFunction<UpdateUserChallengeEcogestureMutation, UpdateUserChallengeEcogestureMutationVariables>;
+
+/**
+ * __useUpdateUserChallengeEcogestureMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserChallengeEcogestureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserChallengeEcogestureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserChallengeEcogestureMutation, { data, loading, error }] = useUpdateUserChallengeEcogestureMutation({
+ *   variables: {
+ *      ecogestureId: // value for 'ecogestureId'
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useUpdateUserChallengeEcogestureMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserChallengeEcogestureMutation, UpdateUserChallengeEcogestureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserChallengeEcogestureMutation, UpdateUserChallengeEcogestureMutationVariables>(UpdateUserChallengeEcogestureDocument, options);
+      }
+export type UpdateUserChallengeEcogestureMutationHookResult = ReturnType<typeof useUpdateUserChallengeEcogestureMutation>;
+export type UpdateUserChallengeEcogestureMutationResult = Apollo.MutationResult<UpdateUserChallengeEcogestureMutation>;
+export type UpdateUserChallengeEcogestureMutationOptions = Apollo.BaseMutationOptions<UpdateUserChallengeEcogestureMutation, UpdateUserChallengeEcogestureMutationVariables>;
 export const GetUserChallengeParticipationByUserIdDocument = gql`
     query GetUserChallengeParticipationByUserId($userId: String!) {
   getUserChallengeParticipationByUserId(userId: $userId) {
+    completionPercentage
+    rank
+    invitedChallengers
+    participatingChallengers
     challenge {
       id
       name
