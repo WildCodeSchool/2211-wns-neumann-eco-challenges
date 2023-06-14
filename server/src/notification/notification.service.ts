@@ -15,8 +15,12 @@ export async function getNotificationById(
     .findOne({ where: { id: notificationId } });
 }
 
-export async function getNotifications(): Promise<Notification[]> {
-  return await datasource.getRepository(Notification).find();
+export async function getOwnNotifications(
+  receiverId: string
+): Promise<Notification[] | null> {
+  return await datasource
+    .getRepository(Notification)
+    .find({ where: { receiverId } });
 }
 
 export async function notifyChallengeInvitation(

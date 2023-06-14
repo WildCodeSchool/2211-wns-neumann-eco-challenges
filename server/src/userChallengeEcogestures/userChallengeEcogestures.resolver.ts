@@ -17,7 +17,7 @@ export class UserChallengeEcogesturesResolver {
     @Arg("challengeId") challengeId: string,
     @Arg("ecogestureId") ecogestureId: string
   ): Promise<UserEcogesturesWithChallengersScore> {
-    if (currentUser === null || currentUser === undefined)
+    if (currentUser == null)
       throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
     return await updateUserChallengeEcogesture(
       currentUser.id,

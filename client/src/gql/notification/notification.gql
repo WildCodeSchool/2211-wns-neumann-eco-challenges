@@ -1,5 +1,5 @@
-query Notifications {
-  notifications {
+query GetOwnNotifications {
+  getOwnNotifications {
     id
     senderId
     receiverId
