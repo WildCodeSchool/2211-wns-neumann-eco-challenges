@@ -3,7 +3,10 @@ import datasource from "../db";
 import User from "../user/user.entity";
 import Friend, { FriendRelationship } from "./friend.entity";
 import { getUsers } from "../user/user.service";
-import { notifyFriendInvitation } from "../notification/notification.service";
+import {
+  deleteFriendInvitation,
+  notifyFriendInvitation,
+} from "../notification/notification.service";
 
 export async function getFriends(
   userId: string,
@@ -65,6 +68,7 @@ export async function updateFriendRelationship(
   // Delete friend relationship & friend notification
   if (removeFriendRelationship) {
     await datasource.getRepository(Friend).delete({ userId, friendId });
+    await deleteFriendInvitation(userId, friendId);
 
     // Add friend relationship & friend notification
   } else {

@@ -24,7 +24,7 @@ export default class Notification {
   date: Date;
 
   @Column()
-  type: string;
+  type: "friend_invitation" | "challenge_invitation";
 
   @Column()
   content: string;
