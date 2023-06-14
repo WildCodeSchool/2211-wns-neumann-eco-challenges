@@ -6,7 +6,6 @@ import {
 } from "@reduxjs/toolkit";
 import apolloClient from "../../gql/client";
 import {
-  Challenge,
   ChallengeCreationInput,
   ChallengeDetails,
   ChallengeDetailsDocument,
@@ -14,7 +13,6 @@ import {
   GetUserChallengeParticipationByUserIdDocument,
   UpdateUserChallengeEcogestureDocument,
   UserChallengeParticipationDetails,
-  UserChallengesParticipation,
   UserEcogesturesWithChallengersScore,
 } from "../../gql/generated/schema";
 import { getFilteredChallenges } from "../../tools/challenge.tools";

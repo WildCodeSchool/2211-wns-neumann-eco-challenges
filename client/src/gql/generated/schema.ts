@@ -102,7 +102,6 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addFriend: User;
   createChallenges: Array<Challenge>;
   createEcogestures: Array<Ecogesture>;
   createUser: Array<User>;
@@ -113,13 +112,11 @@ export type Mutation = {
   deleteUser: Array<Scalars['Boolean']>;
   login: UserProfile;
   logout: Scalars['Boolean'];
+  sendExpoNotification: Scalars['Boolean'];
   updateChallenge: Challenge;
+  updateFriendRelationship: User;
   updateUserChallengeEcogesture: UserEcogesturesWithChallengersScore;
-};
-
-
-export type MutationAddFriendArgs = {
-  friendId: Scalars['String'];
+  updateUserExpoToken: User;
 };
 
 
@@ -169,15 +166,37 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationSendExpoNotificationArgs = {
+  notificationPayload: NotificationInput;
+  userId: Scalars['String'];
+};
+
+
 export type MutationUpdateChallengeArgs = {
   data: ChallengeUpdateInput;
   id: Scalars['String'];
 };
 
 
+export type MutationUpdateFriendRelationshipArgs = {
+  friendId: Scalars['String'];
+};
+
+
 export type MutationUpdateUserChallengeEcogestureArgs = {
   challengeId: Scalars['String'];
   ecogestureId: Scalars['String'];
+};
+
+
+export type MutationUpdateUserExpoTokenArgs = {
+  data: UpdateUserExpoToken;
+};
+
+export type NotificationInput = {
+  body: Scalars['String'];
+  data?: InputMaybe<Scalars['String']>;
+  title: Scalars['String'];
 };
 
 export type Query = {
@@ -199,6 +218,12 @@ export type QueryChallengeDetailsArgs = {
 };
 
 
+export type QueryGetFriendsArgs = {
+  onlyFriends?: InputMaybe<Scalars['Boolean']>;
+  status?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryGetUserChallengeParticipationByChallengeIdArgs = {
   challengeId: Scalars['String'];
 };
@@ -206,6 +231,11 @@ export type QueryGetUserChallengeParticipationByChallengeIdArgs = {
 
 export type QueryGetUserChallengeParticipationByUserIdArgs = {
   userId: Scalars['String'];
+};
+
+export type UpdateUserExpoToken = {
+  email?: InputMaybe<Scalars['String']>;
+  expoNotificationToken?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -325,10 +355,20 @@ export type DeleteEcoGestureMutationVariables = Exact<{
 
 export type DeleteEcoGestureMutation = { __typename?: 'Mutation', deleteEcogestures: Array<boolean> };
 
-export type GetFriendsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetFriendsQueryVariables = Exact<{
+  status?: InputMaybe<Scalars['String']>;
+  onlyFriends?: InputMaybe<Scalars['Boolean']>;
+}>;
 
 
 export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
+
+export type UpdateFriendRelationshipMutationVariables = Exact<{
+  friendId: Scalars['String'];
+}>;
+
+
+export type UpdateFriendRelationshipMutation = { __typename?: 'Mutation', updateFriendRelationship: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -717,8 +757,8 @@ export type DeleteEcoGestureMutationHookResult = ReturnType<typeof useDeleteEcoG
 export type DeleteEcoGestureMutationResult = Apollo.MutationResult<DeleteEcoGestureMutation>;
 export type DeleteEcoGestureMutationOptions = Apollo.BaseMutationOptions<DeleteEcoGestureMutation, DeleteEcoGestureMutationVariables>;
 export const GetFriendsDocument = gql`
-    query GetFriends {
-  getFriends {
+    query GetFriends($status: String, $onlyFriends: Boolean) {
+  getFriends(status: $status, onlyFriends: $onlyFriends) {
     friend {
       id
       firstName
@@ -742,6 +782,8 @@ export const GetFriendsDocument = gql`
  * @example
  * const { data, loading, error } = useGetFriendsQuery({
  *   variables: {
+ *      status: // value for 'status'
+ *      onlyFriends: // value for 'onlyFriends'
  *   },
  * });
  */
@@ -756,6 +798,42 @@ export function useGetFriendsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFriendsQueryHookResult = ReturnType<typeof useGetFriendsQuery>;
 export type GetFriendsLazyQueryHookResult = ReturnType<typeof useGetFriendsLazyQuery>;
 export type GetFriendsQueryResult = Apollo.QueryResult<GetFriendsQuery, GetFriendsQueryVariables>;
+export const UpdateFriendRelationshipDocument = gql`
+    mutation UpdateFriendRelationship($friendId: String!) {
+  updateFriendRelationship(friendId: $friendId) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+    `;
+export type UpdateFriendRelationshipMutationFn = Apollo.MutationFunction<UpdateFriendRelationshipMutation, UpdateFriendRelationshipMutationVariables>;
+
+/**
+ * __useUpdateFriendRelationshipMutation__
+ *
+ * To run a mutation, you first call `useUpdateFriendRelationshipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFriendRelationshipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFriendRelationshipMutation, { data, loading, error }] = useUpdateFriendRelationshipMutation({
+ *   variables: {
+ *      friendId: // value for 'friendId'
+ *   },
+ * });
+ */
+export function useUpdateFriendRelationshipMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFriendRelationshipMutation, UpdateFriendRelationshipMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFriendRelationshipMutation, UpdateFriendRelationshipMutationVariables>(UpdateFriendRelationshipDocument, options);
+      }
+export type UpdateFriendRelationshipMutationHookResult = ReturnType<typeof useUpdateFriendRelationshipMutation>;
+export type UpdateFriendRelationshipMutationResult = Apollo.MutationResult<UpdateFriendRelationshipMutation>;
+export type UpdateFriendRelationshipMutationOptions = Apollo.BaseMutationOptions<UpdateFriendRelationshipMutation, UpdateFriendRelationshipMutationVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {

@@ -15,7 +15,7 @@ export async function getUserChallengeParticipationByChallengeId(
   const participations = await datasource
     .getRepository(UserChallengesParticipation)
     .find({
-      where: { challengeId, ...(status == null ? {} : { status: undefined }) },
+      where: { challengeId, status },
       relations: { user: true },
     });
 
@@ -33,7 +33,7 @@ export async function getUserChallengeParticipationByUserId(
     .getRepository(UserChallengesParticipation)
     .find({
       relations: { challenge: true },
-      where: { userId, ...(status == null ? {} : { status: undefined }) },
+      where: { userId, status },
     });
 
   const participationsDetailed = await Promise.all(
@@ -103,7 +103,7 @@ export async function createUserChallengeParticipation(
   await datasource.getRepository(UserChallengesParticipation).save({
     challengeId,
     userId: user.id,
-    ...(status !== undefined ? { status } : {}),
+    status,
   });
 
   const userUpdated = await datasource.getRepository(User).findOne({

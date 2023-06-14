@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
 import Typography from "@mui/material/Typography";
-import { FriendInvitationEnhanced } from "../../components/dashboard/FriendInvitationEnhanced";
+import { FriendInvitationEnhanced } from "../../components/friend/FriendInvitationEnhanced";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 import { setEvent } from "../../reducer/event/event.reducer";
 import {
@@ -16,6 +16,7 @@ import {
 } from "../../gql/generated/schema";
 import { useEffect, useState } from "react";
 import { setChallengeChallengers } from "../../reducer/challenge/challenge.reducer";
+import { thunkUpdateFriendRelationship } from "../../reducer/friend/friend.reducer";
 
 export const ChallengeInvitation = ({
   updateStepStatus,
@@ -29,21 +30,23 @@ export const ChallengeInvitation = ({
     (store) => store.challenges.challengeCreation
   );
 
-  const { data, loading, error } = useGetFriendsQuery();
+  const { data, loading, error } = useGetFriendsQuery({
+    variables: { status: "accepted" },
+  });
   const [friends, setFriends] = useState(
-    data?.getFriends.map((friend) => ({ ...friend, invite: false })) ?? []
+    data?.getFriends.map((friend) => ({ ...friend, isInvited: false })) ?? []
   );
 
   useEffect(() => {
     setFriends(
-      data?.getFriends.map((friend) => ({ ...friend, invite: false })) ?? []
+      data?.getFriends.map((friend) => ({ ...friend, isInvited: false })) ?? []
     );
   }, [data]);
 
-  const updateFriendInvitation = (id: string, invite: boolean) => {
+  const updateFriendInvitation = (id: string, isInvited: boolean) => {
     setFriends(
       friends.map((friend) =>
-        friend.friend.id === id ? { ...friend, invite } : friend
+        friend.friend.id === id ? { ...friend, isInvited } : friend
       )
     );
   };
@@ -128,7 +131,7 @@ export const ChallengeInvitation = ({
             onSubmit={async (e) => {
               e.preventDefault();
               const challengersId = friends
-                .filter(({ invite }) => invite)
+                .filter(({ isInvited }) => isInvited)
                 .map(({ friend: { id } }) => id);
               dispatch(setChallengeChallengers(challengersId));
 
@@ -167,6 +170,7 @@ export const ChallengeInvitation = ({
 
             <Grid item container marginTop={3}>
               <FriendInvitationEnhanced
+                mode="CHALLENGE_INVITATION"
                 updateFriendInvitation={updateFriendInvitation}
                 friends={friends}
               />

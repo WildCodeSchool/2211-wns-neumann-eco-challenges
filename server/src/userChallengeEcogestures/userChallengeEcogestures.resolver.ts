@@ -3,10 +3,7 @@ import { Resolver } from "type-graphql/dist/decorators/Resolver";
 import { ContextType } from "../user/user.resolver";
 import { ApolloError } from "apollo-server-errors";
 import { updateUserChallengeEcogesture } from "./userChallengeEcogestures.service";
-import UserChallengeEcogestures, {
-  UserChallengeScore,
-  UserEcogesturesWithChallengersScore,
-} from "./userChallengeEcogestures.entity";
+import { UserEcogesturesWithChallengersScore } from "./userChallengeEcogestures.entity";
 
 @Resolver(UserChallengeEcogesturesResolver)
 export class UserChallengeEcogesturesResolver {

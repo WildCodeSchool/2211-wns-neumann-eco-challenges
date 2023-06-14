@@ -209,6 +209,10 @@ $itemWidth: 100% / 6;
   background: $backgroundColor;
 }
 
+.paddingBtmPageForMenu {
+  padding-bottom: $bottomMenuHeight * 1.5;
+}
+
 .datePicker:focus,
 .datePicker:active,
 .datePicker:hover,
