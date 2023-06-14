@@ -6,6 +6,18 @@ const CHALLENGE_INVITE_TEMPLATE =
   "<b>$sender$</b> wants you to join the challenge <b>$challengeName$</b>";
 const FRIEND_INVITE_TEMPLATE = "<b>$sender$</b> wants to be your friend.";
 
+export async function getNotificationById(
+  notificationId: string
+): Promise<Notification | null> {
+  return await datasource
+    .getRepository(Notification)
+    .findOne({ where: { id: notificationId } });
+}
+
+export async function getNotifications(): Promise<Notification[]> {
+  return await datasource.getRepository(Notification).find();
+}
+
 export async function notifyChallengeInvitation(
   senderId: string,
   receiverId: string,

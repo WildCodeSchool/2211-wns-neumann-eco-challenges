@@ -1,0 +1,12 @@
+query Notifications {
+  notifications {
+    id
+    senderId
+    receiverId
+    date
+    type
+    content
+    status
+    hasBeenSeen
+  }
+}
