@@ -1,3 +1,4 @@
+import { ApolloError } from "apollo-server";
 import { getChallengeById } from "../challenge/challenge.service";
 import datasource from "../db";
 import { getUsersById } from "../user/user.service";
@@ -49,4 +50,19 @@ export async function notifyFriendInvitation(
     .save({ content, type: "friend_invitation", senderId, receiverId });
 
   return true;
+}
+
+export async function deleteNotifications(
+  notificationId: string[]
+): Promise<boolean[]> {
+  return await Promise.all(
+    notificationId.map(async (id) => {
+      const { affected } = await datasource
+        .getRepository(Notification)
+        .delete(id);
+      if (affected === 0)
+        throw new ApolloError("Notification not found", "NOT_FOUND");
+      return true;
+    })
+  );
 }

@@ -10,3 +10,7 @@ query Notifications {
     hasBeenSeen
   }
 }
+
+mutation DeleteNotifications($deleteNotificationsId: [String!]!) {
+  deleteNotifications(id: $deleteNotificationsId)
+}
