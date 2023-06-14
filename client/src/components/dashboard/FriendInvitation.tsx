@@ -18,9 +18,14 @@ export const FriendInvitation = () => {
   ///
   /// Loads not only user's friends but also all the others users.
   ///
-  const { data, loading, error } = useGetFriendsQuery({
+  const { data, loading, error, refetch } = useGetFriendsQuery({
     variables: { onlyFriends: false },
   });
+
+  useEffect(() => {
+    const refetchFriends = async () => await refetch();
+    refetchFriends();
+  }, []);
 
   const [friends, setFriends] = useState(
     data?.getFriends.map((friend) => ({

@@ -39,12 +39,13 @@ const actionsText = {
   },
 };
 const formatFriendshipStatus = (
+  isInvited: boolean,
   mode: FriendInvitationMode,
   status: "pending" | "declined" | "accepted" | "none",
   challengedNTimes?: number
 ) => {
   if (mode === "FRIEND_INVITATION") {
-    if (status === "accepted" || status === "none") return "";
+    if (status === "accepted" || status === "none" || !isInvited) return "";
     return statusFriendRelationshipTexts[mode][status];
   }
 
@@ -120,6 +121,7 @@ export const FriendInvitationEnhanced = ({
                   id={id}
                   isInvited={isInvited}
                   subText={formatFriendshipStatus(
+                    isInvited,
                     mode,
                     friendRelationshipStatus as
                       | "pending"

@@ -10,7 +10,6 @@ import Lottie from "react-lottie";
 import { useAppSelector } from "../reducer/hooks";
 import handshake from "../assets/lotties/handshake.json";
 import { ScrollTopScreen } from "./ScrollTopScreen";
-import { FriendInvitationEnhanced } from "../components/friend/FriendInvitationEnhanced";
 import { FriendInvitation } from "../components/dashboard/FriendInvitation";
 export const Dashboard = () => {
   const { firstName } = useAppSelector((state: any) => state.user.user);
