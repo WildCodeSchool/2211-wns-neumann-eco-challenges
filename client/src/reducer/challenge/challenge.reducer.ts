@@ -135,8 +135,9 @@ export const {
   setChallengeDetails,
   setChallengeEcogestures,
 } = challengesSlice.actions;
-// Thunks
 
+
+// Thunks
 export const thunkGetChallengeDetails = createAsyncThunk(
   "challenges/getChallengeDetails",
   async (challengeId: string): Promise<ChallengeDetails> => {
