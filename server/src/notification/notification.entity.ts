@@ -31,7 +31,7 @@ export default class Notification {
 
   @Field()
   @Column()
-  type: string;
+  type: "friend_invitation" | "challenge_invitation";
 
   @Field()
   @Column()

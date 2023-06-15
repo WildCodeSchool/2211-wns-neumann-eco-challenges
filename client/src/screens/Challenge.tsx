@@ -1,5 +1,4 @@
 import { useParams } from "react-router";
-import { Category } from "../gql/generated/schema";
 import Grid from "@mui/material/Grid/Grid";
 import { HeaderScreen } from "../components/menu/HeaderScreen";
 import { ClosingButton } from "../components/notification/ClosingButton";
@@ -9,17 +8,16 @@ import silverCrown from "../assets/challenge/display-challenge/crown_silver.svg"
 import bronzeCrown from "../assets/challenge/display-challenge/crown_bronze.svg";
 import goldCrown from "../assets/challenge/display-challenge/crown_gold.svg";
 
-import { Avatar, Badge, Card, Chip, Stack, Typography } from "@mui/material";
+import { Avatar, Badge, Card, Stack, Typography } from "@mui/material";
 import { ChallengerRankingItem } from "../components/challenge/ChallengerRankingItem";
 import { ChallengeEcogestures } from "../components/challenge/ChallengeEcogestures";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ChallengeTimer } from "../components/challenge/ChallengeTimer";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import {
   thunkGetChallengeDetails,
   thunkUpdateUserChallengeEcogesture,
 } from "../reducer/challenge/challenge.reducer";
-import React from "react";
 
 const getGoldenPodium = (name: string, score: number, avatar: string) => {
   return (
@@ -263,8 +261,6 @@ const getBronzePodium = (name: string, score: number, avatar: string) => {
 
 export const Challenge = () => {
   const { id: challengeId } = useParams();
-  const [selectedCategoryId, setSelectedCategoryId] = useState("all");
-  const [categories, setCategories] = useState<Category[]>([]);
   const dispatch = useAppDispatch();
   const { challengeDetails, status } = useAppSelector((state) => ({
     userId: state.user?.user?.id,
@@ -322,23 +318,6 @@ export const Challenge = () => {
     };
     getChallengeDetails();
   }, []);
-
-  useEffect(() => {
-    if (challengeDetails)
-      setCategories([
-        {
-          id: "all",
-          name: "all",
-          icon: "all", // Find an icon
-        },
-        ...challengeDetails!.categories,
-      ]);
-  }, [challengeDetails]);
-
-  const getFilteredEcogestures = () =>
-    challengeDetails!.ecogestures.filter(({ category: { id } }) =>
-      selectedCategoryId === "all" ? true : id === selectedCategoryId
-    );
 
   if (status == null || status.isLoading) return <div>loading</div>;
   return (
@@ -509,43 +488,6 @@ export const Challenge = () => {
               Tell us what you've accomplished?
             </Typography>
           </Stack>
-          <Stack
-            width={"80%"}
-            direction={"row"}
-            overflow={"scroll"}
-            sx={{
-              "&::-webkit-scrollbar": { display: "none" },
-              msOverflowStyle: "none",
-              scrollbarWidth: "none",
-              "& .MuiStack-root": { scrollbarColor: "red" },
-              "& .MuiChip-root": {
-                border: "1px solid #DADADA",
-                color: "#787878",
-                margin: 0,
-              },
-            }}
-          >
-            {categories.map(({ name, id, icon }) => (
-              <div
-                key={id}
-                style={{
-                  minWidth: "33.33%",
-                  flex: 1,
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <Chip
-                  clickable={true}
-                  onClick={() => setSelectedCategoryId(id)}
-                  variant="outlined"
-                  sx={{ border: "1px solid green" }}
-                  label={name}
-                  avatar={<Avatar src={icon!}></Avatar>}
-                />
-              </div>
-            ))}
-          </Stack>
           <div style={{ width: "80%" }}>
             <ChallengeEcogestures
               onSelectedEcogesture={(ecogestureId: string) => {
@@ -556,7 +498,7 @@ export const Challenge = () => {
                   })
                 );
               }}
-              ecogestures={getFilteredEcogestures()}
+              ecogestures={challengeDetails!.ecogestures}
               selectedEcogesturesId={challengeDetails!.userEcogestures.map(
                 ({ ecogestureId }) => ecogestureId
               )}

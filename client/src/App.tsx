@@ -29,7 +29,7 @@ function App() {
         pathname === "/" || pathname.includes("/sign")
           ? "App-header welcome"
           : pathname.includes("/dashboard")
-          ? "App-header dashboard"
+          ? "App-header dashboard paddingBtmPageForMenu"
           : pathname.includes("/challenge")
           ? "App-header challenge dashboard"
           : "App-header"

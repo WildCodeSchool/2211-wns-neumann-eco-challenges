@@ -2,21 +2,49 @@ import { ApolloError } from "apollo-server-errors";
 import datasource from "../db";
 import User from "../user/user.entity";
 import Friend, { FriendRelationship } from "./friend.entity";
+import { getUsers } from "../user/user.service";
+import {
+  deleteFriendInvitation,
+  notifyFriendInvitation,
+} from "../notification/notification.service";
 
 export async function getFriends(
-  userId: string
+  userId: string,
+  onlyFriends: boolean,
+  status?: Friend["status"]
 ): Promise<FriendRelationship[]> {
-  const user = await datasource
-    .getRepository(User)
-    .findOne({ where: { id: userId }, relations: { friends: true } });
+  const friends = await datasource
+    .getRepository(Friend)
+    .find({ where: { userId, status } });
 
-  if (user === null) throw new ApolloError("User not found", "NOT_FOUND");
-
-  const { friends } = user;
-  const friendIdsAndStatus = friends.map(({ friendId, status }) => ({
+  let friendIdsAndStatus: Array<{
+    friendId: string;
+    status: FriendRelationship["status"];
+  }> = friends.map(({ friendId, status }) => ({
     friendId,
     status,
   }));
+
+  // Includes all the users even those we are not friend with
+  if (onlyFriends != null && !onlyFriends) {
+    const notFriends = (await getUsers()).filter(
+      ({ id }) =>
+        id !== userId &&
+        friends.findIndex(({ friendId }) => id === friendId) === -1
+    );
+
+    friendIdsAndStatus = [
+      ...friendIdsAndStatus,
+      ...notFriends.map(
+        ({
+          id: friendId,
+        }): { friendId: string; status: FriendRelationship["status"] } => ({
+          friendId,
+          status: "none",
+        })
+      ),
+    ];
+  }
 
   const friendList = await Promise.all(
     friendIdsAndStatus.map(async ({ friendId, status }) => {
@@ -29,24 +57,28 @@ export async function getFriends(
   return friendList;
 }
 
-export async function addFriend(
+export async function updateFriendRelationship(
   userId: string,
   friendId: string
 ): Promise<User> {
-  const user = await datasource
-    .getRepository(User)
-    .findOne({ where: { id: userId }, relations: { friends: true } });
-  if (user === null) throw new ApolloError("User not found", "NOT_FOUND");
+  const removeFriendRelationship = await datasource
+    .getRepository(Friend)
+    .exist({ where: { userId, friendId } });
 
-  await datasource.getRepository(Friend).save({ userId, friendId });
+  // Delete friend relationship & friend notification
+  if (removeFriendRelationship) {
+    await datasource.getRepository(Friend).delete({ userId, friendId });
+    await deleteFriendInvitation(userId, friendId);
 
-  // id test :
-  // "ed23f909-2a12-483e-87da-9bf0ecd15d8f"
-  // "fef3fe70-6caa-48ef-af9d-f86f9ec6b100"
+    // Add friend relationship & friend notification
+  } else {
+    await datasource.getRepository(Friend).save({ userId, friendId });
+    await notifyFriendInvitation(userId, friendId);
+  }
 
   const userWithFriends = await datasource
     .getRepository(User)
-    .findOne({ where: { id: userId }, relations: { friends: { user: true } } });
+    .findOne({ where: { id: userId } });
 
   if (userWithFriends === null)
     throw new ApolloError("User not found", "NOT_FOUND");

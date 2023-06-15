@@ -5,14 +5,24 @@ import { FriendItemEnhancedProps } from "../../interfaces/friend/friend.interfac
 export const FriendItemEnhanced = ({
   name,
   avatar,
-  challengedNTimes,
+  subText,
   id,
   isInvited,
+  isLoading = false,
   borderColor,
+  activeText,
+  inactiveText,
   updateFriendInvitation,
 }: FriendItemEnhancedProps & {
   updateFriendInvitation: (id: string, invite: boolean) => void;
 }) => {
+  const getButtonText = () => {
+    if (isLoading) return "Loading";
+    if (isInvited) return activeText;
+    if (!isInvited) return inactiveText;
+    return activeText;
+  };
+
   return (
     <Grid
       container
@@ -42,7 +52,7 @@ export const FriendItemEnhanced = ({
           lineHeight={0.7}
           className="darkGreyColor"
         >
-          Challenged {challengedNTimes} times
+          {subText}
         </Typography>
       </Grid>
       <Button
@@ -60,7 +70,7 @@ export const FriendItemEnhanced = ({
         }}
       >
         <Typography variant="subtitle2" fontWeight={700}>
-          {isInvited ? "cancel" : "invite"}
+          {getButtonText()}
         </Typography>
       </Button>
     </Grid>

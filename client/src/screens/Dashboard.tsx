@@ -1,8 +1,6 @@
 import Stack from "@mui/material/Stack";
-import React, { useContext, useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { DashboardWrapper } from "../components/dashboard/DashboardWrapper";
-import { FriendInvitation } from "../components/dashboard/FriendInvitation";
 import { HeaderScreen } from "../components/menu/HeaderScreen";
 import { OngoingChallenges } from "../components/dashboard/OngoingChallenges";
 import { ScheduledChallenges } from "../components/dashboard/ScheduledChallenges";
@@ -12,6 +10,7 @@ import Lottie from "react-lottie";
 import { useAppSelector } from "../reducer/hooks";
 import handshake from "../assets/lotties/handshake.json";
 import { ScrollTopScreen } from "./ScrollTopScreen";
+import { FriendInvitation } from "../components/dashboard/FriendInvitation";
 export const Dashboard = () => {
   const { firstName } = useAppSelector((state: any) => state.user.user);
 

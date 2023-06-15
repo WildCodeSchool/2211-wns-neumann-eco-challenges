@@ -67,7 +67,6 @@ export async function getChallengeDetails(
     challenge.id
   );
 
-  console.log(userEcogestures);
   // Get challengers informations: name
   const challengers = await getUsersById(challengersId);
 

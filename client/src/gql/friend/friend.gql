@@ -1,5 +1,5 @@
-query GetFriends {
-  getFriends {
+query GetFriends($status: String, $onlyFriends: Boolean) {
+  getFriends(status: $status, onlyFriends: $onlyFriends) {
     friend {
       id
       firstName
@@ -7,5 +7,14 @@ query GetFriends {
       email
     }
     status
+  }
+}
+
+mutation UpdateFriendRelationship($friendId: String!) {
+  updateFriendRelationship(friendId: $friendId) {
+    id
+    firstName
+    lastName
+    email
   }
 }

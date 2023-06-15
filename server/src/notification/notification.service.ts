@@ -42,6 +42,16 @@ export async function notifyChallengeInvitation(
   return true;
 }
 
+export async function deleteFriendInvitation(
+  senderId: string,
+  receiverId: string
+): Promise<boolean> {
+  await datasource
+    .getRepository(Notification)
+    .delete({ receiverId, senderId, type: "friend_invitation" });
+  return true;
+}
+
 export async function notifyFriendInvitation(
   senderId: string,
   receiverId: string

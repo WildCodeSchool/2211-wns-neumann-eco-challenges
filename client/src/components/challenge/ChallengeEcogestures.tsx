@@ -1,7 +1,16 @@
-import { Grid, FormGroup, FormControlLabel, Typography } from "@mui/material";
-import { Ecogesture } from "../../gql/generated/schema";
+import {
+  Grid,
+  FormGroup,
+  FormControlLabel,
+  Typography,
+  Avatar,
+  Stack,
+  Chip,
+} from "@mui/material";
+import { Category, Ecogesture } from "../../gql/generated/schema";
 import { EcogestureItem } from "../ecogesture/EcogestureItem";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 export const ChallengeEcogestures = ({
   ecogestures,
@@ -16,12 +25,76 @@ export const ChallengeEcogestures = ({
 }) => {
   const {
     register,
-    handleSubmit,
     formState: { errors: formErrors },
   } = useForm();
 
+  const getFilteredEcogestures = () =>
+    ecogestures.filter(({ category: { id } }) =>
+      selectedCategoryId === "all" ? true : id === selectedCategoryId
+    );
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [categories, setCategories] = useState<Array<Category>>([]);
+  useEffect(() => {
+    const categories: Category[] = [{ id: "all", name: "all", icon: "all" }];
+    if (ecogestures.length !== 0) {
+      ecogestures.forEach(({ category }) => {
+        if (categories.find(({ id }) => id === category.id) == null)
+          categories.push(category);
+      });
+    }
+    setCategories(categories);
+    setSelectedCategoryId("all");
+  }, [ecogestures]);
+
   return (
-    <Grid item>
+    <Grid
+      item
+      container
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      flexDirection={"column"}
+      position={"relative"}
+      gap={4}
+    >
+      <Stack
+        width={"100%"}
+        direction={"row"}
+        overflow={"scroll"}
+        sx={{
+          "&::-webkit-scrollbar": { display: "none" },
+          msOverflowStyle: "none",
+          scrollbarWidth: "none",
+          "& .MuiStack-root": { scrollbarColor: "red" },
+          "& .MuiChip-root": {
+            border: "1px solid #DADADA",
+            color: "#787878",
+            margin: 0,
+          },
+        }}
+      >
+        {categories.map(({ name, id, icon }) => (
+          <div
+            key={id}
+            style={{
+              minWidth: "33.33%",
+              flex: 1,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Chip
+              clickable={true}
+              onClick={() => setSelectedCategoryId(id)}
+              variant="outlined"
+              sx={{ border: "1px solid green" }}
+              label={name}
+              avatar={<Avatar src={icon!}></Avatar>}
+            />
+          </div>
+        ))}
+      </Stack>
       <FormGroup
         {...register("list", {
           validate: {
@@ -36,7 +109,7 @@ export const ChallengeEcogestures = ({
           gap: "12px",
         }}
       >
-        {ecogestures.map((gesture) => (
+        {getFilteredEcogestures().map((gesture) => (
           <FormControlLabel
             style={{
               margin: 0,

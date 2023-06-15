@@ -53,6 +53,7 @@ query ChallengeDetails($challengeId: String!) {
       category {
         id
         name
+        icon
       }
     }
     totalEcogesturesScore

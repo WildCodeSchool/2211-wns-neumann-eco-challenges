@@ -26,11 +26,12 @@ class Friend {
 }
 export default Friend;
 
+type RelationshipStatus = Friend["status"] | "none";
 @ObjectType()
 export class FriendRelationship {
   @Field(() => User)
   friend: User;
 
   @Field()
-  status: "accepted" | "pending" | "declined";
+  status: RelationshipStatus;
 }

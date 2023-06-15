@@ -1,8 +1,5 @@
 import moment from "moment";
-import {
-  Challenge,
-  UserChallengeParticipationDetails,
-} from "../gql/generated/schema";
+import { UserChallengeParticipationDetails } from "../gql/generated/schema";
 
 type ChallengeFilters = "ongoing" | "all" | "scheduled";
 
