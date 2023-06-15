@@ -208,14 +208,20 @@ async function userChallengesParticipationFill(): Promise<void> {
 }
 
 async function challengeFill(): Promise<void> {
-  const { id: userId } = (await getUsers()).find(
+  const users = await getUsers()
+
+  const { id: userId } = users.find(
     ({ email }) => email === "bdeliencourt@gmail.com"
   ) ?? { id: "" };
 
+  const challengers = users?.filter(
+    ({ email }) => email !== "bdeliencourt@gmail.com"
+  ) ?? [];
+  
   const ecogesturesId = (await getEcogestures()).map(({ id }) => id);
   await createChallenges(userId, [
     {
-      challengersId: [],
+      challengersId: challengers.map((challenger) => challenger.id),
       ecogesturesId,
       challenge: {
         name: "Make your street cleaner",

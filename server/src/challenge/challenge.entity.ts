@@ -9,6 +9,7 @@ import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestur
 import User from "../user/user.entity";
 import Ecogesture from "../ecogesture/ecogesture.entity";
 import Category from "../category/category.entity";
+import Notification from "../notification/notification.entity";
 
 @Entity()
 @ObjectType()
@@ -32,6 +33,11 @@ class Challenge {
   @Column({ type: "timestamptz", nullable: true })
   @Field()
   endingDate: Date;
+
+  @OneToMany(() => Notification, (notifications) => notifications.challenge, {
+    onDelete: "CASCADE",
+  })
+  notifications: Notification[];
 
   // One challenge can have many ecogestures
   @OneToMany(() => ChallengeEcogestures, (ce) => ce.challenge, {
