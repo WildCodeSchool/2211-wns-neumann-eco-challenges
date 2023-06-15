@@ -34,11 +34,6 @@ class Challenge {
   @Field()
   endingDate: Date;
 
-  @OneToMany(() => Notification, (notifications) => notifications.challenge, {
-    onDelete: "CASCADE",
-  })
-  notifications: Notification[];
-
   // One challenge can have many ecogestures
   @OneToMany(() => ChallengeEcogestures, (ce) => ce.challenge, {
     onDelete: "CASCADE",
