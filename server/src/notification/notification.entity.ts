@@ -2,14 +2,21 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
-import User from "../user/user.entity";
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType, registerEnumType } from "type-graphql";
 import { InputType } from "type-graphql/dist/decorators/InputType";
-import Challenge from "../challenge/challenge.entity";
 
+export enum NotificationStatus {
+  "pending" = "pending",
+  "declined" = "declined",
+  "accepted" = "accepted",
+}
+
+registerEnumType(NotificationStatus, {
+  name: "NotificationStatus", // this one is mandatory
+});
 @Entity()
 @ObjectType()
 export default class Notification {
@@ -30,26 +37,30 @@ export default class Notification {
   date: Date;
 
   @Field()
-  @Column()
-  type: "friend_invitation" | "challenge_invitation";
+  @UpdateDateColumn()
+  updatedDate: Date;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  type?: "friend_invitation" | "challenge_invitation";
 
   @Field()
   @Column()
   content: string;
 
-  @Field()
-  @Column({ default: "pending", nullable: true })
+  @Column({ nullable: true })
+  contentAfterUserResponse?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   status: "accepted" | "pending" | "declined";
 
   @Field()
   @Column({ default: false })
   hasBeenSeen?: boolean;
 
-  @ManyToOne(() => User, (user) => user.notifications)
-  user: User;
-
-  @ManyToOne(() => Challenge, (challenge) => challenge.notifications)
-  challenge: Challenge;
+  @Column({ nullable: true })
+  challengeId?: string;
 }
 
 @InputType()

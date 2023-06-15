@@ -55,10 +55,6 @@ class User {
     (challengeParticipation) => challengeParticipation.user
   )
   userChallengesParticipation: UserChallengesParticipation[];
-
-  // One user can have many notifications
-  @OneToMany(() => Notification, (notification) => notification.user)
-  notifications: Notification[];
 }
 
 @InputType()
