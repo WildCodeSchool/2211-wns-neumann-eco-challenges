@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { ChallengeDetail } from "./ChallengeDetail";
 import { ChallengeEcogesture } from "./ChallengeEcogesture";

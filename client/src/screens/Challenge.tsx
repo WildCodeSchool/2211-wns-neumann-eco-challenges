@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid/Grid";
 import { HeaderScreen } from "../components/menu/HeaderScreen";
 import { ClosingButton } from "../components/notification/ClosingButton";

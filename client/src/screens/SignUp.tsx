@@ -6,18 +6,12 @@ import Typography from "@mui/material/Typography/Typography";
 import { useNavigate } from "react-router-dom";
 import { GreenMatesLogo } from "../components/common/GreenMatesLogo";
 import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
-import {
-  SignUpMutationFn,
-  SignInMutationFn,
-  UserInput,
-} from "../gql/generated/schema";
+import { UserInput } from "../gql/generated/schema";
 import { useForm } from "react-hook-form";
 import { thunkSignIn, thunkSignUp } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
-import { useEffect } from "react";
-import { scrollToTop } from "../tools/render.tools";
 
 const minPasswordLength = 8;
 const getHeader = () => {

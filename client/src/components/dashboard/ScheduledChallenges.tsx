@@ -1,23 +1,9 @@
 import Stack from "@mui/material/Stack";
 import { ScheduledChallengeItem } from "../challenge/ScheduledChallengeItem";
-import {
-  Challenge,
-  useChallengesQuery,
-  useGetUserChallengeParticipationByUserIdQuery,
-} from "../../gql/generated/schema";
-import moment from "moment";
 import { getFilteredChallenges } from "../../tools/challenge.tools";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 import { useEffect } from "react";
 import { thunkGetUserChallenges } from "../../reducer/challenge/challenge.reducer";
-
-const attendees = [
-  [10, 10],
-  [1, 12],
-  [4, 6],
-  [0, 13],
-  [0, 13],
-];
 
 export const ScheduledChallenges = () => {
   const { userId, challenges } = useAppSelector((state) => ({
