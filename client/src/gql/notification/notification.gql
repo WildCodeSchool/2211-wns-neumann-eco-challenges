@@ -1,0 +1,16 @@
+query GetOwnNotifications {
+  getOwnNotifications {
+    id
+    senderId
+    receiverId
+    date
+    type
+    content
+    status
+    hasBeenSeen
+  }
+}
+
+mutation DeleteNotifications($deleteNotificationsId: [String!]!) {
+  deleteNotifications(id: $deleteNotificationsId)
+}
