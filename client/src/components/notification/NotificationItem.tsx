@@ -5,7 +5,7 @@ import parse from "html-react-parser";
 import moment from "moment";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import GamesRoundedIcon from "@mui/icons-material/GamesRounded";
-import { grey, pink } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 
 const notificationConfigs = {
   CHALLENGE_INVITE: {

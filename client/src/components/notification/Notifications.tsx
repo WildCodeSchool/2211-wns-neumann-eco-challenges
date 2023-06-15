@@ -2,8 +2,7 @@ import Grid from "@mui/material/Grid";
 import { NotificationItem } from "./NotificationItem";
 import { HeaderScreen } from "../menu/HeaderScreen";
 import Stack from "@mui/material/Stack";
-import Badge, { BadgeProps } from "@mui/material/Badge";
-import { styled } from "@mui/styles";
+import Badge from "@mui/material/Badge";
 
 const notifications = [
   {

@@ -16,7 +16,6 @@ import {
 } from "../../gql/generated/schema";
 import { useEffect, useState } from "react";
 import { setChallengeChallengers } from "../../reducer/challenge/challenge.reducer";
-import { thunkUpdateFriendRelationship } from "../../reducer/friend/friend.reducer";
 
 export const ChallengeInvitation = ({
   updateStepStatus,
@@ -30,7 +29,7 @@ export const ChallengeInvitation = ({
     (store) => store.challenges.challengeCreation
   );
 
-  const { data, loading, error } = useGetFriendsQuery({
+  const { data } = useGetFriendsQuery({
     variables: { status: "accepted" },
   });
   const [friends, setFriends] = useState(

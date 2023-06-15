@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { BrowserRouter, ScrollRestoration } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "./gql/client";
 

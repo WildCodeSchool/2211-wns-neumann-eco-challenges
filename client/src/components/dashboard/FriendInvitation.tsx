@@ -18,7 +18,7 @@ export const FriendInvitation = () => {
   ///
   /// Loads not only user's friends but also all the others users.
   ///
-  const { data, loading, error, refetch } = useGetFriendsQuery({
+  const { data, refetch } = useGetFriendsQuery({
     variables: { onlyFriends: false },
   });
 

@@ -8,12 +8,11 @@ import { DesktopDateTimePicker } from "@mui/x-date-pickers/DesktopDateTimePicker
 import { motion } from "framer-motion";
 import { HeaderScreen } from "../../components/menu/HeaderScreen";
 import { ClosingButton } from "../../components/notification/ClosingButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Typography from "@mui/material/Typography/Typography";
 import { useAppDispatch } from "../../reducer/hooks";
 import { setChallengeDetails } from "../../reducer/challenge/challenge.reducer";
-import { scrollToTop } from "../../tools/render.tools";
 
 export const ChallengeDetail = ({
   updateStepStatus,
