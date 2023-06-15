@@ -2,9 +2,11 @@ import { gql } from "@apollo/client/core";
 import apolloClient from "./apolloClient";
 
 const addUser = gql`
-  mutation CreateUser($data: UserInput!) {
-    createUser(data: $data) {
+  mutation SignUp($userInputs: [UserInput!]!) {
+    createUser(userInputs: $userInputs) {
       id
+      firstName
+      lastName
       email
     }
   }
@@ -16,11 +18,18 @@ describe("User resolver", () => {
       const result = await apolloClient.mutate({
         mutation: addUser,
         variables: {
-          data: { email: "jimmy@gmail.com", password: "jimmyjimmy" },
+          userInputs: [
+            {
+              email: "jimmy@gmail.com",
+              password: "jimmyjimmy",
+              firstName: "jimmy",
+              lastName: "jimjim",
+            },
+          ],
         },
       });
-      expect(result.data.createUser).toHaveProperty("id");
-      expect(result.data.createUser).toHaveProperty("email");
+      expect(result.data.createUser[0]).toHaveProperty("id");
+      expect(result.data.createUser[0]).toHaveProperty("email");
     });
   });
 });

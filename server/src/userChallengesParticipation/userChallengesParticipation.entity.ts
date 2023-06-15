@@ -3,13 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import Challenge from "../challenge/challenge.entity";
 import User from "../user/user.entity";
-import moment from "moment";
 
 @Entity()
 @ObjectType()
