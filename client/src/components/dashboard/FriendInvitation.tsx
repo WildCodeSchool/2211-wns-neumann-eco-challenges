@@ -18,7 +18,7 @@ export const FriendInvitation = () => {
   ///
   /// Loads not only user's friends but also all the others users.
   ///
-  const { data, loading, error, refetch } = useGetFriendsQuery({
+  const { data, refetch } = useGetFriendsQuery({
     variables: { onlyFriends: false },
   });
 
@@ -30,7 +30,7 @@ export const FriendInvitation = () => {
   const [friends, setFriends] = useState(
     data?.getFriends.map((friend) => ({
       ...friend,
-      isInvited: friend.status !== "none",
+      isInvited: ["accepted", "pending"].includes(friend.status),
     })) ?? []
   );
 
@@ -43,7 +43,7 @@ export const FriendInvitation = () => {
     setFriends(
       data?.getFriends.map((friend) => ({
         ...friend,
-        isInvited: friend.status !== "none",
+        isInvited: ["accepted", "pending"].includes(friend.status),
       })) ?? []
     );
   }, [data]);

@@ -23,7 +23,7 @@ export class UserChallengesParticipationResolver {
   async getUserChallengeParticipationByUserId(
     @Arg("userId") userId: string
   ): Promise<UserChallengeParticipationDetails[]> {
-    return await getUserChallengeParticipationByUserId(userId);
+    return await getUserChallengeParticipationByUserId(userId, "accepted");
   }
 
   @Query(() => [UserChallengesParticipation])

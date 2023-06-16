@@ -19,6 +19,12 @@ import {
   thunkUpdateUserChallengeEcogesture,
 } from "../reducer/challenge/challenge.reducer";
 
+const avatars = [
+  "https://images.prismic.io/utopix-next-website/Mzk0NGJkOWEtY2ZlYS00MjVjLTkwNTAtOGY5OWQzN2IzNGVi_762cec57-2eaf-4eaf-9a0d-2e7860147e48_profilhomme7.jpg?ixlib=js-3.7.1&w=3840&auto=format&fit=max",
+  "https://www.informelles.media/wp-content/uploads/2022/05/Alice-Lhabouz-Couleur-HD-scaled.jpg",
+  "https://ca.slack-edge.com/TGU64F2H2-U04DJ3K2QTG-fbaa52a9366f-512",
+];
+
 const getGoldenPodium = (name: string, score: number, avatar: string) => {
   return (
     <Card
@@ -57,7 +63,7 @@ const getGoldenPodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatar}
+          src={avatars[0]}
         />
       </Badge>
 
@@ -137,7 +143,7 @@ const getSilverPodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatar}
+          src={avatars[1]}
         />
       </Badge>
 
@@ -217,7 +223,7 @@ const getBronzePodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatar}
+          src={avatars[2]}
         />
       </Badge>
 

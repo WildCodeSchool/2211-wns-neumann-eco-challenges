@@ -3,6 +3,8 @@ import { getChallengeById } from "../challenge/challenge.service";
 import datasource from "../db";
 import { getUsersById } from "../user/user.service";
 import Notification from "./notification.entity";
+import { updateFriendRelationshipStatus } from "../friend/friend.service";
+import { updateChallengeParticipationStatus } from "../userChallengesParticipation/userChallengesParticipation.service";
 
 const contentTemplates = {
   friend_invitation: {
@@ -31,7 +33,7 @@ export async function getOwnNotifications(
 ): Promise<Notification[] | null> {
   const notifications = await datasource
     .getRepository(Notification)
-    .find({ where: { receiverId } });
+    .find({ where: { receiverId }, order: { updatedDate: "DESC" } });
 
   return notifications.map((notification) => ({
     ...notification,
@@ -57,7 +59,7 @@ export async function updateNotificationStatus(
     notification.type != null &&
     ["friend_invitation", "challenge_invitation"].includes(notification.type);
 
-  // Compute content after user response
+  // Compute content after user response, accept or decline invitation
   if (status != null && isInvitiationNotification) {
     notification.status = status;
     const [sender] = await getUsersById([notification.senderId]);
@@ -77,6 +79,20 @@ export async function updateNotificationStatus(
       throw new ApolloError(
         "[updateNotificationStatus] - Cannot find sender user",
         "NOT_FOUND"
+      );
+
+    if (notification.type === "friend_invitation")
+      await updateFriendRelationshipStatus(
+        notification.senderId,
+        notification.receiverId,
+        notification.status
+      );
+
+    if (notification.type === "challenge_invitation")
+      await updateChallengeParticipationStatus(
+        notification.challengeId as string,
+        notification.receiverId,
+        notification.status
       );
 
     notification.contentAfterUserResponse = contentTemplates[

@@ -11,7 +11,6 @@ import {
   useUpdateNotificationMutation,
 } from "../../gql/generated/schema";
 import { grey } from "@mui/material/colors";
-import { useEffect, useState } from "react";
 
 const notificationConfigs = {
   challenge_invitation: {
@@ -59,14 +58,13 @@ export const NotificationItem = ({
 }) => {
   const [updateNotification] = useUpdateNotificationMutation();
 
-  const onNotificationAnswerButtonClicked = async (type: string) => {
+  const onNotificationAnswerButtonClicked = async (
+    status: NotificationStatus
+  ) => {
     await updateNotification({
       variables: {
         notificationId: notification.id,
-        status:
-          type === "accepted"
-            ? NotificationStatus.Accepted
-            : NotificationStatus.Declined,
+        status,
       },
     });
   };
@@ -124,7 +122,11 @@ export const NotificationItem = ({
               <Grid item xs={6}>
                 <Button
                   variant={"smallActionButton"}
-                  onClick={() => onNotificationAnswerButtonClicked("accept")}
+                  onClick={() =>
+                    onNotificationAnswerButtonClicked(
+                      NotificationStatus.Accepted
+                    )
+                  }
                 >
                   Accept
                 </Button>
@@ -132,7 +134,11 @@ export const NotificationItem = ({
               <Grid item xs={6}>
                 <Button
                   variant={"smallActionButton"}
-                  onClick={() => onNotificationAnswerButtonClicked("decline")}
+                  onClick={() =>
+                    onNotificationAnswerButtonClicked(
+                      NotificationStatus.Declined
+                    )
+                  }
                 >
                   Decline
                 </Button>
