@@ -36,9 +36,9 @@ export default class Notification {
   @CreateDateColumn()
   date: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedDate?: Date;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

@@ -82,7 +82,7 @@ export const FriendInvitation = () => {
   };
 
   return (
-    <Paper elevation={5} className="challengeItemContainer">
+    <Paper elevation={2} className="challengeItemContainer">
       <Stack padding={2} spacing={0.5}>
         <FriendInvitationEnhanced
           statusUpdateFriendRelationship={statusUpdateFriendRelationship}

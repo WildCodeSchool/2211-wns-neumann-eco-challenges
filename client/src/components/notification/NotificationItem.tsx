@@ -5,22 +5,26 @@ import parse from "html-react-parser";
 import moment from "moment";
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import GamesRoundedIcon from "@mui/icons-material/GamesRounded";
-import { grey, pink } from "@mui/material/colors";
+import {
+  Notification,
+  NotificationStatus,
+  useUpdateNotificationMutation,
+} from "../../gql/generated/schema";
+import { grey } from "@mui/material/colors";
+import { useEffect, useState } from "react";
 
 const notificationConfigs = {
-  CHALLENGE_INVITE: {
-    message: `<b>$sender$</b> wants you to join the challenge <b>$content$</b>`,
+  challenge_invitation: {
     iconClassName: "bgPeachColor",
   },
-  FRIEND_INVITE: {
-    message: "<b>$sender$</b> wants to be your friend.",
+  friend_invitation: {
     iconClassName: "bgYellowColor",
   },
 };
 
 const getIcon = (type: string) => {
   switch (type) {
-    case "FRIEND_INVITE":
+    case "friend_invitation":
       return (
         <Avatar
           sx={{ width: 30, height: 30 }}
@@ -29,7 +33,7 @@ const getIcon = (type: string) => {
           <FaceRoundedIcon sx={{ width: 20, height: 20 }} />
         </Avatar>
       );
-    case "CHALLENGE_INVITE":
+    case "challenge_invitation":
       return (
         <Avatar
           sx={{ width: 30, height: 30 }}
@@ -43,40 +47,44 @@ const getIcon = (type: string) => {
   }
 };
 
-const getMessage = ({
-  type,
-  sender,
-  content,
-}: {
-  type: string;
-  sender: string;
-  content: { name: string; url: string } | any;
-}) =>
-  notificationConfigs[
-    type as keyof { CHALLENGE_INVITE: string; FRIEND_INVITE: string }
-  ].message
-    .replace("$sender$", sender)
-    .replace("$content$", type === "CHALLENGE_INVITE" ? content.name : content);
-
 export const NotificationItem = ({
-  type,
-  sender,
-  content,
-  avatar,
-  date,
+  notification,
 }: {
-  type: string;
-  sender: string;
-  content: { name: string; url: string } | any;
-  avatar: string;
-  date: string;
+  notification: Notification;
 }) => {
+  const [updatedNotification, setUpdatedNotification] = useState(notification);
+  useEffect(() => {
+    console.log(notification);
+
+    setUpdatedNotification(notification);
+  }, [notification]);
+  const [updateNotification] = useUpdateNotificationMutation();
+
+  const hasBeenClicked = async (type: string) => {
+    const data = await updateNotification({
+      variables: {
+        notificationId: notification.id,
+        status:
+          type === "accepted"
+            ? NotificationStatus.Accepted
+            : NotificationStatus.Declined,
+      },
+    });
+    if (data.data != null) {
+      setUpdatedNotification(data.data?.updateNotificationStatus);
+    }
+  };
+
   return (
-    <Paper elevation={0}>
+    <Paper elevation={2}>
       <Grid
         container
         paddingY={2}
-        sx={{ borderBottom: "1px solid", borderColor: grey[200] }}
+        sx={{
+          border: "1px solid",
+          borderColor: grey[200],
+          borderRadius: "4px",
+        }}
       >
         <Grid
           item
@@ -86,32 +94,37 @@ export const NotificationItem = ({
           alignItems={"center"}
           marginTop={"-1.5em"}
         >
-          <Avatar sx={{ width: 56, height: 56 }} src={avatar}></Avatar>
+          <Avatar sx={{ width: 56, height: 56 }} src={undefined}></Avatar>
         </Grid>
         <Grid item xs={7}>
           <Grid item xs={12}>
             <Typography variant="caption">
-              {moment(date).format("dddd DD MMMM YYYY hh:mm")}
+              {moment(notification?.date).format("dddd DD MMMM YYYY hh:mm")}
             </Typography>
           </Grid>
           <Grid item xs={12} marginBottom={"0.3em"}>
-            {parse(getMessage({ type, sender, content }))}
+            {parse(notification.content)}
           </Grid>
-          <Grid
-            item
-            xs={12}
-            flexDirection={"row"}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Grid item xs={6}>
-              <Button>Accept</Button>
+          {updatedNotification.status !== NotificationStatus.Pending && (
+            <Grid
+              item
+              xs={12}
+              flexDirection={"row"}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              marginTop={1}
+            >
+              <Grid item xs={6}>
+                <Button onClick={() => hasBeenClicked("accept")}>Accept</Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button onClick={() => hasBeenClicked("decline")}>
+                  Decline
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={6} display={"flex"} justifyContent={"center"}>
-              <Button>Decline</Button>
-            </Grid>
-          </Grid>
+          )}
         </Grid>
         <Grid
           item
@@ -121,7 +134,7 @@ export const NotificationItem = ({
           alignItems={"center"}
           marginTop={"-1.5em"}
         >
-          {getIcon(type)}
+          {getIcon(notification.type!)}
         </Grid>
       </Grid>
     </Paper>

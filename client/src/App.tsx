@@ -19,6 +19,8 @@ import { GenericDialog } from "./screens/GenericDialog";
 import { useAppSelector } from "./reducer/hooks";
 import { ScrollTopScreen } from "./screens/ScrollTopScreen";
 import { Challenge } from "./screens/Challenge";
+import theme from "./theme/theme";
+import { ThemeProvider } from "@mui/material";
 
 function App() {
   const { pathname } = useLocation();
@@ -82,7 +84,9 @@ const AppContent = () => {
                 <ScrollTopScreen
                   key={uuid()}
                   screen={
-                    <ProtectedComponent component={<NotificationsCenter />} />
+                    <ThemeProvider theme={theme}>
+                      <ProtectedComponent component={<NotificationsCenter />} />
+                    </ThemeProvider>
                   }
                 />
               }
