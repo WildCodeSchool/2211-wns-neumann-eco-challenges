@@ -116,6 +116,7 @@ export type Mutation = {
   sendExpoNotification: Scalars['Boolean'];
   updateChallenge: Challenge;
   updateFriendRelationship: User;
+  updateNotificationStatus: Notification;
   updateUserChallengeEcogesture: UserEcogesturesWithChallengersScore;
   updateUserExpoToken: User;
 };
@@ -189,6 +190,12 @@ export type MutationUpdateFriendRelationshipArgs = {
 };
 
 
+export type MutationUpdateNotificationStatusArgs = {
+  notificationId: Scalars['String'];
+  status?: InputMaybe<NotificationStatus>;
+};
+
+
 export type MutationUpdateUserChallengeEcogestureArgs = {
   challengeId: Scalars['String'];
   ecogestureId: Scalars['String'];
@@ -207,8 +214,9 @@ export type Notification = {
   id: Scalars['String'];
   receiverId: Scalars['String'];
   senderId: Scalars['String'];
-  status: Scalars['String'];
-  type: Scalars['String'];
+  status?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']>;
+  updatedDate?: Maybe<Scalars['DateTime']>;
 };
 
 export type NotificationInput = {
@@ -216,6 +224,12 @@ export type NotificationInput = {
   data?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
+
+export enum NotificationStatus {
+  Accepted = 'accepted',
+  Declined = 'declined',
+  Pending = 'pending'
+}
 
 export type Query = {
   __typename?: 'Query';
@@ -392,7 +406,7 @@ export type UpdateFriendRelationshipMutation = { __typename?: 'Mutation', update
 export type GetOwnNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type: string, content: string, status: string, hasBeenSeen: boolean }> };
+export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type?: string | null, content: string, status?: string | null, hasBeenSeen: boolean }> };
 
 export type DeleteNotificationsMutationVariables = Exact<{
   deleteNotificationsId: Array<Scalars['String']> | Scalars['String'];
@@ -400,6 +414,14 @@ export type DeleteNotificationsMutationVariables = Exact<{
 
 
 export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<boolean> };
+
+export type UpdateNotificationMutationVariables = Exact<{
+  status?: InputMaybe<NotificationStatus>;
+  notificationId: Scalars['String'];
+}>;
+
+
+export type UpdateNotificationMutation = { __typename?: 'Mutation', updateNotificationStatus: { __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, updatedDate?: any | null, type?: string | null, content: string, status?: string | null, hasBeenSeen: boolean } };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -939,6 +961,48 @@ export function useDeleteNotificationsMutation(baseOptions?: Apollo.MutationHook
 export type DeleteNotificationsMutationHookResult = ReturnType<typeof useDeleteNotificationsMutation>;
 export type DeleteNotificationsMutationResult = Apollo.MutationResult<DeleteNotificationsMutation>;
 export type DeleteNotificationsMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
+export const UpdateNotificationDocument = gql`
+    mutation UpdateNotification($status: NotificationStatus, $notificationId: String!) {
+  updateNotificationStatus(status: $status, notificationId: $notificationId) {
+    id
+    senderId
+    receiverId
+    date
+    updatedDate
+    type
+    content
+    status
+    hasBeenSeen
+  }
+}
+    `;
+export type UpdateNotificationMutationFn = Apollo.MutationFunction<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
+
+/**
+ * __useUpdateNotificationMutation__
+ *
+ * To run a mutation, you first call `useUpdateNotificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNotificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNotificationMutation, { data, loading, error }] = useUpdateNotificationMutation({
+ *   variables: {
+ *      status: // value for 'status'
+ *      notificationId: // value for 'notificationId'
+ *   },
+ * });
+ */
+export function useUpdateNotificationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNotificationMutation, UpdateNotificationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateNotificationMutation, UpdateNotificationMutationVariables>(UpdateNotificationDocument, options);
+      }
+export type UpdateNotificationMutationHookResult = ReturnType<typeof useUpdateNotificationMutation>;
+export type UpdateNotificationMutationResult = Apollo.MutationResult<UpdateNotificationMutation>;
+export type UpdateNotificationMutationOptions = Apollo.BaseMutationOptions<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {

@@ -26,7 +26,7 @@ class UserChallengesParticipation {
 
   @Field()
   @Column({ default: "pending" })
-  status?: "pending" | "accepted" | "declined";
+  status: "pending" | "accepted" | "declined";
 
   @UpdateDateColumn()
   updatedDate: Date;

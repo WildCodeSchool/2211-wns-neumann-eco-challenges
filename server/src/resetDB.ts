@@ -5,8 +5,16 @@ import {
   createEcogestures,
   getEcogestures,
 } from "./ecogesture/ecogesture.service";
-import { allChallenges, createChallenges } from "./challenge/challenge.service";
-import { createUserChallengeParticipation } from "./userChallengesParticipation/userChallengesParticipation.service";
+import {
+  allChallenges,
+  createChallenges,
+  getChallengeById,
+} from "./challenge/challenge.service";
+import {
+  createUserChallengeParticipation,
+  getUserChallengeParticipationByUserId,
+  updateChallengeParticipationStatus,
+} from "./userChallengesParticipation/userChallengesParticipation.service";
 import { getUsers } from "./user/user.service";
 import moment from "moment";
 import Friend from "./friend/friend.entity";
@@ -17,6 +25,7 @@ import UserChallengesCreation from "./userChallengesCreation/userChallengesCreat
 import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogestures.entity";
 import Category from "./category/category.entity";
 import Notification from "./notification/notification.entity";
+import { updateFriendRelationship } from "./friend/friend.service";
 async function reset(): Promise<void> {
   // Drop database
   await datasource.initialize();
@@ -42,6 +51,7 @@ async function reset(): Promise<void> {
   await userFill();
   await friendFill();
   await challengeFill();
+  await userChallengesParticipationFill();
 
   // Close connection
   await datasource.destroy();
@@ -117,7 +127,8 @@ async function friendFill(): Promise<void> {
   await Promise.all(
     friendsId.map(
       async (friendId) =>
-        await datasource.getRepository(Friend).save({ userId, friendId })
+        // await datasource.getRepository(Friend).save({ userId, friendId })
+        await updateFriendRelationship(friendId, userId)
     )
   );
 }
@@ -199,25 +210,41 @@ async function userChallengesParticipationFill(): Promise<void> {
     ({ email }) => email === "bdeliencourt@gmail.com"
   ) ?? { id: "" };
 
-  const challenges = await allChallenges();
+  const challenges = await getUserChallengeParticipationByUserId(
+    userId,
+    "accepted"
+  );
+
+  const challenge = challenges.find(
+    ({ challenge }) => challenge.name === "Make your street cleaner"
+  );
+
+  if (challenge == null) return;
+
+  const users = await getUsers();
+
   await Promise.all(
-    challenges.map(
-      async ({ id }) => await createUserChallengeParticipation(id, userId)
+    users.map(
+      async ({ id }) =>
+        await updateChallengeParticipationStatus(
+          challenge.challenge.id,
+          id,
+          "accepted"
+        )
     )
   );
 }
 
 async function challengeFill(): Promise<void> {
-  const users = await getUsers()
+  const users = await getUsers();
 
   const { id: userId } = users.find(
     ({ email }) => email === "bdeliencourt@gmail.com"
   ) ?? { id: "" };
 
-  const challengers = users?.filter(
-    ({ email }) => email !== "bdeliencourt@gmail.com"
-  ) ?? [];
-  
+  const challengers =
+    users?.filter(({ email }) => email !== "bdeliencourt@gmail.com") ?? [];
+
   const ecogesturesId = (await getEcogestures()).map(({ id }) => id);
   await createChallenges(userId, [
     {
@@ -231,7 +258,7 @@ async function challengeFill(): Promise<void> {
       },
     },
     {
-      challengersId: [],
+      challengersId: challengers.map((challenger) => challenger.id),
       ecogesturesId,
       challenge: {
         name: "Eat and buy wisely",

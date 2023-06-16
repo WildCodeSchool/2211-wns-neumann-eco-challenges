@@ -22,6 +22,22 @@ export async function getUserChallengeParticipationByChallengeId(
   return participations;
 }
 
+// Update the challenge participation of the current user.
+export async function updateChallengeParticipationStatus(
+  challengeId: string,
+  userId: string,
+  status: UserChallengesParticipation["status"]
+): Promise<void> {
+  const { affected } = await datasource
+    .getRepository(UserChallengesParticipation)
+    .update({ userId, challengeId }, { status });
+
+  if (affected == null || affected === 0)
+    throw new ApolloError(
+      "[updateChallengeParticipationStatus] - Cannot update challenge participation",
+      "NOT_FOUND"
+    );
+}
 // Return the list of the user's challenges.
 // If status is not set, all the challenges are returned
 // If status is set, the challenges participations with the speicifed status are returned
@@ -84,7 +100,7 @@ export async function getUserChallengeParticipationByUserId(
 export async function createUserChallengeParticipation(
   challengeId: string,
   userId: string,
-  status?: UserChallengesParticipation["status"]
+  status: UserChallengesParticipation["status"] = "pending"
 ): Promise<User> {
   const challenge = await datasource
     .getRepository(Challenge)

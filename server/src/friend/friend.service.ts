@@ -2,51 +2,37 @@ import { ApolloError } from "apollo-server-errors";
 import datasource from "../db";
 import User from "../user/user.entity";
 import Friend, { FriendRelationship } from "./friend.entity";
-import { getUsers } from "../user/user.service";
 import {
   deleteFriendInvitation,
   notifyFriendInvitation,
 } from "../notification/notification.service";
+import { In, Not } from "typeorm";
 
 export async function getFriends(
   userId: string,
   onlyFriends: boolean,
   status?: Friend["status"]
 ): Promise<FriendRelationship[]> {
-  const friends = await datasource
-    .getRepository(Friend)
-    .find({ where: { userId, status } });
+  // Find friend relationship where the current user is whether the sender or the receiver
+  const friends = await datasource.getRepository(Friend).find({
+    where: [
+      { userId, status },
+      { friendId: userId, status },
+    ],
+  });
 
-  let friendIdsAndStatus: Array<{
+  // Get the user's friends ids and their status.
+  const friendIdsAndStatus: Array<{
     friendId: string;
     status: FriendRelationship["status"];
-  }> = friends.map(({ friendId, status }) => ({
-    friendId,
+  }> = friends.map(({ friendId, userId: userIdInFriend, status }) => ({
+    // If the friend id is the current user id, we get the friend id which is the user id
+    // If not, the userId is the current userId, we return the friend id
+    friendId: friendId === userId ? userIdInFriend : friendId,
     status,
   }));
 
-  // Includes all the users even those we are not friend with
-  if (onlyFriends != null && !onlyFriends) {
-    const notFriends = (await getUsers()).filter(
-      ({ id }) =>
-        id !== userId &&
-        friends.findIndex(({ friendId }) => id === friendId) === -1
-    );
-
-    friendIdsAndStatus = [
-      ...friendIdsAndStatus,
-      ...notFriends.map(
-        ({
-          id: friendId,
-        }): { friendId: string; status: FriendRelationship["status"] } => ({
-          friendId,
-          status: "none",
-        })
-      ),
-    ];
-  }
-
-  const friendList = await Promise.all(
+  const friendsList = await Promise.all(
     friendIdsAndStatus.map(async ({ friendId, status }) => {
       const friend = await datasource.getRepository(User).findOneOrFail({
         where: { id: friendId },
@@ -54,9 +40,45 @@ export async function getFriends(
       return { friend, status };
     })
   );
-  return friendList;
+
+  // Includes all the users even those we are not friend with
+  if (onlyFriends != null && !onlyFriends) {
+    const friendsIdWithCurrentUser = friendsList.map(
+      ({ friend: { id } }) => id
+    );
+    friendsIdWithCurrentUser.push(userId);
+    console.log(friendsList.map(({ friend: { id } }) => id));
+    const othersUsers = await datasource.getRepository(User).find({
+      where: { id: Not(In(friendsIdWithCurrentUser)) },
+    });
+
+    // Add all users who are not in a process of becoming friend with the current user.
+    friendsList.push(
+      ...othersUsers.map((user) => ({
+        friend: user,
+        status: "none" as FriendRelationship["status"],
+      }))
+    );
+  }
+
+  return friendsList;
 }
 
+export async function updateFriendRelationshipStatus(
+  userId: string,
+  friendId: string,
+  status: Friend["status"]
+): Promise<void> {
+  const { affected } = await datasource
+    .getRepository(Friend)
+    .update({ userId, friendId }, { status });
+
+  if (affected == null || affected === 0)
+    throw new ApolloError(
+      "[updateFriendRelationshipStatus] - Cannot update friend relationship",
+      "NOT_FOUND"
+    );
+}
 export async function updateFriendRelationship(
   userId: string,
   friendId: string

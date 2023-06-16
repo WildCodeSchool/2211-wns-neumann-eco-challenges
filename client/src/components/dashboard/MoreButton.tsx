@@ -5,8 +5,7 @@ export const MoreButton = () => {
   return (
     <Button style={{ textTransform: "lowercase" }} className="moreButton">
       <div className="transitionArrow">
-        {" "}
-        <ArrowRightAltIcon />{" "}
+        <ArrowRightAltIcon />
       </div>
       <Typography sx={{ color: "#104455" }} fontWeight={600} lineHeight={1}>
         more

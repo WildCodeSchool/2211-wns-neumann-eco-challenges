@@ -11,9 +11,9 @@ export interface FriendItemEnhancedProps {
   avatar: string;
   id: string;
   isInvited: boolean;
-  subText: string;
+  subText?: string;
   borderColor: string;
-  activeText: string;
-  inactiveText: string;
-  isLoading: boolean;
+  activeText?: string;
+  inactiveText?: string;
+  isLoading?: boolean;
 }

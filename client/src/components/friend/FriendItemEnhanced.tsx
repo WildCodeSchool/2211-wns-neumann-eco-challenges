@@ -59,7 +59,6 @@ export const FriendItemEnhanced = ({
         onClick={() => {
           updateFriendInvitation(id, !isInvited);
         }}
-        variant="contained"
         style={{
           boxShadow: "none",
           borderRadius: "25px",

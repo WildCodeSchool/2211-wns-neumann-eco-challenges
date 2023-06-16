@@ -30,7 +30,7 @@ export const FriendInvitation = () => {
   const [friends, setFriends] = useState(
     data?.getFriends.map((friend) => ({
       ...friend,
-      isInvited: friend.status !== "none",
+      isInvited: ["accepted", "pending"].includes(friend.status),
     })) ?? []
   );
 
@@ -43,7 +43,7 @@ export const FriendInvitation = () => {
     setFriends(
       data?.getFriends.map((friend) => ({
         ...friend,
-        isInvited: friend.status !== "none",
+        isInvited: ["accepted", "pending"].includes(friend.status),
       })) ?? []
     );
   }, [data]);
@@ -82,7 +82,7 @@ export const FriendInvitation = () => {
   };
 
   return (
-    <Paper elevation={5} className="challengeItemContainer">
+    <Paper elevation={2} className="challengeItemContainer">
       <Stack padding={2} spacing={0.5}>
         <FriendInvitationEnhanced
           statusUpdateFriendRelationship={statusUpdateFriendRelationship}
