@@ -30,7 +30,8 @@ function App() {
       className={
         pathname === "/" || pathname.includes("/sign")
           ? "App-header welcome"
-          : pathname.includes("/dashboard")
+          : pathname.includes("/dashboard") ||
+            pathname.includes("/notification")
           ? "App-header dashboard paddingBtmPageForMenu"
           : pathname.includes("/challenge")
           ? "App-header challenge dashboard"

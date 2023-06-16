@@ -3,55 +3,81 @@ import { NotificationItem } from "./NotificationItem";
 import { HeaderScreen } from "../menu/HeaderScreen";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
-import { useGetOwnNotificationsQuery } from "../../gql/generated/schema";
-import { useEffect } from "react";
+import {
+  NotificationStatus,
+  useGetOwnNotificationsQuery,
+} from "../../gql/generated/schema";
+import { Typography } from "@mui/material";
 
 export const Notifications = () => {
   const { data, loading } = useGetOwnNotificationsQuery();
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   return (
-    <Grid container gap={4}>
-      <Stack>
+    <Grid container gap={4} direction={"column"}>
+      <Stack width="100%">
         <HeaderScreen
           title=""
           subtitle="Latest notifications"
           afterSubtitleComponent={
             <Badge
               color="error"
-              badgeContent={data?.getOwnNotifications.length}
-              showZero={false}
+              badgeContent={
+                <Typography fontSize={"1em"} fontWeight={700}>
+                  {
+                    data?.getOwnNotifications.filter(
+                      ({ status }) => status === NotificationStatus.Pending
+                    ).length
+                  }
+                </Typography>
+              }
+              showZero={true}
             />
           }
         />
 
         <Stack marginTop={2} gap={1}>
-          {data?.getOwnNotifications.map((notification) => (
-            <NotificationItem notification={notification} />
-          ))}
+          {data?.getOwnNotifications
+            .filter(({ status }) => status === NotificationStatus.Pending)
+            .map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
         </Stack>
       </Stack>
-      {/* <Stack>
+      <Stack width={"100%"}>
         <HeaderScreen
           title=""
           subtitle="Archived"
           afterSubtitleComponent={
             <Badge
+              sx={{ fontWeight: "700 !important" }}
               color="error"
-              badgeContent={data?.getOwnNotifications.length}
-              showZero={false}
+              badgeContent={
+                <Typography fontSize={"1em"} fontWeight={700}>
+                  {
+                    data?.getOwnNotifications.filter(
+                      ({ status }) => status !== NotificationStatus.Pending
+                    ).length
+                  }
+                </Typography>
+              }
+              showZero={true}
             />
           }
         />
         <Stack marginTop={2} gap={1}>
-          {data?.getOwnNotifications.map((notification) => (
-            <NotificationItem {...notification} />
-          ))}
+          {data?.getOwnNotifications
+            .filter(({ status }) => status !== NotificationStatus.Pending)
+            .map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
         </Stack>
-      </Stack> */}
+      </Stack>
     </Grid>
   );
 };
