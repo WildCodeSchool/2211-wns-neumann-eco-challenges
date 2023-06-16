@@ -1,0 +1,26 @@
+name: integration-tests-workflow
+
+on: pull_request
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Make env file
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_JWT_PRIVATE_KEY: zeyfgzeigfyzegfyuzegf
+          envkey_NODE_ENV: "development"
+          envkey_CORS_ALLOWED_ORIGINS: "http://localhost:3001,http://localhost:3000,http://localhost:4000,http://192.168.0.10:3000,http://192.168.0.15:3000"
+          envkey_SERVER_HOST: "http://192.168.0.15"
+          envkey_SERVER_PORT: 4000
+          envkey_DB_HOST: localhost
+          envkey_DB_USER: postgres
+          envkey_DB_PASS: postgres
+          envkey_DB_NAME: postgres
+          envkey_DB_PORT: 5432
+          directory: server
+          file_name: .env
+      - name: Run integration tests
+        run: npm run integration-tests

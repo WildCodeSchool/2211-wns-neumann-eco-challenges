@@ -9,7 +9,6 @@ import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestur
 import User from "../user/user.entity";
 import Ecogesture from "../ecogesture/ecogesture.entity";
 import Category from "../category/category.entity";
-import Notification from "../notification/notification.entity";
 
 @Entity()
 @ObjectType()

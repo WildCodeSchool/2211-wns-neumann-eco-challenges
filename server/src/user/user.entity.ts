@@ -6,7 +6,7 @@ import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeE
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import Friend from "../friend/friend.entity";
-import Notification from "../notification/notification.entity";
+
 @Entity()
 @ObjectType()
 class User {

@@ -10,7 +10,6 @@ import { WelcomePageTemplate } from "../components/welcome/WelcomePageTemplate";
 import { useAppDispatch } from "../reducer/hooks";
 import { thunkGetProfile } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
-import { scrollToTop } from "../tools/render.tools";
 
 export const Welcome = () => {
   const navigate = useNavigate();

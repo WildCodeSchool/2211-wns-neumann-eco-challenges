@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node-dev src/index.ts",
-    "resetDB": "ts-node-dev src/resetDB.ts"
+    "resetDB": "ts-node-dev src/resetDB.ts",
+    "build": "tsc",
+    "start:prod": "node build/index.js"
   },
   "repository": {
     "type": "git",

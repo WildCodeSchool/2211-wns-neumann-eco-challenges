@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: docker-build
+name: client-build
 
 # Controls when the workflow will run
 on:
@@ -29,5 +29,5 @@ jobs:
           build-args: |
             "REACT_APP_GRAPHQL_API_URL=http://localhost:4000"
           context: "{{defaultContext}}:client"
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/greenmates:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/greenmates-client:latest
           file: "Dockerfile.production"
