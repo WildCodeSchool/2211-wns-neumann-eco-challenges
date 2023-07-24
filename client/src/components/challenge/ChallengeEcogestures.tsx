@@ -28,13 +28,19 @@ export const ChallengeEcogestures = ({
     formState: { errors: formErrors },
   } = useForm();
 
-  const getFilteredEcogestures = () =>
-    ecogestures.filter(({ category: { id } }) =>
-      selectedCategoryId === "all" ? true : id === selectedCategoryId
-    );
+  const getFilteredEcogestures = () => {
+    return selectedCategoryId === "all"
+      ? ecogestures
+      : ecogestures.filter(({ category: { id } }) => id === selectedCategoryId);
+  };
 
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState<Array<Category>>([]);
+
+  ///
+  /// On ecogestures loading, parse all ecogestures to get categories.
+  /// add an extra category 'all'. All is selected by default.
+  ///
   useEffect(() => {
     const categories: Category[] = [{ id: "all", name: "all", icon: "all" }];
     if (ecogestures.length !== 0) {

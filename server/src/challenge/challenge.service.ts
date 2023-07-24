@@ -38,6 +38,11 @@ export async function getChallengeDetails(
     challenge.challengeEcogestures.map(({ ecogestureId }) => ecogestureId)
   );
 
+  // Sort ecogestures by reward ASC
+  ecogestures.sort(
+    (ecogestureA, ecogestureB) => ecogestureA.reward - ecogestureB.reward
+  );
+
   // Get categories
   const categories: Category[] = [];
   ecogestures.forEach(({ category }) => {
