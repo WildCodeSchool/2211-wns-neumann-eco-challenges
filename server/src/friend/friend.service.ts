@@ -83,13 +83,27 @@ export async function updateFriendRelationship(
   userId: string,
   friendId: string
 ): Promise<User> {
-  const removeFriendRelationship = await datasource
+  // Relation is unique for a pair of userId and friendId
+  // Can be : userId - friendId or friendId - userId
+  const doesRelationUserIdFriendIdExists = await datasource
     .getRepository(Friend)
     .exist({ where: { userId, friendId } });
+  const doesRelationUserIdFriendIdReversedExists = await datasource
+    .getRepository(Friend)
+    .exist({ where: { userId: friendId, friendId: userId } });
 
   // Delete friend relationship & friend notification
-  if (removeFriendRelationship) {
-    await datasource.getRepository(Friend).delete({ userId, friendId });
+  if (
+    doesRelationUserIdFriendIdReversedExists ||
+    doesRelationUserIdFriendIdExists
+  ) {
+    const _userId = doesRelationUserIdFriendIdExists ? userId : friendId;
+    const _friendId = doesRelationUserIdFriendIdExists ? friendId : userId;
+    await datasource.getRepository(Friend).delete({
+      userId: _userId,
+      friendId: _friendId,
+    });
+    // Delete only friend invitations that are in pending.
     await deleteFriendInvitation(userId, friendId);
 
     // Add friend relationship & friend notification

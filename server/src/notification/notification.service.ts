@@ -141,7 +141,12 @@ export async function deleteFriendInvitation(
 ): Promise<boolean> {
   await datasource
     .getRepository(Notification)
-    .delete({ receiverId, senderId, type: "friend_invitation" });
+    .delete({
+      receiverId,
+      senderId,
+      type: "friend_invitation",
+      status: "pending",
+    });
   return true;
 }
 

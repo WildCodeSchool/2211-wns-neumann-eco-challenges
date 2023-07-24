@@ -11,6 +11,8 @@ import {
   useUpdateNotificationMutation,
 } from "../../gql/generated/schema";
 import { grey } from "@mui/material/colors";
+import { useAppDispatch } from "../../reducer/hooks";
+import { setEvent } from "../../reducer/event/event.reducer";
 
 const notificationConfigs = {
   challenge_invitation: {
@@ -57,16 +59,27 @@ export const NotificationItem = ({
   notification: Notification;
 }) => {
   const [updateNotification] = useUpdateNotificationMutation();
+  const dispatch = useAppDispatch();
 
   const onNotificationAnswerButtonClicked = async (
     status: NotificationStatus
   ) => {
-    await updateNotification({
-      variables: {
-        notificationId: notification.id,
-        status,
-      },
-    });
+    try {
+      await updateNotification({
+        variables: {
+          notificationId: notification.id,
+          status,
+        },
+      });
+    } catch (error) {
+      dispatch(
+        setEvent({
+          id: "updateFriendRelationshipStatus",
+          title: "Ouch !",
+          body: "We couldn't find your friend request.",
+        })
+      );
+    }
   };
 
   return (
