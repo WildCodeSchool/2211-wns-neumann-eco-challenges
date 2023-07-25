@@ -58,4 +58,4 @@ jobs:
       - name: Trigger update production with webhook
         uses: wei/curl@master
         with:
-          args: https://neumann5.wns.wilders.dev/
+          args: https://ops.neumann5.wns.wilders.dev/hooks/update/production
