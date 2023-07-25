@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 const env = Constants.expoConfig?.extra;
 
 const httpLink = createHttpLink({
-  uri: env?.REACT_APP_GRAPHQL_API_URL || "http://localhost:4000",
+  uri: env?.REACT_APP_GRAPHQL_API_URL,
   credentials: "include",
 });
 

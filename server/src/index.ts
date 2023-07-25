@@ -7,8 +7,14 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import datasource from "./db";
 import { env } from "./env";
-import { ContextType, JWTPayload } from "./user/user.resolver";
+import { ContextType, JWTPayload, UserResolver } from "./user/user.resolver";
 import User from "./user/user.entity";
+import { ChallengeResolver } from "./challenge/challenge.resolver";
+import { UserChallengeEcogesturesResolver } from "./userChallengeEcogestures/userChallengeEcogestures.resolver";
+import { EcogestureResolver } from "./ecogesture/ecogesture.resolver";
+import { FriendResolver } from "./friend/friend.resolver";
+import { NotificationResolver } from "./notification/notification.resolver";
+import { UserChallengesParticipationResolver } from "./userChallengesParticipation/userChallengesParticipation.resolver";
 
 const errorMessages = {
   23505: "An account with this email already exists.",
@@ -20,7 +26,15 @@ async function start(): Promise<void> {
 
   const schema = await buildSchema({
     // resolvers: [join(__dirname, '/resolvers/*.ts')],
-    resolvers: [join(__dirname, "/**/*.resolver.ts")],
+    resolvers: [
+      ChallengeResolver,
+      UserChallengeEcogesturesResolver,
+      EcogestureResolver,
+      FriendResolver,
+      NotificationResolver,
+      UserChallengesParticipationResolver,
+      UserResolver,
+    ],
     authChecker: async ({ context }: { context: ContextType }) => {
       const {
         req: { headers },

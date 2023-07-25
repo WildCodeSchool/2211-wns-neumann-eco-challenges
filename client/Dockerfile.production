@@ -10,8 +10,8 @@ COPY package*.json .
 COPY pnpm* .
 COPY .npmrc .
 
-RUN pnpm i
-RUN pnpm i serve
+RUN npm i
+RUN npm i serve
 
 COPY src ./src
 COPY public ./public

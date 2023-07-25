@@ -8,7 +8,7 @@ const client = new ApolloClient({
     },
   },
   link: createHttpLink({
-    uri: process.env.GRAPHQL_API_URL ?? "http://localhost:4000/",
+    uri: process.env.GRAPHQL_API_URL,
     credentials: "include",
   }),
 });
