@@ -40,8 +40,6 @@ services:
   client:
     platform: linux/amd64
     image: bdeliencourt/greenmates-client
-    environment:
-      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
   nginx:
     image: nginx:1.21.3
     depends_on:
