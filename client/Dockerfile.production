@@ -1,17 +1,15 @@
 FROM node:16.19-alpine
 
 RUN apk --no-cache add curl
-RUN npm i -g pnpm
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY package*.json .
-COPY pnpm* .
 COPY .npmrc .
 
 RUN npm i
-RUN npm i serve
+RUN npm i -g serve
 
 COPY src ./src
 COPY public ./public
