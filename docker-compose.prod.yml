@@ -15,7 +15,7 @@ services:
       retries: 5
     volumes:
       - db-prod:/var/lib/postgresql/data
-  server-prod:
+  server:
     restart: always
     depends_on:
       db-prod:
@@ -33,20 +33,20 @@ services:
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
     image: bdeliencourt/greenmates-server:prod
     healthcheck:
-      test: "curl --fail --request GET -H 'content-type:application/json' --url 'http://server-prod:4000/graphql?query=%7B__typename%7D'"
+      test: "curl --fail --request GET -H 'content-type:application/json' --url 'http://server:4000/graphql?query=%7B__typename%7D'"
       interval: 5s
       timeout: 5s
       retries: 10
-  client-prod:
+  client:
     restart: always
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:prod
-  nginx-prod:
+  nginx:
     image: nginx:1.21.3
     depends_on:
-      server-prod:
+      server:
         condition: service_healthy
-      client-prod:
+      client:
         condition: service_started
     restart: always
     ports:
