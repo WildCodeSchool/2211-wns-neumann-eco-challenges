@@ -1,5 +1,6 @@
+name: greenmates-staging
 services:
-  db-staging:
+  db:
     restart: always
     image: postgres:15-alpine
     environment:
@@ -14,15 +15,15 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - db-staging:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
   server:
     restart: always
     depends_on:
-      db-staging:
+      db:
         condition: service_healthy
     environment:
       - NODE_ENV=${NODE_ENV:-staging}
-      - DB_HOST=db-staging
+      - DB_HOST=db
       - DB_USER=${DB_USER:-postgres}
       - DB_PASS=${DB_PASS:-postgres}
       - DB_NAME=${DB_NAME:-postgres}
@@ -41,7 +42,7 @@ services:
     restart: always
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:staging
-  nginx-staging:
+  nginx:
     image: nginx:1.21.3
     depends_on:
       server:
@@ -55,4 +56,4 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
 volumes:
-  db-staging:
+  db:

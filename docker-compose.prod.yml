@@ -1,3 +1,4 @@
+name: greenmates-prod
 services:
   db-prod:
     restart: always
