@@ -15,7 +15,7 @@ services:
       retries: 5
     volumes:
       - stagingDB:/var/lib/postgresql/data
-  server:
+  server-staging:
     restart: always
     depends_on:
       stagingDB:
@@ -37,10 +37,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-  client:
+  client-staging:
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:staging
-  nginx:
+  nginx-staging:
     image: nginx:1.21.3
     depends_on:
       server:
