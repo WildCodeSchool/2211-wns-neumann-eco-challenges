@@ -38,6 +38,7 @@ services:
       timeout: 5s
       retries: 10
   client-staging:
+    restart: always
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:staging
   nginx-staging:

@@ -38,6 +38,7 @@ services:
       timeout: 5s
       retries: 10
   client-prod:
+    restart: always
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:prod
   nginx-prod:
