@@ -1,5 +1,5 @@
 services:
-  prodDB:
+  db-prod:
     restart: always
     image: postgres:15-alpine
     environment:
@@ -14,15 +14,15 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - prodDB:/var/lib/postgresql/data
-  server:
+      - db-prod:/var/lib/postgresql/data
+  server-prod:
     restart: always
     depends_on:
-      prodDB:
+      db-prod:
         condition: service_healthy
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-      - DB_HOST=prodDB
+      - DB_HOST=db-prod
       - DB_USER=${DB_USER:-postgres}
       - DB_PASS=${DB_PASS:-postgres}
       - DB_NAME=${DB_NAME:-postgres}
@@ -33,19 +33,19 @@ services:
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
     image: bdeliencourt/greenmates-server:prod
     healthcheck:
-      test: "curl --fail --request GET -H 'content-type:application/json' --url 'http://server:4000/graphql?query=%7B__typename%7D'"
+      test: "curl --fail --request GET -H 'content-type:application/json' --url 'http://server-prod:4000/graphql?query=%7B__typename%7D'"
       interval: 5s
       timeout: 5s
       retries: 10
-  client:
+  client-prod:
     platform: linux/amd64
     image: bdeliencourt/greenmates-client:prod
-  nginx:
+  nginx-prod:
     image: nginx:1.21.3
     depends_on:
-      server:
+      server-prod:
         condition: service_healthy
-      client:
+      client-prod:
         condition: service_started
     restart: always
     ports:
@@ -54,4 +54,4 @@ services:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
 volumes:
-  prodDB:
+  db-prod:

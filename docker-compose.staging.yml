@@ -1,5 +1,5 @@
 services:
-  stagingDB:
+  db-staging:
     restart: always
     image: postgres:15-alpine
     environment:
@@ -14,15 +14,15 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - stagingDB:/var/lib/postgresql/data
+      - db-staging:/var/lib/postgresql/data
   server-staging:
     restart: always
     depends_on:
-      stagingDB:
+      db-staging:
         condition: service_healthy
     environment:
       - NODE_ENV=${NODE_ENV:-staging}
-      - DB_HOST=stagingDB
+      - DB_HOST=db-staging
       - DB_USER=${DB_USER:-postgres}
       - DB_PASS=${DB_PASS:-postgres}
       - DB_NAME=${DB_NAME:-postgres}
@@ -54,4 +54,4 @@ services:
       - ./nginx.staging.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
 volumes:
-  stagingDB:
+  db-staging:
