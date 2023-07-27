@@ -125,17 +125,17 @@ export class UserResolver {
     )
       throw new ApolloError("User needs a token first", "EXPO_TOKEN_NOT_FOUND");
 
-      await expo.sendPushNotificationsAsync([
-        {
-          to: user.expoNotificationToken,
-          body: notificationPayload.body,
-          title: notificationPayload.title,
-          data:
-            typeof notificationPayload.data === "string"
-              ? JSON.parse(notificationPayload.data)
-              : undefined,
-        },
-      ]);
+    await expo.sendPushNotificationsAsync([
+      {
+        to: user.expoNotificationToken,
+        body: notificationPayload.body,
+        title: notificationPayload.title,
+        data:
+          typeof notificationPayload.data === "string"
+            ? JSON.parse(notificationPayload.data)
+            : undefined,
+      },
+    ]);
 
     return true;
   }

@@ -2,12 +2,20 @@ import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 
 import { useEffect, useRef, useState } from "react";
-import { AddTask, DashboardRounded, Face } from "@mui/icons-material";
+import {
+  AddTask,
+  DashboardRounded,
+  Face,
+  MeetingRoom,
+} from "@mui/icons-material";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import { keyframes } from "@mui/system";
 import withStyles from "@mui/styles/withStyles";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../reducer/hooks";
+import { thunkSignOut } from "../../reducer/user/user.reducer";
+import { RequestStatus } from "../../reducer/requestStatus.enums";
 
 const StyledBottomNavigationAction = withStyles({
   root: {
@@ -18,6 +26,8 @@ const StyledBottomNavigationAction = withStyles({
 })(BottomNavigationAction);
 
 export const BottomMenu = () => {
+  const dispatch = useAppDispatch();
+
   const {
     current: [width],
   } = useRef([window.innerWidth]);
@@ -97,8 +107,13 @@ export const BottomMenu = () => {
         />
         <StyledBottomNavigationAction
           className={newMenuItemIndex === 2 ? "activeMenuItem" : ""}
-          label="Profile"
-          icon={<Face />}
+          onClick={async () => {
+            const isSignOut = await dispatch(thunkSignOut());
+            if (isSignOut.meta.requestStatus === RequestStatus.fulfilled)
+              navigate("/");
+          }}
+          label="Sign-out"
+          icon={<MeetingRoom />}
         />
       </BottomNavigation>
     </Paper>

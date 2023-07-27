@@ -7,6 +7,7 @@ import {
   GetProfileDocument,
   LoginInput,
   SignInDocument,
+  SignOutDocument,
   SignUpDocument,
   User,
   UserInput,
@@ -107,6 +108,7 @@ export const thunkSignIn = createAsyncThunk(
       mutation: SignInDocument,
       variables: { data: { email: user.email, password: user.password } },
     });
+
     return signIn.data?.login;
   }
 );
@@ -121,10 +123,23 @@ export const thunkGetProfile = createAsyncThunk(
   }
 );
 
+// Logout
+export const thunkSignOut = createAsyncThunk(
+  "user/signOut",
+  async (_, thunkAPI): Promise<boolean | SerializedError> => {
+    const isSignedOut = await apolloClient.mutate({
+      mutation: SignOutDocument,
+    });
+    // thunkAPI.dispatch(createAction("user/signout"));
+    return isSignedOut.data?.logout;
+  }
+);
+
 // Register thunk
 export const thunkSignUp = createAsyncThunk(
   "user/signUp",
   async (user: UserInput): Promise<User[] | SerializedError> => {
+    console.log("SiGN UP");
     const users = await apolloClient.mutate({
       mutation: SignUpDocument,
       variables: {
