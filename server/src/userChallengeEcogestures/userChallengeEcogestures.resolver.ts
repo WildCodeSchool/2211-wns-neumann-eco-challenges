@@ -12,14 +12,16 @@ export class UserChallengeEcogesturesResolver {
   async updateUserChallengeEcogesture(
     @Ctx() { currentUser }: ContextType,
     @Arg("challengeId") challengeId: string,
-    @Arg("ecogestureId") ecogestureId: string
+    @Arg("ecogestureId") ecogestureId: string,
+    @Arg("proofId") proof: string
   ): Promise<UserEcogesturesWithChallengersScore> {
     if (currentUser == null)
       throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
     return await updateUserChallengeEcogesture(
       currentUser.id,
       challengeId,
-      ecogestureId
+      ecogestureId,
+      proof,
     );
   }
 }
