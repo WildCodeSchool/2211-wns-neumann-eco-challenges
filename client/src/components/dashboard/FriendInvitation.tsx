@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import {
   clearStatusUpdateFriendRelationship,
   thunkUpdateFriendRelationship,
+  updateFriendRelationshipStatus,
 } from "../../reducer/friend/friend.reducer";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 import { setEvent } from "../../reducer/event/event.reducer";
@@ -114,6 +115,9 @@ export const FriendInvitation = () => {
             type: InvitationType.FriendInvitation,
           },
         });
+        dispatch(
+          updateFriendRelationshipStatus({ friendId: relationship!.friend.id })
+        );
       } catch (error) {
         dispatch(
           setEvent({
