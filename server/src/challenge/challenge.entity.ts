@@ -9,6 +9,7 @@ import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestur
 import User from "../user/user.entity";
 import Ecogesture from "../ecogesture/ecogesture.entity";
 import Category from "../category/category.entity";
+import Reaction from "../userChallengeReaction/UserChallengeReaction.entity";
 
 @Entity()
 @ObjectType()
@@ -38,6 +39,9 @@ class Challenge {
     onDelete: "CASCADE",
   })
   challengeEcogestures: ChallengeEcogestures[];
+
+  @OneToMany(() => Reaction, (reaction) => reaction.challenge)
+  userChallengeReactions: Reaction[];
 
   // One challenge can have many realizations (to replae)
   @OneToMany(() => UserChallengeEcogestures, (uce) => uce.challenge, {

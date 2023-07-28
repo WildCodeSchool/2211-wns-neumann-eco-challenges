@@ -5,13 +5,8 @@ import {
   createEcogestures,
   getEcogestures,
 } from "./ecogesture/ecogesture.service";
+import { createChallenges } from "./challenge/challenge.service";
 import {
-  allChallenges,
-  createChallenges,
-  getChallengeById,
-} from "./challenge/challenge.service";
-import {
-  createUserChallengeParticipation,
   getUserChallengeParticipationByUserId,
   updateChallengeParticipationStatus,
 } from "./userChallengesParticipation/userChallengesParticipation.service";
