@@ -24,6 +24,7 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-lottie": "^1.2.6",
     "@types/react-redux": "^7.1.25",
+    "@uploadcare/blocks": "0.25.1",
     "framer-motion": "^10.11.5",
     "graphql": "^16.6.0",
     "html-react-parser": "^3.0.15",
