@@ -32,7 +32,7 @@ const datasource = new DataSource({
     Notification,
     Category,
   ],
-  logging: ["query", "error"],
+  logging: ["error"],
 });
 
 export default datasource;

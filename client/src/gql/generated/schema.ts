@@ -81,19 +81,17 @@ export type EcogestureInput = {
   reward: Scalars['Int'];
 };
 
-export type Friend = {
-  __typename?: 'Friend';
-  friendId: Scalars['String'];
-  id: Scalars['String'];
-  status: Scalars['String'];
-  userId: Scalars['String'];
-};
-
 export type FriendRelationship = {
   __typename?: 'FriendRelationship';
+  didCurrentUserAskedFriendship: Scalars['Boolean'];
   friend: User;
   status: Scalars['String'];
 };
+
+export enum InvitationType {
+  ChallengeInvitation = 'challenge_invitation',
+  FriendInvitation = 'friend_invitation'
+}
 
 export type LoginInput = {
   email: Scalars['String'];
@@ -117,6 +115,7 @@ export type Mutation = {
   updateChallenge: Challenge;
   updateFriendRelationship: User;
   updateNotificationStatus: Notification;
+  updateNotificationStatusBySenderReceiverType: Notification;
   updateUserChallengeEcogesture: UserEcogesturesWithChallengersScore;
   updateUserExpoToken: User;
 };
@@ -192,7 +191,17 @@ export type MutationUpdateFriendRelationshipArgs = {
 
 export type MutationUpdateNotificationStatusArgs = {
   notificationId: Scalars['String'];
-  status?: InputMaybe<NotificationStatus>;
+  status: NotificationStatus;
+};
+
+
+export type MutationUpdateNotificationStatusBySenderReceiverTypeArgs = {
+  challengeId?: InputMaybe<Scalars['String']>;
+  receiverId: Scalars['String'];
+  senderId: Scalars['String'];
+  status: NotificationStatus;
+  statusFilter?: InputMaybe<NotificationStatus>;
+  type: Scalars['String'];
 };
 
 
@@ -215,7 +224,7 @@ export type Notification = {
   receiverId: Scalars['String'];
   senderId: Scalars['String'];
   status?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<InvitationType>;
   updatedDate?: Maybe<Scalars['DateTime']>;
 };
 
@@ -394,7 +403,7 @@ export type GetFriendsQueryVariables = Exact<{
 }>;
 
 
-export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
 
 export type UpdateFriendRelationshipMutationVariables = Exact<{
   friendId: Scalars['String'];
@@ -406,7 +415,7 @@ export type UpdateFriendRelationshipMutation = { __typename?: 'Mutation', update
 export type GetOwnNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type?: string | null, content: string, status?: string | null, hasBeenSeen: boolean }> };
+export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type?: InvitationType | null, content: string, status?: string | null, hasBeenSeen: boolean }> };
 
 export type DeleteNotificationsMutationVariables = Exact<{
   deleteNotificationsId: Array<Scalars['String']> | Scalars['String'];
@@ -415,13 +424,25 @@ export type DeleteNotificationsMutationVariables = Exact<{
 
 export type DeleteNotificationsMutation = { __typename?: 'Mutation', deleteNotifications: Array<boolean> };
 
+export type UpdateNotificationStatusBySenderReceiverTypeMutationVariables = Exact<{
+  status: NotificationStatus;
+  type: Scalars['String'];
+  receiverId: Scalars['String'];
+  senderId: Scalars['String'];
+  statusFilter?: InputMaybe<NotificationStatus>;
+  challengeId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateNotificationStatusBySenderReceiverTypeMutation = { __typename?: 'Mutation', updateNotificationStatusBySenderReceiverType: { __typename?: 'Notification', id: string } };
+
 export type UpdateNotificationMutationVariables = Exact<{
-  status?: InputMaybe<NotificationStatus>;
+  status: NotificationStatus;
   notificationId: Scalars['String'];
 }>;
 
 
-export type UpdateNotificationMutation = { __typename?: 'Mutation', updateNotificationStatus: { __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, updatedDate?: any | null, type?: string | null, content: string, status?: string | null, hasBeenSeen: boolean } };
+export type UpdateNotificationMutation = { __typename?: 'Mutation', updateNotificationStatus: { __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, updatedDate?: any | null, type?: InvitationType | null, content: string, status?: string | null, hasBeenSeen: boolean } };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -820,6 +841,7 @@ export const GetFriendsDocument = gql`
       lastName
       email
     }
+    didCurrentUserAskedFriendship
     status
   }
 }
@@ -961,8 +983,53 @@ export function useDeleteNotificationsMutation(baseOptions?: Apollo.MutationHook
 export type DeleteNotificationsMutationHookResult = ReturnType<typeof useDeleteNotificationsMutation>;
 export type DeleteNotificationsMutationResult = Apollo.MutationResult<DeleteNotificationsMutation>;
 export type DeleteNotificationsMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationsMutation, DeleteNotificationsMutationVariables>;
+export const UpdateNotificationStatusBySenderReceiverTypeDocument = gql`
+    mutation UpdateNotificationStatusBySenderReceiverType($status: NotificationStatus!, $type: String!, $receiverId: String!, $senderId: String!, $statusFilter: NotificationStatus, $challengeId: String) {
+  updateNotificationStatusBySenderReceiverType(
+    status: $status
+    type: $type
+    receiverId: $receiverId
+    senderId: $senderId
+    statusFilter: $statusFilter
+    challengeId: $challengeId
+  ) {
+    id
+  }
+}
+    `;
+export type UpdateNotificationStatusBySenderReceiverTypeMutationFn = Apollo.MutationFunction<UpdateNotificationStatusBySenderReceiverTypeMutation, UpdateNotificationStatusBySenderReceiverTypeMutationVariables>;
+
+/**
+ * __useUpdateNotificationStatusBySenderReceiverTypeMutation__
+ *
+ * To run a mutation, you first call `useUpdateNotificationStatusBySenderReceiverTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNotificationStatusBySenderReceiverTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNotificationStatusBySenderReceiverTypeMutation, { data, loading, error }] = useUpdateNotificationStatusBySenderReceiverTypeMutation({
+ *   variables: {
+ *      status: // value for 'status'
+ *      type: // value for 'type'
+ *      receiverId: // value for 'receiverId'
+ *      senderId: // value for 'senderId'
+ *      statusFilter: // value for 'statusFilter'
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useUpdateNotificationStatusBySenderReceiverTypeMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNotificationStatusBySenderReceiverTypeMutation, UpdateNotificationStatusBySenderReceiverTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateNotificationStatusBySenderReceiverTypeMutation, UpdateNotificationStatusBySenderReceiverTypeMutationVariables>(UpdateNotificationStatusBySenderReceiverTypeDocument, options);
+      }
+export type UpdateNotificationStatusBySenderReceiverTypeMutationHookResult = ReturnType<typeof useUpdateNotificationStatusBySenderReceiverTypeMutation>;
+export type UpdateNotificationStatusBySenderReceiverTypeMutationResult = Apollo.MutationResult<UpdateNotificationStatusBySenderReceiverTypeMutation>;
+export type UpdateNotificationStatusBySenderReceiverTypeMutationOptions = Apollo.BaseMutationOptions<UpdateNotificationStatusBySenderReceiverTypeMutation, UpdateNotificationStatusBySenderReceiverTypeMutationVariables>;
 export const UpdateNotificationDocument = gql`
-    mutation UpdateNotification($status: NotificationStatus, $notificationId: String!) {
+    mutation UpdateNotification($status: NotificationStatus!, $notificationId: String!) {
   updateNotificationStatus(status: $status, notificationId: $notificationId) {
     id
     senderId

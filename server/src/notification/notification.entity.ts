@@ -17,6 +17,16 @@ export enum NotificationStatus {
 registerEnumType(NotificationStatus, {
   name: "NotificationStatus", // this one is mandatory
 });
+
+export enum InvitationType {
+  "friend_invitation" = "friend_invitation",
+  "challenge_invitation" = "challenge_invitation",
+}
+
+registerEnumType(InvitationType, {
+  name: "InvitationType", // this one is mandatory
+});
+
 @Entity()
 @ObjectType()
 export default class Notification {
@@ -40,9 +50,9 @@ export default class Notification {
   @UpdateDateColumn()
   updatedDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => InvitationType, { nullable: true })
   @Column({ nullable: true })
-  type?: "friend_invitation" | "challenge_invitation";
+  type?: InvitationType;
 
   @Field()
   @Column()
@@ -61,6 +71,9 @@ export default class Notification {
 
   @Column({ nullable: true })
   challengeId?: string;
+
+  @Column({ default: false })
+  canceledBySender?: boolean;
 }
 
 @InputType()

@@ -1,19 +1,30 @@
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { FriendInvitationEnhanced } from "../friend/FriendInvitationEnhanced";
-import { useGetFriendsQuery } from "../../gql/generated/schema";
+import {
+  InvitationType,
+  NotificationStatus,
+  useGetFriendsQuery,
+  useUpdateNotificationMutation,
+  useUpdateNotificationStatusBySenderReceiverTypeMutation,
+} from "../../gql/generated/schema";
 import { useEffect, useState } from "react";
 import {
   clearStatusUpdateFriendRelationship,
   thunkUpdateFriendRelationship,
 } from "../../reducer/friend/friend.reducer";
 import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
+import { setEvent } from "../../reducer/event/event.reducer";
 
 export const FriendInvitation = () => {
   const dispatch = useAppDispatch();
   const statusUpdateFriendRelationship = useAppSelector(
     (store) => store.friends.statusUpdateFriendRelationship
   );
+  const userId = useAppSelector((store) => store.user.user!.id);
+
+  const [updateNotification] =
+    useUpdateNotificationStatusBySenderReceiverTypeMutation();
 
   ///
   /// Loads not only user's friends but also all the others users.
@@ -30,7 +41,9 @@ export const FriendInvitation = () => {
   const [friends, setFriends] = useState(
     data?.getFriends.map((friend) => ({
       ...friend,
-      isInvited: ["accepted", "pending"].includes(friend.status),
+      isInvited:
+        "accepted" === friend.status ||
+        ("pending" === friend.status && friend.didCurrentUserAskedFriendship),
     })) ?? []
   );
 
@@ -43,7 +56,9 @@ export const FriendInvitation = () => {
     setFriends(
       data?.getFriends.map((friend) => ({
         ...friend,
-        isInvited: ["accepted", "pending"].includes(friend.status),
+        isInvited:
+          "accepted" === friend.status ||
+          ("pending" === friend.status && friend.didCurrentUserAskedFriendship),
       })) ?? []
     );
   }, [data]);
@@ -68,17 +83,50 @@ export const FriendInvitation = () => {
       };
     });
 
-    // Update friends state without re-render since dispatch will do it.
+    // Update friends state without re-render since refetch will do it.
     friends.splice(0, friends.length, ...updatedFriends);
     // Clear status computed from store.
     dispatch(clearStatusUpdateFriendRelationship({ statusIds: idsToUpdate }));
+    // Refetch friends
+    refetch();
   }, [statusUpdateFriendRelationship]);
 
   ///
   /// Call a thunk to update the friend relationship.
   ///
-  const updateFriendInvitation = (id: string, _: boolean) => {
-    dispatch(thunkUpdateFriendRelationship(id));
+  const updateFriendInvitation = async (id: string, _: boolean) => {
+    // Find relationship : if status is pending and an other user invited me
+    // Then accept the relationship
+    const relationship = friends.find((relation) => relation.friend.id === id);
+    if (
+      relationship != null &&
+      relationship!.status === "pending" &&
+      !relationship!.didCurrentUserAskedFriendship
+    ) {
+      try {
+        // update notificiation
+        await updateNotification({
+          variables: {
+            senderId: relationship!.friend.id,
+            receiverId: userId,
+            status: NotificationStatus.Accepted,
+            statusFilter: NotificationStatus.Pending,
+            type: InvitationType.FriendInvitation,
+          },
+        });
+      } catch (error) {
+        dispatch(
+          setEvent({
+            id: "updateFriendRelationshipStatus",
+            title: "Ouch !",
+            body: "We couldn't invite your friend.",
+          })
+        );
+      }
+    } else {
+      // Update relationship and send notification
+      dispatch(thunkUpdateFriendRelationship(id));
+    }
   };
 
   return (

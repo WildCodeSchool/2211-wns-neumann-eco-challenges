@@ -33,5 +33,8 @@ export class FriendRelationship {
   friend: User;
 
   @Field()
+  didCurrentUserAskedFriendship: boolean;
+
+  @Field()
   status: RelationshipStatus;
 }

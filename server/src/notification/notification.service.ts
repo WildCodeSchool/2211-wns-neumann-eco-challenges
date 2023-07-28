@@ -2,7 +2,10 @@ import { ApolloError } from "apollo-server";
 import { getChallengeById } from "../challenge/challenge.service";
 import datasource from "../db";
 import { getUsersById } from "../user/user.service";
-import Notification from "./notification.entity";
+import Notification, {
+  InvitationType,
+  NotificationStatus,
+} from "./notification.entity";
 import { updateFriendRelationshipStatus } from "../friend/friend.service";
 import { updateChallengeParticipationStatus } from "../userChallengesParticipation/userChallengesParticipation.service";
 
@@ -31,9 +34,10 @@ export async function getNotificationById(
 export async function getOwnNotifications(
   receiverId: string
 ): Promise<Notification[] | null> {
-  const notifications = await datasource
-    .getRepository(Notification)
-    .find({ where: { receiverId }, order: { updatedDate: "DESC" } });
+  const notifications = await datasource.getRepository(Notification).find({
+    where: { receiverId, canceledBySender: false },
+    order: { updatedDate: "DESC" },
+  });
 
   return notifications.map((notification) => ({
     ...notification,
@@ -43,7 +47,7 @@ export async function getOwnNotifications(
 
 export async function updateNotificationStatus(
   notificationId: string,
-  status?: Notification["status"]
+  status: Notification["status"]
 ): Promise<Notification> {
   const notification = await datasource
     .getRepository(Notification)
@@ -60,7 +64,7 @@ export async function updateNotificationStatus(
     ["friend_invitation", "challenge_invitation"].includes(notification.type);
 
   // Compute content after user response, accept or decline invitation
-  if (status != null && isInvitiationNotification) {
+  if (isInvitiationNotification) {
     notification.status = status;
     const [sender] = await getUsersById([notification.senderId]);
     const challenge =
@@ -96,7 +100,7 @@ export async function updateNotificationStatus(
       );
 
     notification.contentAfterUserResponse = contentTemplates[
-      notification.type as "friend_invitation" | "challenge_invitation"
+      notification.type as InvitationType
     ][status]
       .replace("$sender$", sender.firstName)
       .replace("$challengeName$", challenge?.name ?? "");
@@ -125,9 +129,9 @@ export async function notifyChallengeInvitation(
 
   await datasource.getRepository(Notification).save({
     content,
-    type: "challenge_invitation",
+    type: InvitationType.challenge_invitation,
     senderId,
-    status: "pending",
+    status: NotificationStatus.pending,
     receiverId,
     challengeId,
   });
@@ -135,19 +139,22 @@ export async function notifyChallengeInvitation(
   return true;
 }
 
-export async function deleteFriendInvitation(
+export async function cancelFriendInvitation(
   senderId: string,
   receiverId: string
 ): Promise<boolean> {
-  await datasource
-    .getRepository(Notification)
-    .delete({
-      receiverId,
+  const { affected } = await datasource.getRepository(Notification).update(
+    {
       senderId,
-      type: "friend_invitation",
-      status: "pending",
-    });
-  return true;
+      receiverId,
+      type: InvitationType.friend_invitation,
+      status: NotificationStatus.pending,
+      canceledBySender: false,
+    },
+    { canceledBySender: true }
+  );
+
+  return affected !== 0;
 }
 
 export async function notifyFriendInvitation(
@@ -162,10 +169,11 @@ export async function notifyFriendInvitation(
 
   await datasource.getRepository(Notification).save({
     content,
-    type: "friend_invitation",
+    type: InvitationType.friend_invitation,
     senderId,
     receiverId,
-    status: "pending",
+
+    status: NotificationStatus.pending,
   });
 
   return true;

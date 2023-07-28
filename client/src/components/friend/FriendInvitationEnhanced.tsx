@@ -10,8 +10,7 @@ import { Search } from "@mui/icons-material";
 import { FriendRelationship } from "../../gql/generated/schema";
 import { useState } from "react";
 import { ThunksStatus } from "../../store";
-
-type FriendInvitationMode = "CHALLENGE_INVITATION" | "FRIEND_INVITATION";
+import { FriendInvitationMode } from "../../interfaces/friend/friend.interface";
 
 const colors = ["#FF9996", "#FFE5CD", "#62B6B7"];
 const avatars = [
@@ -19,44 +18,6 @@ const avatars = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU",
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoj4aXYYSDLGAQEZGKAteDT9Ia_wONVPsuUA&usqp=CAU",
 ];
-
-const statusFriendRelationshipTexts = {
-  FRIEND_INVITATION: {
-    pending: "Waiting for your friend to answer.",
-    declined: "Your friend invitation was declined.",
-  },
-  CHALLENGE_INVITATION: "Challenged $nbChallenge$ times",
-};
-
-const actionsText = {
-  FRIEND_INVITATION: {
-    activeText: "Unfriend",
-    inactiveText: "Invite",
-  },
-  CHALLENGE_INVITATION: {
-    activeText: "Cancel",
-    inactiveText: "Invite",
-  },
-};
-const formatFriendshipStatus = (
-  isInvited: boolean,
-  mode: FriendInvitationMode,
-  status: "pending" | "declined" | "accepted" | "none",
-  challengedNTimes?: number
-) => {
-  if (mode === "FRIEND_INVITATION") {
-    if (status === "accepted" || status === "none" || !isInvited) return "";
-    return statusFriendRelationshipTexts[mode][status];
-  }
-
-  if (mode === "CHALLENGE_INVITATION") {
-    return statusFriendRelationshipTexts[mode].replace(
-      "$nbChallenge$",
-      challengedNTimes?.toString() ?? "0"
-    );
-  }
-  return "";
-};
 
 export const FriendInvitationEnhanced = ({
   friends,
@@ -103,35 +64,33 @@ export const FriendInvitationEnhanced = ({
             (
               {
                 isInvited,
-                friend: { firstName, id },
+                friend,
+                didCurrentUserAskedFriendship,
                 status: friendRelationshipStatus,
               },
               index
             ) => {
               const { isLoading } = statusUpdateFriendRelationship?.find(
-                ({ id: friendId }) => id === friendId
+                ({ id: friendId }) => friend.id === friendId
               ) ?? { isLoading: false };
               return (
                 <FriendItemEnhanced
                   isLoading={isLoading}
-                  key={id}
+                  key={friend.id}
+                  friend={friend}
                   updateFriendInvitation={updateFriendInvitation}
-                  name={firstName}
                   borderColor={colors[index % colors.length]}
-                  id={id}
                   isInvited={isInvited}
-                  subText={formatFriendshipStatus(
-                    isInvited,
-                    mode,
+                  mode={mode}
+                  status={
                     friendRelationshipStatus as
                       | "pending"
                       | "declined"
                       | "accepted"
                       | "none"
-                  )}
+                  }
+                  didCurrentUserAskedFriendship={didCurrentUserAskedFriendship}
                   avatar={avatars[index % avatars.length]}
-                  activeText={actionsText[mode].activeText}
-                  inactiveText={actionsText[mode].inactiveText}
                 />
               );
             }

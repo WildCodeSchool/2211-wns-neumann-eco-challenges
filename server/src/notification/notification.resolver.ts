@@ -5,8 +5,12 @@ import {
   getOwnNotifications,
   updateNotificationStatus,
 } from "./notification.service";
-import Notification, { NotificationStatus } from "./notification.entity";
+import Notification, {
+  InvitationType,
+  NotificationStatus,
+} from "./notification.entity";
 import { ContextType } from "../user/user.resolver";
+import datasource from "../db";
 
 @Resolver(Notification)
 export class NotificationResolver {
@@ -22,10 +26,38 @@ export class NotificationResolver {
 
   @Authorized()
   @Mutation(() => Notification)
+  async updateNotificationStatusBySenderReceiverType(
+    @Arg("senderId") senderId: string,
+    @Arg("receiverId") receiverId: string,
+    @Arg("type") type: InvitationType,
+    @Arg("status", () => NotificationStatus)
+    status: Notification["status"],
+    @Arg("statusFilter", () => NotificationStatus, { nullable: true })
+    statusFilter?: Notification["status"],
+    @Arg("challengeId", { nullable: true }) challengeId?: string
+  ): Promise<Notification> {
+    const notification = await datasource.getRepository(Notification).findOne({
+      where: {
+        senderId,
+        receiverId,
+        type,
+        challengeId,
+        status: statusFilter,
+        canceledBySender: false,
+      },
+    });
+    if (notification == null)
+      throw new ApolloError("Notification not found", "NOT_FOUND");
+
+    return await updateNotificationStatus(notification.id, status);
+  }
+
+  @Authorized()
+  @Mutation(() => Notification)
   async updateNotificationStatus(
     @Arg("notificationId") notificationId: string,
-    @Arg("status", () => NotificationStatus, { nullable: true })
-    status?: Notification["status"]
+    @Arg("status", () => NotificationStatus)
+    status: Notification["status"]
   ): Promise<Notification> {
     return await updateNotificationStatus(notificationId, status);
   }

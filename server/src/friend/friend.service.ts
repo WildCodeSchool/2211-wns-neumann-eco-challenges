@@ -3,7 +3,7 @@ import datasource from "../db";
 import User from "../user/user.entity";
 import Friend, { FriendRelationship } from "./friend.entity";
 import {
-  deleteFriendInvitation,
+  cancelFriendInvitation,
   notifyFriendInvitation,
 } from "../notification/notification.service";
 import { In, Not } from "typeorm";
@@ -24,21 +24,25 @@ export async function getFriends(
   // Get the user's friends ids and their status.
   const friendIdsAndStatus: Array<{
     friendId: string;
+    didCurrentUserAskedFriendship: boolean;
     status: FriendRelationship["status"];
   }> = friends.map(({ friendId, userId: userIdInFriend, status }) => ({
     // If the friend id is the current user id, we get the friend id which is the user id
     // If not, the userId is the current userId, we return the friend id
     friendId: friendId === userId ? userIdInFriend : friendId,
+    didCurrentUserAskedFriendship: userIdInFriend === userId,
     status,
   }));
 
   const friendsList = await Promise.all(
-    friendIdsAndStatus.map(async ({ friendId, status }) => {
-      const friend = await datasource.getRepository(User).findOneOrFail({
-        where: { id: friendId },
-      });
-      return { friend, status };
-    })
+    friendIdsAndStatus.map(
+      async ({ friendId, status, didCurrentUserAskedFriendship }) => {
+        const friend = await datasource.getRepository(User).findOneOrFail({
+          where: { id: friendId },
+        });
+        return { friend, status, didCurrentUserAskedFriendship };
+      }
+    )
   );
 
   // Includes all the users even those we are not friend with
@@ -47,7 +51,6 @@ export async function getFriends(
       ({ friend: { id } }) => id
     );
     friendsIdWithCurrentUser.push(userId);
-    console.log(friendsList.map(({ friend: { id } }) => id));
     const othersUsers = await datasource.getRepository(User).find({
       where: { id: Not(In(friendsIdWithCurrentUser)) },
     });
@@ -57,6 +60,7 @@ export async function getFriends(
       ...othersUsers.map((user) => ({
         friend: user,
         status: "none" as FriendRelationship["status"],
+        didCurrentUserAskedFriendship: false,
       }))
     );
   }
@@ -69,9 +73,22 @@ export async function updateFriendRelationshipStatus(
   friendId: string,
   status: Friend["status"]
 ): Promise<void> {
+  const friendship = await datasource.getRepository(Friend).findOne({
+    where: [
+      { userId, friendId },
+      { friendId: userId, userId: friendId },
+    ],
+  });
+
+  if (friendship == null)
+    throw new ApolloError(
+      "[updateFriendRelationshipStatus] - Cannot find friend relationship",
+      "NOT_FOUND"
+    );
+
   const { affected } = await datasource
     .getRepository(Friend)
-    .update({ userId, friendId }, { status });
+    .update(friendship, { status });
 
   if (affected == null || affected === 0)
     throw new ApolloError(
@@ -79,12 +96,13 @@ export async function updateFriendRelationshipStatus(
       "NOT_FOUND"
     );
 }
+
 export async function updateFriendRelationship(
   userId: string,
   friendId: string
 ): Promise<User> {
   // Relation is unique for a pair of userId and friendId
-  // Can be : userId - friendId or friendId - userId
+  // And so can be symmetric
   const doesRelationUserIdFriendIdExists = await datasource
     .getRepository(Friend)
     .exist({ where: { userId, friendId } });
@@ -103,8 +121,9 @@ export async function updateFriendRelationship(
       userId: _userId,
       friendId: _friendId,
     });
+
     // Delete only friend invitations that are in pending.
-    await deleteFriendInvitation(userId, friendId);
+    await cancelFriendInvitation(userId, friendId);
 
     // Add friend relationship & friend notification
   } else {
