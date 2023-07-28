@@ -1,0 +1,25 @@
+mutation CreateUserChallengeReaction(
+  $content: String!
+  $userId: String!
+  $challengeId: String!
+) {
+  createUserChallengeReaction(
+    content: $content
+    userId: $userId
+    challengeId: $challengeId
+  ) {
+    id
+    userId
+    content
+    challengeId
+  }
+}
+
+query GetUserChallengeReaction($challengeId: String!) {
+  getUserChallengeReaction(challengeId: $challengeId) {
+    id
+    userId
+    content
+    challengeId
+  }
+}

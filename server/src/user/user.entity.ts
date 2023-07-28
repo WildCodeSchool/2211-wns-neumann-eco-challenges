@@ -6,6 +6,7 @@ import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeE
 import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
 import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import Friend from "../friend/friend.entity";
+import UserChallengeReaction from "../userChallengeReaction/UserChallengeReaction.entity";
 
 @Entity()
 @ObjectType()
@@ -41,6 +42,12 @@ class User {
     (challengeEcogesture) => challengeEcogesture.user
   )
   userChallengeEcogestures: UserChallengeEcogestures[];
+
+  @OneToMany(
+    () => UserChallengeReaction,
+    (userChallengeReaction) => userChallengeReaction.user
+  )
+  userChallengeReactions: UserChallengeReaction[];
 
   // One user can create many challenges
   @OneToMany(

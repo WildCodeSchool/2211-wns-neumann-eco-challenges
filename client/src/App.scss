@@ -206,6 +206,13 @@ $itemWidth: 100% / 6;
   color: $lightGreenColor !important;
 }
 
+.activeButtonValidate {
+  color: $lightGreenColor !important;
+}
+.activeButtonDecline {
+  color: rgba(250, 123, 135, 0.8) !important;
+}
+
 .dashboard {
   background: $backgroundColor;
 }

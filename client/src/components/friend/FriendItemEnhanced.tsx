@@ -67,11 +67,15 @@ export const FriendItemEnhanced = ({
           color: isInvited ? "black" : "white",
           background: isInvited ? "#DADADA" : "black",
         }}
+<<<<<<< Updated upstream
       >
         <Typography variant="subtitle2" fontWeight={700}>
           {getButtonText()}
         </Typography>
       </Button>
+=======
+      ></Button>
+>>>>>>> Stashed changes
     </Grid>
   );
 };

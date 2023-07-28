@@ -8,7 +8,7 @@ const client = new ApolloClient({
     },
   },
   link: createHttpLink({
-    uri: process.env.GRAPHQL_API_URL,
+    uri: process.env.REACT_APP_GRAPHQL_API_URL,
     credentials: "include",
   }),
 });

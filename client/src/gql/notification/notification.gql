@@ -14,20 +14,3 @@ query GetOwnNotifications {
 mutation DeleteNotifications($deleteNotificationsId: [String!]!) {
   deleteNotifications(id: $deleteNotificationsId)
 }
-
-mutation UpdateNotification(
-  $status: NotificationStatus
-  $notificationId: String!
-) {
-  updateNotificationStatus(status: $status, notificationId: $notificationId) {
-    id
-    senderId
-    receiverId
-    date
-    updatedDate
-    type
-    content
-    status
-    hasBeenSeen
-  }
-}

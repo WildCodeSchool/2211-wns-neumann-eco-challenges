@@ -7,7 +7,6 @@ import UserChallengeEcogestures, {
 } from "./userChallengeEcogestures.entity";
 import { getUserChallengeParticipationByChallengeId } from "../userChallengesParticipation/userChallengesParticipation.service";
 import moment from "moment";
-import { getUsersById } from "../user/user.service";
 
 export async function getUserChallengeEcogesturesByUserAndChallengeId(
   userId: string,
