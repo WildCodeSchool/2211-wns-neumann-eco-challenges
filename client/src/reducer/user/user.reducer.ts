@@ -89,7 +89,7 @@ export const userSlice = createSlice({
     builder.addCase(thunkGetProfile.fulfilled, (state, action) => {
       state.errors.getProfile = undefined;
       state.loadings.getProfile = "idle";
-      if (action.payload?.user !== null && action.payload?.token !== null) {
+      if (action.payload?.user != null && action.payload?.token != null) {
         state.token = action.payload!.token;
         state.user = action.payload!.user;
       }
@@ -118,6 +118,7 @@ export const thunkGetProfile = createAsyncThunk(
   async (): Promise<UserProfile | null> => {
     const profile = await apolloClient.query({
       query: GetProfileDocument,
+      fetchPolicy: "no-cache",
     });
     return profile.data?.getProfile;
   }
@@ -130,7 +131,6 @@ export const thunkSignOut = createAsyncThunk(
     const isSignedOut = await apolloClient.mutate({
       mutation: SignOutDocument,
     });
-    // thunkAPI.dispatch(createAction("user/signout"));
     return isSignedOut.data?.logout;
   }
 );
