@@ -11,6 +11,15 @@ const friendsSlice = createSlice({
     statusUpdateFriendRelationship: ThunksStatus;
   },
   reducers: {
+    updateFriendRelationshipStatus: (
+      state,
+      action: PayloadAction<{ friendId: string }>
+    ) => {
+      state.statusUpdateFriendRelationship.push({
+        id: action.payload.friendId,
+        isLoading: false,
+      });
+    },
     clearStatusUpdateFriendRelationship: (
       state,
       action: PayloadAction<{ statusIds: string[] }>
@@ -72,7 +81,10 @@ const friendsSlice = createSlice({
 });
 
 export const friendsReducer = friendsSlice.reducer;
-export const { clearStatusUpdateFriendRelationship } = friendsSlice.actions;
+export const {
+  clearStatusUpdateFriendRelationship,
+  updateFriendRelationshipStatus,
+} = friendsSlice.actions;
 
 // Update friend relationship
 export const thunkUpdateFriendRelationship = createAsyncThunk(
