@@ -26,7 +26,7 @@ export async function updateUserChallengeEcogesture(
   userId: string,
   challengeId: string,
   ecogestureId: string,
-  proof: string
+  proof?: string
 ): Promise<UserEcogesturesWithChallengersScore> {
   const isAlreadyDone = await datasource
     .getRepository(UserChallengeEcogestures)
@@ -35,7 +35,7 @@ export async function updateUserChallengeEcogesture(
   if (isAlreadyDone)
     await datasource
       .getRepository(UserChallengeEcogestures)
-      .delete({ userId, ecogestureId, challengeId, proof });
+      .delete({ userId, ecogestureId, challengeId });
   else {
     const ecogesture = await datasource
       .getRepository(Ecogesture)
