@@ -1,12 +1,11 @@
 export const Emoji = ({ symbol, label }: { symbol: string; label: string }) => (
-  <span
+  <div
     className="emoji"
     role="img"
+    style={{ fontSize: "30px" }}
     aria-label={label ? label : ""}
     aria-hidden={label ? "false" : "true"}
   >
     {symbol}
-  </span>
+  </div>
 );
-
-export const ORDERED_EMOJI = ["👍", "😂", "❤️", "😮", "🥲", "🚀", "🔥"];

@@ -1,11 +1,9 @@
-mutation CreateUserChallengeReaction(
-  $content: String!
-  $userId: String!
+mutation CreateOrUpdateUserChallengeReaction(
+  $content: ReactionEmojis!
   $challengeId: String!
 ) {
-  createUserChallengeReaction(
+  createOrUpdateUserChallengeReaction(
     content: $content
-    userId: $userId
     challengeId: $challengeId
   ) {
     id
@@ -15,11 +13,26 @@ mutation CreateUserChallengeReaction(
   }
 }
 
+query GetUserChallengesReactions($challengesId: [String!]!) {
+  getUserChallengesReactions(challengesId: $challengesId) {
+    challengeId
+    content
+  }
+}
+
 query GetUserChallengeReaction($challengeId: String!) {
   getUserChallengeReaction(challengeId: $challengeId) {
-    id
-    userId
     content
-    challengeId
   }
+}
+
+query GetReactionEmojis {
+  getReactionEmojis {
+    reactionEmoji
+    icon
+  }
+}
+
+mutation DeleteUserChallengeReaction($challengeId: String!) {
+  deleteUserChallengeReaction(challengeId: $challengeId)
 }

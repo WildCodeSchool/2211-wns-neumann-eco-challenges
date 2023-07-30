@@ -102,9 +102,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   createChallenges: Array<Challenge>;
   createEcogestures: Array<Ecogesture>;
+  createOrUpdateUserChallengeReaction: UserChallengeReaction;
   createUser: Array<User>;
   createUserChallengeParticipation: User;
-  createUserChallengeReaction: UserChallengeReaction;
   deleteChallenges: Array<Scalars['Boolean']>;
   deleteEcogestures: Array<Scalars['Boolean']>;
   deleteFriend: User;
@@ -133,6 +133,12 @@ export type MutationCreateEcogesturesArgs = {
 };
 
 
+export type MutationCreateOrUpdateUserChallengeReactionArgs = {
+  challengeId: Scalars['String'];
+  content: ReactionEmojis;
+};
+
+
 export type MutationCreateUserArgs = {
   userInputs: Array<UserInput>;
 };
@@ -140,13 +146,6 @@ export type MutationCreateUserArgs = {
 
 export type MutationCreateUserChallengeParticipationArgs = {
   challengeId: Scalars['String'];
-  userId: Scalars['String'];
-};
-
-
-export type MutationCreateUserChallengeReactionArgs = {
-  challengeId: Scalars['String'];
-  content: Scalars['String'];
   userId: Scalars['String'];
 };
 
@@ -178,7 +177,6 @@ export type MutationDeleteUserArgs = {
 
 export type MutationDeleteUserChallengeReactionArgs = {
   challengeId: Scalars['String'];
-  userId: Scalars['String'];
 };
 
 
@@ -223,6 +221,7 @@ export type MutationUpdateNotificationStatusBySenderReceiverTypeArgs = {
 export type MutationUpdateUserChallengeEcogestureArgs = {
   challengeId: Scalars['String'];
   ecogestureId: Scalars['String'];
+  proofId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -260,18 +259,26 @@ export type Query = {
   challengeDetails: ChallengeDetails;
   challenges: Array<Challenge>;
   ecogestures: Array<Ecogesture>;
+  getChallengeReactions: Array<UserChallengeReaction>;
   getFriends: Array<FriendRelationship>;
   getOwnNotifications: Array<Notification>;
   getProfile: UserProfile;
+  getReactionEmojis: Array<ReactionEmojisWithIcon>;
   getUserChallengeParticipationByChallengeId: Array<UserChallengesParticipation>;
   getUserChallengeParticipationByUserId: Array<UserChallengeParticipationDetails>;
-  getUserChallengeReaction: Array<UserChallengeReaction>;
+  getUserChallengeReaction: UserChallengeReaction;
+  getUserChallengesReactions: Array<UserChallengeReaction>;
   profile: User;
   users: Array<User>;
 };
 
 
 export type QueryChallengeDetailsArgs = {
+  challengeId: Scalars['String'];
+};
+
+
+export type QueryGetChallengeReactionsArgs = {
   challengeId: Scalars['String'];
 };
 
@@ -294,6 +301,27 @@ export type QueryGetUserChallengeParticipationByUserIdArgs = {
 
 export type QueryGetUserChallengeReactionArgs = {
   challengeId: Scalars['String'];
+};
+
+
+export type QueryGetUserChallengesReactionsArgs = {
+  challengesId: Array<Scalars['String']>;
+};
+
+export enum ReactionEmojis {
+  Flame = 'flame',
+  Heart = 'heart',
+  Laughing = 'laughing',
+  Rocket = 'rocket',
+  Sad = 'sad',
+  Suprised = 'suprised',
+  ThumbUp = 'thumb_up'
+}
+
+export type ReactionEmojisWithIcon = {
+  __typename?: 'ReactionEmojisWithIcon';
+  icon: Scalars['String'];
+  reactionEmoji: ReactionEmojis;
 };
 
 export type UpdateUserExpoToken = {
@@ -333,7 +361,7 @@ export type UserChallengeParticipationDetails = {
 export type UserChallengeReaction = {
   __typename?: 'UserChallengeReaction';
   challengeId: Scalars['String'];
-  content: Scalars['String'];
+  content: ReactionEmojis;
   id: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -377,6 +405,13 @@ export type ChallengesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ChallengesQuery = { __typename?: 'Query', challenges: Array<{ __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }> };
+
+export type GetUserChallengeReactionQueryVariables = Exact<{
+  challengeId: Scalars['String'];
+}>;
+
+
+export type GetUserChallengeReactionQuery = { __typename?: 'Query', getUserChallengeReaction: { __typename?: 'UserChallengeReaction', content: ReactionEmojis } };
 
 export type CreateChallengesMutationVariables = Exact<{
   challenges: Array<ChallengeCreationInput> | ChallengeCreationInput;
@@ -473,21 +508,32 @@ export type UpdateNotificationMutationVariables = Exact<{
 
 export type UpdateNotificationMutation = { __typename?: 'Mutation', updateNotificationStatus: { __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, updatedDate?: any | null, type?: InvitationType | null, content: string, status?: string | null, hasBeenSeen: boolean } };
 
-export type CreateUserChallengeReactionMutationVariables = Exact<{
-  content: Scalars['String'];
-  userId: Scalars['String'];
+export type CreateOrUpdateUserChallengeReactionMutationVariables = Exact<{
+  content: ReactionEmojis;
   challengeId: Scalars['String'];
 }>;
 
 
-export type CreateUserChallengeReactionMutation = { __typename?: 'Mutation', createUserChallengeReaction: { __typename?: 'UserChallengeReaction', id: string, userId: string, content: string, challengeId: string } };
+export type CreateOrUpdateUserChallengeReactionMutation = { __typename?: 'Mutation', createOrUpdateUserChallengeReaction: { __typename?: 'UserChallengeReaction', id: string, userId: string, content: ReactionEmojis, challengeId: string } };
 
-export type GetUserChallengeReactionQueryVariables = Exact<{
+export type GetUserChallengesReactionsQueryVariables = Exact<{
+  challengesId: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type GetUserChallengesReactionsQuery = { __typename?: 'Query', getUserChallengesReactions: Array<{ __typename?: 'UserChallengeReaction', challengeId: string, content: ReactionEmojis }> };
+
+export type GetReactionEmojisQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetReactionEmojisQuery = { __typename?: 'Query', getReactionEmojis: Array<{ __typename?: 'ReactionEmojisWithIcon', reactionEmoji: ReactionEmojis, icon: string }> };
+
+export type DeleteUserChallengeReactionMutationVariables = Exact<{
   challengeId: Scalars['String'];
 }>;
 
 
-export type GetUserChallengeReactionQuery = { __typename?: 'Query', getUserChallengeReaction: Array<{ __typename?: 'UserChallengeReaction', id: string, userId: string, content: string, challengeId: string }> };
+export type DeleteUserChallengeReactionMutation = { __typename?: 'Mutation', deleteUserChallengeReaction: boolean };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -582,6 +628,41 @@ export function useChallengesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type ChallengesQueryHookResult = ReturnType<typeof useChallengesQuery>;
 export type ChallengesLazyQueryHookResult = ReturnType<typeof useChallengesLazyQuery>;
 export type ChallengesQueryResult = Apollo.QueryResult<ChallengesQuery, ChallengesQueryVariables>;
+export const GetUserChallengeReactionDocument = gql`
+    query GetUserChallengeReaction($challengeId: String!) {
+  getUserChallengeReaction(challengeId: $challengeId) {
+    content
+  }
+}
+    `;
+
+/**
+ * __useGetUserChallengeReactionQuery__
+ *
+ * To run a query within a React component, call `useGetUserChallengeReactionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserChallengeReactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserChallengeReactionQuery({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useGetUserChallengeReactionQuery(baseOptions: Apollo.QueryHookOptions<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>(GetUserChallengeReactionDocument, options);
+      }
+export function useGetUserChallengeReactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>(GetUserChallengeReactionDocument, options);
+        }
+export type GetUserChallengeReactionQueryHookResult = ReturnType<typeof useGetUserChallengeReactionQuery>;
+export type GetUserChallengeReactionLazyQueryHookResult = ReturnType<typeof useGetUserChallengeReactionLazyQuery>;
+export type GetUserChallengeReactionQueryResult = Apollo.QueryResult<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>;
 export const CreateChallengesDocument = gql`
     mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
   createChallenges(challenges: $challenges) {
@@ -1115,11 +1196,10 @@ export function useUpdateNotificationMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateNotificationMutationHookResult = ReturnType<typeof useUpdateNotificationMutation>;
 export type UpdateNotificationMutationResult = Apollo.MutationResult<UpdateNotificationMutation>;
 export type UpdateNotificationMutationOptions = Apollo.BaseMutationOptions<UpdateNotificationMutation, UpdateNotificationMutationVariables>;
-export const CreateUserChallengeReactionDocument = gql`
-    mutation CreateUserChallengeReaction($content: String!, $userId: String!, $challengeId: String!) {
-  createUserChallengeReaction(
+export const CreateOrUpdateUserChallengeReactionDocument = gql`
+    mutation CreateOrUpdateUserChallengeReaction($content: ReactionEmojis!, $challengeId: String!) {
+  createOrUpdateUserChallengeReaction(
     content: $content
-    userId: $userId
     challengeId: $challengeId
   ) {
     id
@@ -1129,72 +1209,135 @@ export const CreateUserChallengeReactionDocument = gql`
   }
 }
     `;
-export type CreateUserChallengeReactionMutationFn = Apollo.MutationFunction<CreateUserChallengeReactionMutation, CreateUserChallengeReactionMutationVariables>;
+export type CreateOrUpdateUserChallengeReactionMutationFn = Apollo.MutationFunction<CreateOrUpdateUserChallengeReactionMutation, CreateOrUpdateUserChallengeReactionMutationVariables>;
 
 /**
- * __useCreateUserChallengeReactionMutation__
+ * __useCreateOrUpdateUserChallengeReactionMutation__
  *
- * To run a mutation, you first call `useCreateUserChallengeReactionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateUserChallengeReactionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateOrUpdateUserChallengeReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrUpdateUserChallengeReactionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createUserChallengeReactionMutation, { data, loading, error }] = useCreateUserChallengeReactionMutation({
+ * const [createOrUpdateUserChallengeReactionMutation, { data, loading, error }] = useCreateOrUpdateUserChallengeReactionMutation({
  *   variables: {
  *      content: // value for 'content'
- *      userId: // value for 'userId'
  *      challengeId: // value for 'challengeId'
  *   },
  * });
  */
-export function useCreateUserChallengeReactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserChallengeReactionMutation, CreateUserChallengeReactionMutationVariables>) {
+export function useCreateOrUpdateUserChallengeReactionMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrUpdateUserChallengeReactionMutation, CreateOrUpdateUserChallengeReactionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateUserChallengeReactionMutation, CreateUserChallengeReactionMutationVariables>(CreateUserChallengeReactionDocument, options);
+        return Apollo.useMutation<CreateOrUpdateUserChallengeReactionMutation, CreateOrUpdateUserChallengeReactionMutationVariables>(CreateOrUpdateUserChallengeReactionDocument, options);
       }
-export type CreateUserChallengeReactionMutationHookResult = ReturnType<typeof useCreateUserChallengeReactionMutation>;
-export type CreateUserChallengeReactionMutationResult = Apollo.MutationResult<CreateUserChallengeReactionMutation>;
-export type CreateUserChallengeReactionMutationOptions = Apollo.BaseMutationOptions<CreateUserChallengeReactionMutation, CreateUserChallengeReactionMutationVariables>;
-export const GetUserChallengeReactionDocument = gql`
-    query GetUserChallengeReaction($challengeId: String!) {
-  getUserChallengeReaction(challengeId: $challengeId) {
-    id
-    userId
-    content
+export type CreateOrUpdateUserChallengeReactionMutationHookResult = ReturnType<typeof useCreateOrUpdateUserChallengeReactionMutation>;
+export type CreateOrUpdateUserChallengeReactionMutationResult = Apollo.MutationResult<CreateOrUpdateUserChallengeReactionMutation>;
+export type CreateOrUpdateUserChallengeReactionMutationOptions = Apollo.BaseMutationOptions<CreateOrUpdateUserChallengeReactionMutation, CreateOrUpdateUserChallengeReactionMutationVariables>;
+export const GetUserChallengesReactionsDocument = gql`
+    query GetUserChallengesReactions($challengesId: [String!]!) {
+  getUserChallengesReactions(challengesId: $challengesId) {
     challengeId
+    content
   }
 }
     `;
 
 /**
- * __useGetUserChallengeReactionQuery__
+ * __useGetUserChallengesReactionsQuery__
  *
- * To run a query within a React component, call `useGetUserChallengeReactionQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserChallengeReactionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetUserChallengesReactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserChallengesReactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetUserChallengeReactionQuery({
+ * const { data, loading, error } = useGetUserChallengesReactionsQuery({
+ *   variables: {
+ *      challengesId: // value for 'challengesId'
+ *   },
+ * });
+ */
+export function useGetUserChallengesReactionsQuery(baseOptions: Apollo.QueryHookOptions<GetUserChallengesReactionsQuery, GetUserChallengesReactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserChallengesReactionsQuery, GetUserChallengesReactionsQueryVariables>(GetUserChallengesReactionsDocument, options);
+      }
+export function useGetUserChallengesReactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserChallengesReactionsQuery, GetUserChallengesReactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserChallengesReactionsQuery, GetUserChallengesReactionsQueryVariables>(GetUserChallengesReactionsDocument, options);
+        }
+export type GetUserChallengesReactionsQueryHookResult = ReturnType<typeof useGetUserChallengesReactionsQuery>;
+export type GetUserChallengesReactionsLazyQueryHookResult = ReturnType<typeof useGetUserChallengesReactionsLazyQuery>;
+export type GetUserChallengesReactionsQueryResult = Apollo.QueryResult<GetUserChallengesReactionsQuery, GetUserChallengesReactionsQueryVariables>;
+export const GetReactionEmojisDocument = gql`
+    query GetReactionEmojis {
+  getReactionEmojis {
+    reactionEmoji
+    icon
+  }
+}
+    `;
+
+/**
+ * __useGetReactionEmojisQuery__
+ *
+ * To run a query within a React component, call `useGetReactionEmojisQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReactionEmojisQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReactionEmojisQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetReactionEmojisQuery(baseOptions?: Apollo.QueryHookOptions<GetReactionEmojisQuery, GetReactionEmojisQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetReactionEmojisQuery, GetReactionEmojisQueryVariables>(GetReactionEmojisDocument, options);
+      }
+export function useGetReactionEmojisLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReactionEmojisQuery, GetReactionEmojisQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetReactionEmojisQuery, GetReactionEmojisQueryVariables>(GetReactionEmojisDocument, options);
+        }
+export type GetReactionEmojisQueryHookResult = ReturnType<typeof useGetReactionEmojisQuery>;
+export type GetReactionEmojisLazyQueryHookResult = ReturnType<typeof useGetReactionEmojisLazyQuery>;
+export type GetReactionEmojisQueryResult = Apollo.QueryResult<GetReactionEmojisQuery, GetReactionEmojisQueryVariables>;
+export const DeleteUserChallengeReactionDocument = gql`
+    mutation DeleteUserChallengeReaction($challengeId: String!) {
+  deleteUserChallengeReaction(challengeId: $challengeId)
+}
+    `;
+export type DeleteUserChallengeReactionMutationFn = Apollo.MutationFunction<DeleteUserChallengeReactionMutation, DeleteUserChallengeReactionMutationVariables>;
+
+/**
+ * __useDeleteUserChallengeReactionMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserChallengeReactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserChallengeReactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserChallengeReactionMutation, { data, loading, error }] = useDeleteUserChallengeReactionMutation({
  *   variables: {
  *      challengeId: // value for 'challengeId'
  *   },
  * });
  */
-export function useGetUserChallengeReactionQuery(baseOptions: Apollo.QueryHookOptions<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>) {
+export function useDeleteUserChallengeReactionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserChallengeReactionMutation, DeleteUserChallengeReactionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>(GetUserChallengeReactionDocument, options);
+        return Apollo.useMutation<DeleteUserChallengeReactionMutation, DeleteUserChallengeReactionMutationVariables>(DeleteUserChallengeReactionDocument, options);
       }
-export function useGetUserChallengeReactionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>(GetUserChallengeReactionDocument, options);
-        }
-export type GetUserChallengeReactionQueryHookResult = ReturnType<typeof useGetUserChallengeReactionQuery>;
-export type GetUserChallengeReactionLazyQueryHookResult = ReturnType<typeof useGetUserChallengeReactionLazyQuery>;
-export type GetUserChallengeReactionQueryResult = Apollo.QueryResult<GetUserChallengeReactionQuery, GetUserChallengeReactionQueryVariables>;
+export type DeleteUserChallengeReactionMutationHookResult = ReturnType<typeof useDeleteUserChallengeReactionMutation>;
+export type DeleteUserChallengeReactionMutationResult = Apollo.MutationResult<DeleteUserChallengeReactionMutation>;
+export type DeleteUserChallengeReactionMutationOptions = Apollo.BaseMutationOptions<DeleteUserChallengeReactionMutation, DeleteUserChallengeReactionMutationVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {

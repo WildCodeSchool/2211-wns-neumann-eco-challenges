@@ -2,6 +2,7 @@ import Challenge from "../challenge/challenge.entity";
 import { getChallengeDetails } from "../challenge/challenge.service";
 import datasource from "../db";
 import User from "../user/user.entity";
+import { getUserChallengeReaction } from "../userChallengeReaction/UserChallengeReaction.service";
 import UserChallengesParticipation, {
   UserChallengeParticipationDetails,
 } from "./userChallengesParticipation.entity";

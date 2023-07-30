@@ -1,43 +1,81 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import datasource from "../db";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import UserChallengeReaction, {
-  EmojiList,
+  ReactionEmojis,
+  ReactionEmojisIcons,
+  ReactionEmojisWithIcon,
 } from "./UserChallengeReaction.entity";
 import {
-  createUserChallengeReaction,
+  createOrUpdateUserChallengeReaction,
   deleteUserChallengeReaction,
+  getChallengeReactions,
   getUserChallengeReaction,
+  getUserChallengesReactions,
 } from "./UserChallengeReaction.service";
+import { ContextType } from "../user/user.resolver";
+import { ApolloError } from "apollo-server-errors";
 
 @Resolver(() => UserChallengeReaction)
 export class UserChallengeReactionResolver {
+  @Authorized()
   @Mutation(() => UserChallengeReaction)
-  async createUserChallengeReaction(
+  async createOrUpdateUserChallengeReaction(
     @Arg("challengeId") challengeId: string,
-    @Arg("userId") userId: string,
-    @Arg("content") content: EmojiList
+    @Ctx() { currentUser }: ContextType,
+    @Arg("content", () => ReactionEmojis) content: ReactionEmojis
   ): Promise<UserChallengeReaction> {
-    const hasAlreadyReact = await datasource
-      .getRepository(UserChallengeReaction)
-      .find({ where: { challengeId, userId } });
-    if (hasAlreadyReact.length > 0) {
-      await deleteUserChallengeReaction(challengeId, userId);
-    }
-    return await createUserChallengeReaction(challengeId, userId, content);
+    if (currentUser == null)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await createOrUpdateUserChallengeReaction(
+      challengeId,
+      currentUser.id,
+      content
+    );
   }
 
+  @Authorized()
   @Query(() => [UserChallengeReaction])
-  async getUserChallengeReaction(
+  async getChallengeReactions(
     @Arg("challengeId") challengeId: string
   ): Promise<UserChallengeReaction[]> {
-    return await getUserChallengeReaction(challengeId);
+    return await getChallengeReactions(challengeId);
   }
 
+  @Authorized()
+  @Query(() => [ReactionEmojisWithIcon])
+  async getReactionEmojis(): Promise<ReactionEmojisWithIcon[]> {
+    return ReactionEmojisIcons;
+  }
+
+  @Authorized()
+  @Query(() => UserChallengeReaction)
+  async getUserChallengeReaction(
+    @Ctx() { currentUser }: ContextType,
+    @Arg("challengeId") challengeId: string
+  ): Promise<UserChallengeReaction | null> {
+    if (currentUser === null || currentUser === undefined)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await getUserChallengeReaction(currentUser.id, challengeId);
+  }
+
+  @Authorized()
+  @Query(() => [UserChallengeReaction])
+  async getUserChallengesReactions(
+    @Ctx() { currentUser }: ContextType,
+    @Arg("challengesId", () => [String]) challengesId: string[]
+  ): Promise<UserChallengeReaction[]> {
+    if (currentUser == null)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await getUserChallengesReactions(currentUser.id, challengesId);
+  }
+
+  @Authorized()
   @Mutation(() => Boolean)
   async deleteUserChallengeReaction(
-    @Arg("challengeId") challengeId: string,
-    @Arg("userId") userId: string
+    @Ctx() { currentUser }: ContextType,
+    @Arg("challengeId") challengeId: string
   ): Promise<boolean> {
-    return await deleteUserChallengeReaction(challengeId, userId);
+    if (currentUser == null)
+      throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
+    return await deleteUserChallengeReaction(challengeId, currentUser.id);
   }
 }

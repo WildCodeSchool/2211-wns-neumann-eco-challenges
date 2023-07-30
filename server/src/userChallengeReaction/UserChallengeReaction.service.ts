@@ -1,24 +1,56 @@
+import { ApolloError } from "apollo-server-errors";
 import datasource from "../db";
 import UserChallengeReaction, {
-  EmojiList,
+  ReactionEmojis,
 } from "./UserChallengeReaction.entity";
+import { In } from "typeorm";
 
-export async function createUserChallengeReaction(
+export async function createOrUpdateUserChallengeReaction(
   challengeId: string,
   userId: string,
-  content: EmojiList
+  reaction: ReactionEmojis
 ): Promise<UserChallengeReaction> {
-  return await datasource
+  await datasource.getRepository(UserChallengeReaction).upsert(
+    { challengeId, userId, content: reaction },
+    {
+      skipUpdateIfNoValuesChanged: true, // If true, postgres will skip the update if no values would be changed (reduces writes)
+      conflictPaths: ["challengeId", "userId"], // column(s) name that you would like to ON CONFLICT
+    }
+  );
+  const userChallengeReaction = await datasource
     .getRepository(UserChallengeReaction)
-    .save({ challengeId, userId, content });
+    .findOne({ where: { challengeId, userId } });
+
+  if (userChallengeReaction == null)
+    throw new ApolloError("Cannot get user challenge reaction", "NOT_FOUND");
+
+  return userChallengeReaction;
 }
 
-export async function getUserChallengeReaction(
+export async function getChallengeReactions(
   challengeId: string
 ): Promise<UserChallengeReaction[]> {
   return await datasource
     .getRepository(UserChallengeReaction)
-    .find({ relations: { challenge: true }, where: { challengeId } });
+    .find({ where: { challengeId } });
+}
+
+export async function getUserChallengeReaction(
+  userId: string,
+  challengeId: string
+): Promise<UserChallengeReaction | null> {
+  return await datasource
+    .getRepository(UserChallengeReaction)
+    .findOne({ where: { challengeId, userId } });
+}
+
+export async function getUserChallengesReactions(
+  userId: string,
+  challengesId: string[]
+): Promise<UserChallengeReaction[]> {
+  return await datasource.getRepository(UserChallengeReaction).find({
+    where: { challengeId: In(challengesId), userId },
+  });
 }
 export async function deleteUserChallengeReaction(
   challengeId: string,

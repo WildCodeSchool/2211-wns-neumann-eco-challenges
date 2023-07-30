@@ -6,8 +6,12 @@ import { useAppDispatch, useAppSelector } from "../../reducer/hooks";
 import useLongPress from "../../hooks/useLongPress";
 import { EmojiBar } from "../common/EmojiBar";
 import React from "react";
-import { useGetUserChallengeReactionQuery } from "../../gql/generated/schema";
-import { Stack } from "@mui/material";
+import {
+  ReactionEmojisWithIcon,
+  UserChallengeReaction,
+  useGetReactionEmojisQuery,
+  useGetUserChallengesReactionsQuery,
+} from "../../gql/generated/schema";
 
 const classes = [
   "nightLinearGradient",
@@ -17,20 +21,41 @@ const classes = [
 ];
 
 export const OngoingChallenges = () => {
-  const [openEmojiBar, setopenEmojiBar] = useState(false);
+  const [openEmojiBar, setOpenEmojiBar] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [onGoingChallengeId, setOnGoingChallengeId] = useState<string>("");
+  const [selectedChallengeId, setSelectedChallengeId] = useState<string>("");
+  const [reactionEmojis, setReactionEmojis] =
+    useState<ReactionEmojisWithIcon[]>();
+  const { data } = useGetReactionEmojisQuery();
 
-  const onLongPress = useLongPress<HTMLElement>({
-    onLongPress(e) {
-      setopenEmojiBar(true);
-      setAnchorEl(e.currentTarget);
-      setOnGoingChallengeId(e.currentTarget.ariaLabel!);
+  ///
+  /// Load list of available emojis from server
+  ///
+  useEffect(() => {
+    setReactionEmojis(data?.getReactionEmojis ?? []);
+  }, [data]);
+
+  ///
+  /// Display the emoji bar anchored to the selected challenge
+  ///
+  const onLongPress = useLongPress<HTMLElement>(
+    {
+      onLongPress(e) {
+        setOpenEmojiBar(true);
+        setAnchorEl(e.currentTarget);
+        setSelectedChallengeId(e.currentTarget.ariaLabel!);
+      },
     },
-  });
+    { shouldPreventDefault: false }
+  );
 
+  ///
+  /// Close emoji bar
+  ///
   const handleClose = () => {
-    setopenEmojiBar(false);
+    setAnchorEl(null);
+    setOpenEmojiBar(false);
+    getChallengesReactions();
   };
 
   const { userId, challenges } = useAppSelector((state) => ({
@@ -40,6 +65,9 @@ export const OngoingChallenges = () => {
 
   const dispatch = useAppDispatch();
 
+  ///
+  /// Load user challenges
+  ///
   useEffect(() => {
     const getChallenges = async () => {
       dispatch(thunkGetUserChallenges(userId!));
@@ -47,12 +75,34 @@ export const OngoingChallenges = () => {
     getChallenges();
   }, [dispatch, userId]);
 
-  const { data: userReaction } = useGetUserChallengeReactionQuery({
-    variables: { challengeId: onGoingChallengeId },
-  });
+  ///
+  /// Load user challenge reactions
+  ///
+  const { refetch: getChallengesReactionsQuery } =
+    useGetUserChallengesReactionsQuery({});
 
-  console.log(userReaction);
+  const [challengesReactions, setChallengesReactions] = useState<
+    Partial<UserChallengeReaction>[]
+  >([]);
 
+  const getReactionEmojiIcon = (reaction?: Partial<UserChallengeReaction>) => {
+    return reaction == null
+      ? undefined
+      : reactionEmojis?.find(
+          (_reaction) => reaction.content === _reaction.reactionEmoji
+        )?.icon;
+  };
+
+  const getChallengesReactions = async () => {
+    const { data } = await getChallengesReactionsQuery({
+      challengesId: challenges.map((challenge) => challenge.challenge.id),
+    });
+    setChallengesReactions(data.getUserChallengesReactions);
+  };
+
+  useEffect(() => {
+    getChallengesReactions();
+  }, [challenges]);
   return (
     <>
       <ImageList
@@ -74,6 +124,12 @@ export const OngoingChallenges = () => {
               <OngoingChallengeItem
                 key={challengeDetails.challenge.id}
                 {...{
+                  reactionEmojiIcon: getReactionEmojiIcon(
+                    challengesReactions.find(
+                      ({ challengeId }) =>
+                        challengeId === challengeDetails.challenge.id
+                    )
+                  ),
                   id: challengeDetails.challenge.id,
                   name: challengeDetails.challenge.name,
                   backgroundColor: classes[index % classes.length],
@@ -81,25 +137,30 @@ export const OngoingChallenges = () => {
                   endingDateTime: challengeDetails.challenge.endingDate,
                   startingDateTime: challengeDetails.challenge.startingDate,
                   completion: challengeDetails.completionPercentage,
+                  animateReaction:
+                    selectedChallengeId === challengeDetails.challenge.id &&
+                    openEmojiBar === false,
                 }}
               />
             </div>
           );
         })}
       </ImageList>
-      {/* {userReaction ? (
-        <Stack>
-          {userReaction.getUserChallengeReaction.map((x) => x.content)}
-        </Stack>
-      ) : ( */}
-      <EmojiBar
-        anchorEl={anchorEl || undefined}
-        openEmojiBar={openEmojiBar}
-        onClose={handleClose}
-        onGoingChallengeId={onGoingChallengeId}
-        userId={userId!}
-      />
-      {/* )} */}
+
+      {openEmojiBar && (
+        <EmojiBar
+          reactionEmojis={reactionEmojis ?? []}
+          anchorEl={anchorEl!}
+          onClose={handleClose}
+          initialReaction={
+            challengesReactions.find(
+              ({ challengeId }) => challengeId === selectedChallengeId
+            )?.content
+          }
+          selectedChallengeId={selectedChallengeId}
+          userId={userId!}
+        />
+      )}
     </>
   );
 };

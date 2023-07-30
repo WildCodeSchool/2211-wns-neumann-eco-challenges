@@ -8,6 +8,11 @@ query Challenges {
   }
 }
 
+query GetUserChallengeReaction($challengeId: String!) {
+  getUserChallengeReaction(challengeId: $challengeId) {
+    content
+  }
+}
 mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
   createChallenges(challenges: $challenges) {
     id
