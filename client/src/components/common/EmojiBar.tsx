@@ -16,7 +16,6 @@ interface EmojiBarProps {
   onClose: () => void;
   anchorEl: HTMLElement;
   selectedChallengeId: string;
-  userId: string;
   initialReaction?: ReactionEmojis;
 }
 
@@ -35,7 +34,6 @@ export const EmojiBar = ({
   onClose,
   anchorEl,
   selectedChallengeId,
-  userId,
   initialReaction,
 }: EmojiBarProps) => {
   const [selectedReaction, setSelectedReaction] = useState<
@@ -55,7 +53,6 @@ export const EmojiBar = ({
           variables: {
             challengeId: selectedChallengeId,
             content: reaction,
-            userId,
           },
         });
       } catch (error) {
@@ -65,7 +62,6 @@ export const EmojiBar = ({
       try {
         await deleteReaction({
           variables: {
-            userId,
             challengeId: selectedChallengeId,
           },
         });

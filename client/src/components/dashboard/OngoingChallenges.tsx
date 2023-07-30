@@ -158,7 +158,6 @@ export const OngoingChallenges = () => {
             )?.content
           }
           selectedChallengeId={selectedChallengeId}
-          userId={userId!}
         />
       )}
     </>
