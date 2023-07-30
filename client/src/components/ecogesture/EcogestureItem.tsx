@@ -1,4 +1,4 @@
-import { RadioButtonUnchecked, CheckCircle } from "@mui/icons-material";
+import { CameraAlt, RadioButtonUnchecked, CheckCircle } from "@mui/icons-material";
 import { Card, Checkbox, Typography, Avatar } from "@mui/material";
 import { Ecogesture } from "../../gql/generated/schema";
 
@@ -40,6 +40,14 @@ export const EcogestureItem = ({
       <Typography variant="body1" fontWeight={600} flexGrow={1}>
         {ecogesture.name}
       </Typography>
+      {ecogesture.isProofNeeded === true && 
+        <CameraAlt style={{
+          width: 20,
+          height: 20,
+          marginLeft: 10,
+          marginRight: 10,
+        }}/>
+      }
 
       <div style={{ flexBasis: "55px" }}>
         <Avatar

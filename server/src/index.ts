@@ -2,7 +2,6 @@ import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 import { buildSchema } from "type-graphql";
-import { join } from "path";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import datasource from "./db";
@@ -15,6 +14,7 @@ import { EcogestureResolver } from "./ecogesture/ecogesture.resolver";
 import { FriendResolver } from "./friend/friend.resolver";
 import { NotificationResolver } from "./notification/notification.resolver";
 import { UserChallengesParticipationResolver } from "./userChallengesParticipation/userChallengesParticipation.resolver";
+import { UserChallengeReactionResolver } from "./userChallengeReaction/UserChallengeReaction.resolver";
 
 const errorMessages = {
   23505: "An account with this email already exists.",
@@ -34,6 +34,7 @@ async function start(): Promise<void> {
       NotificationResolver,
       UserChallengesParticipationResolver,
       UserResolver,
+      UserChallengeReactionResolver,
     ],
     authChecker: async ({ context }: { context: ContextType }) => {
       const {

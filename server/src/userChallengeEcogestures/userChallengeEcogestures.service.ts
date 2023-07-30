@@ -7,7 +7,6 @@ import UserChallengeEcogestures, {
 } from "./userChallengeEcogestures.entity";
 import { getUserChallengeParticipationByChallengeId } from "../userChallengesParticipation/userChallengesParticipation.service";
 import moment from "moment";
-import { getUsersById } from "../user/user.service";
 
 export async function getUserChallengeEcogesturesByUserAndChallengeId(
   userId: string,
@@ -25,7 +24,8 @@ export async function getUserChallengeEcogesturesByUserAndChallengeId(
 export async function updateUserChallengeEcogesture(
   userId: string,
   challengeId: string,
-  ecogestureId: string
+  ecogestureId: string,
+  proof?: string
 ): Promise<UserEcogesturesWithChallengersScore> {
   const isAlreadyDone = await datasource
     .getRepository(UserChallengeEcogestures)
@@ -49,6 +49,7 @@ export async function updateUserChallengeEcogesture(
       ecogestureId,
       challengeId,
       reward: ecogesture.reward,
+      proof,
     });
   }
 

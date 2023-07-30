@@ -1,0 +1,38 @@
+mutation CreateOrUpdateUserChallengeReaction(
+  $content: ReactionEmojis!
+  $challengeId: String!
+) {
+  createOrUpdateUserChallengeReaction(
+    content: $content
+    challengeId: $challengeId
+  ) {
+    id
+    userId
+    content
+    challengeId
+  }
+}
+
+query GetUserChallengesReactions($challengesId: [String!]!) {
+  getUserChallengesReactions(challengesId: $challengesId) {
+    challengeId
+    content
+  }
+}
+
+query GetUserChallengeReaction($challengeId: String!) {
+  getUserChallengeReaction(challengeId: $challengeId) {
+    content
+  }
+}
+
+query GetReactionEmojis {
+  getReactionEmojis {
+    reactionEmoji
+    icon
+  }
+}
+
+mutation DeleteUserChallengeReaction($challengeId: String!) {
+  deleteUserChallengeReaction(challengeId: $challengeId)
+}

@@ -4,6 +4,7 @@ import { OngoingChallengeItemProps } from "../../interfaces/challenge/challenge.
 import { ChallengeTimer } from "./ChallengeTimer";
 import { useNavigate } from "react-router-dom";
 import { formatRankToReadable } from "../../tools/challenge.tools";
+import { motion } from "framer-motion";
 
 export const OngoingChallengeItem = ({
   id,
@@ -13,6 +14,8 @@ export const OngoingChallengeItem = ({
   startingDateTime,
   endingDateTime,
   backgroundColor,
+  reactionEmojiIcon,
+  animateReaction = false,
 }: OngoingChallengeItemProps) => {
   const navigate = useNavigate();
   return (
@@ -23,13 +26,43 @@ export const OngoingChallengeItem = ({
         width: 130,
         height: 160,
         borderRadius: 15,
+        overflow: "visible",
       }}
     >
       <CardActionArea
         className="challengeItemContainer"
-        sx={{ height: "100%" }}
-        onClick={() => {}}
+        sx={{ height: "100%", position: "relative", overflow: "visible" }}
       >
+        {reactionEmojiIcon != null && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-5px",
+              right: "-5px",
+              height: "25px",
+              width: "25px",
+              backgroundColor: "#242E34",
+              borderRadius: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 5,
+            }}
+          >
+            <motion.div
+              animate={{
+                scale: animateReaction ? [1, 2.5, 1] : 1,
+                y: animateReaction ? [0, -30, 0] : 0,
+              }}
+              transition={{
+                duration: 0.6,
+                ease: "easeInOut",
+              }}
+            >
+              {reactionEmojiIcon}
+            </motion.div>
+          </div>
+        )}
         <Stack
           padding={1}
           sx={{

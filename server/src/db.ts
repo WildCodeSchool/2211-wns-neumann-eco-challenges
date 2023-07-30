@@ -10,6 +10,7 @@ import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogesture
 import Friend from "./friend/friend.entity";
 import Notification from "./notification/notification.entity";
 import Category from "./category/category.entity";
+import UserChallengeReaction from "./userChallengeReaction/UserChallengeReaction.entity";
 
 const datasource = new DataSource({
   type: "postgres",
@@ -31,6 +32,7 @@ const datasource = new DataSource({
     Friend,
     Notification,
     Category,
+    UserChallengeReaction,
   ],
   logging: ["error"],
 });
