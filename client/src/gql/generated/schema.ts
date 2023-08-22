@@ -221,7 +221,7 @@ export type MutationUpdateNotificationStatusBySenderReceiverTypeArgs = {
 export type MutationUpdateUserChallengeEcogestureArgs = {
   challengeId: Scalars['String'];
   ecogestureId: Scalars['String'];
-  proofId?: InputMaybe<Scalars['String']>;
+  proofUrl?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -569,6 +569,7 @@ export type SignOutMutation = { __typename?: 'Mutation', logout: boolean };
 export type UpdateUserChallengeEcogestureMutationVariables = Exact<{
   ecogestureId: Scalars['String'];
   challengeId: Scalars['String'];
+  proofUrl?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1515,10 +1516,11 @@ export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
 export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
 export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
 export const UpdateUserChallengeEcogestureDocument = gql`
-    mutation UpdateUserChallengeEcogesture($ecogestureId: String!, $challengeId: String!) {
+    mutation UpdateUserChallengeEcogesture($ecogestureId: String!, $challengeId: String!, $proofUrl: String) {
   updateUserChallengeEcogesture(
     ecogestureId: $ecogestureId
     challengeId: $challengeId
+    proofUrl: $proofUrl
   ) {
     challengersScore {
       id
@@ -1553,6 +1555,7 @@ export type UpdateUserChallengeEcogestureMutationFn = Apollo.MutationFunction<Up
  *   variables: {
  *      ecogestureId: // value for 'ecogestureId'
  *      challengeId: // value for 'challengeId'
+ *      proofUrl: // value for 'proofUrl'
  *   },
  * });
  */

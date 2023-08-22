@@ -13,7 +13,7 @@ export class UserChallengeEcogesturesResolver {
     @Ctx() { currentUser }: ContextType,
     @Arg("challengeId") challengeId: string,
     @Arg("ecogestureId") ecogestureId: string,
-    @Arg("proofId", { nullable: true }) proof?: string
+    @Arg("proofUrl", { nullable: true }) proofUrl?: string
   ): Promise<UserEcogesturesWithChallengersScore> {
     if (currentUser == null)
       throw new ApolloError("Cannot get user id", "USER_CONTEXT_ERROR");
@@ -21,7 +21,7 @@ export class UserChallengeEcogesturesResolver {
       currentUser.id,
       challengeId,
       ecogestureId,
-      proof,
+      proofUrl
     );
   }
 }

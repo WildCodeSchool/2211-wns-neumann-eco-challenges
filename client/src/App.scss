@@ -220,3 +220,13 @@ $itemWidth: 100% / 6;
 .datePicker:visited {
   background-color: $lightGreenColor !important;
 }
+
+lr-modal {
+  background-color: red !important;
+}
+.my-config {
+  --h-accent: 23;
+  --s-accent: 20%;
+  --l-accent: 1%;
+  --lr-camera-source-background: rgb(0, 0, 0);
+}

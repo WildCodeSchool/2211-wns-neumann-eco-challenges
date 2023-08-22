@@ -55,7 +55,6 @@ export const EmojiBar = ({
           variables: {
             challengeId: selectedChallengeId,
             content: reaction,
-            userId,
           },
         });
       } catch (error) {
@@ -65,7 +64,6 @@ export const EmojiBar = ({
       try {
         await deleteReaction({
           variables: {
-            userId,
             challengeId: selectedChallengeId,
           },
         });

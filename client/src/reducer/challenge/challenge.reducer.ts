@@ -136,7 +136,6 @@ export const {
   setChallengeEcogestures,
 } = challengesSlice.actions;
 
-
 // Thunks
 export const thunkGetChallengeDetails = createAsyncThunk(
   "challenges/getChallengeDetails",
@@ -172,13 +171,16 @@ export const thunkUpdateUserChallengeEcogesture = createAsyncThunk(
   async ({
     challengeId,
     ecogestureId,
+    proofUrl,
   }: {
     challengeId: string;
     ecogestureId: string;
+    proofUrl?: string;
   }): Promise<UserEcogesturesWithChallengersScore> => {
+    console.log({ challengeId, ecogestureId, proofUrl });
     const challengersScore = await apolloClient.mutate({
       mutation: UpdateUserChallengeEcogestureDocument,
-      variables: { ecogestureId, challengeId },
+      variables: { ecogestureId, challengeId, proofUrl },
     });
 
     return challengersScore.data?.updateUserChallengeEcogesture;

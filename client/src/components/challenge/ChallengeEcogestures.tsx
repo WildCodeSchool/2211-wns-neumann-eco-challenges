@@ -10,7 +10,11 @@ import {
 import { Category, Ecogesture } from "../../gql/generated/schema";
 import { EcogestureItem } from "../ecogesture/EcogestureItem";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import * as LR from "@uploadcare/blocks";
+import { PACKAGE_VERSION } from "@uploadcare/blocks";
+
+LR.registerBlocks(LR);
 
 export const ChallengeEcogestures = ({
   ecogestures,
@@ -21,7 +25,7 @@ export const ChallengeEcogestures = ({
   ecogestures: Ecogesture[];
   selectedEcogesturesId: string[];
   isForm?: boolean;
-  onSelectedEcogesture(ecogestureId: string): void;
+  onSelectedEcogesture(ecogestureId: string, proofUrl?: string): void;
 }) => {
   const {
     register,
@@ -53,6 +57,44 @@ export const ChallengeEcogestures = ({
     setSelectedCategoryId("all");
   }, [ecogestures]);
 
+  ///
+  /// File uploader
+  ///
+  const [proofURL, setProofURL] = useState<string>("");
+  const dataOutputRef = useRef<LR.DataOutput>();
+
+  const showFileUploader = (ecogestureId: string, isVisible: boolean) => {
+    const config: any = document.querySelector("lr-config");
+    config.metadata = { selectedEcogestureId: ecogestureId };
+    const shadowRoot = document.querySelector(
+      "lr-file-uploader-regular"
+    )?.shadowRoot;
+    if (isVisible) {
+      shadowRoot
+        ?.querySelector("lr-start-from")
+        ?.setAttribute("active", "true");
+      shadowRoot?.querySelector("dialog")?.showModal();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("LR_DONE_FLOW", (e) => {
+      console.log("LR DOWN FLOW");
+      if (proofURL.length !== 0) {
+        // Perform upload
+        console.log(`Should upload ${proofURL}`);
+        const config: any = document.querySelector("lr-config");
+        onSelectedEcogesture(config.metadata.selectedEcogestureId, proofURL);
+        setProofURL("");
+      }
+    });
+  }, []);
+
+  const dataOutput = document.querySelector("lr-data-output");
+  dataOutput?.addEventListener("lr-data-output", (e: any) => {
+    setProofURL(e.detail?.data[0]?.cdnUrl ?? "");
+  });
+
   return (
     <Grid
       item
@@ -64,6 +106,43 @@ export const ChallengeEcogestures = ({
       position={"relative"}
       gap={4}
     >
+      <div>
+        <lr-config
+          ctx-name="my-uploader"
+          pubkey="demopublickey"
+          imgOnly={true}
+          multiple={false}
+          source-list="local, camera"
+        ></lr-config>
+
+        <div style={{ width: 0, height: 0, opacity: 0 }}>
+          <lr-file-uploader-regular
+            class="my-config"
+            ctx-name="my-uploader"
+            css-src={`https://unpkg.com/@uploadcare/blocks@${PACKAGE_VERSION}/web/lr-file-uploader-regular.min.css`}
+          ></lr-file-uploader-regular>
+        </div>
+
+        <lr-data-output
+          ctx-name="my-uploader"
+          ref={dataOutputRef}
+          use-event
+          hidden
+        ></lr-data-output>
+
+        {/* <div>
+          {files.map((file) => (
+            <img
+              key={file.uuid}
+              src={`https://ucarecdn.com/${file.uuid}/${
+                file.cdnUrlModifiers || ""
+              }-/preview/-/scale_crop/400x400/`}
+              width="200"
+              alt="Preview"
+            />
+          ))}
+        </div> */}
+      </div>
       <Stack
         width={"100%"}
         direction={"row"}
@@ -101,6 +180,7 @@ export const ChallengeEcogestures = ({
           </div>
         ))}
       </Stack>
+
       <FormGroup
         {...register("list", {
           validate: {
@@ -124,13 +204,20 @@ export const ChallengeEcogestures = ({
               <EcogestureItem
                 key={gesture.id}
                 callbackOnClick={() => {
-                  onSelectedEcogesture(gesture.id);
+                  if (
+                    gesture.isProofNeeded &&
+                    selectedEcogesturesId.find(
+                      (ecogestureId) => ecogestureId === gesture.id
+                    ) == null
+                  )
+                    showFileUploader(gesture.id, true);
+                  else onSelectedEcogesture(gesture.id);
                 }}
                 ecogesture={gesture}
                 isChecked={
-                  selectedEcogesturesId.findIndex(
+                  selectedEcogesturesId.find(
                     (ecogestureId) => ecogestureId === gesture.id
-                  ) !== -1
+                  ) != null
                 }
               />
             }

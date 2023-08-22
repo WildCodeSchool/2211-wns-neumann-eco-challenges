@@ -497,11 +497,15 @@ export const Challenge = () => {
           </Stack>
           <div style={{ width: "80%" }}>
             <ChallengeEcogestures
-              onSelectedEcogesture={(ecogestureId: string) => {
+              onSelectedEcogesture={(
+                ecogestureId: string,
+                proofUrl?: string
+              ) => {
                 dispatch(
                   thunkUpdateUserChallengeEcogesture({
                     challengeId: challengeId!,
                     ecogestureId,
+                    proofUrl,
                   })
                 );
               }}
