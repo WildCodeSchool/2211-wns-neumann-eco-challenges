@@ -18,6 +18,7 @@ services:
       - db:/var/lib/postgresql/data
   server:
     restart: always
+    platform: linux/amd64
     depends_on:
       db:
         condition: service_healthy
@@ -56,14 +57,14 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
   discordBot:
+    platform: linux/amd64
     image: chloegirodet/discord-bot
     depends_on:
       nginx:
         condition: service_started
     environment:
-      - BOT_TOKEN='MTE0MjkxMzU1MTIwNDM1NjI5Ng.GUPOYh.OzDOarSuTazMBJ9y42lHzRpS7ueOmT8u0DuLRU'
-      - CHANNEL_ID='1142913191656046722'
-    command:
-      npm run start send-message "staging environment has been updated"
+      - BOT_TOKEN=${BOT_TOKEN:-}
+      - CHANNEL_ID=${CHANNEL_ID:-}
+    command: npm run send-message "🤖 *Green Mates* - new **staging** version successfully deployed. Check it out at https://staging.neumann5.wns.wilders.dev/"
 volumes:
   db:
