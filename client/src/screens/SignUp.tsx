@@ -13,7 +13,7 @@ import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
 import * as LR from "@uploadcare/blocks";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 LR.registerBlocks(LR);
 
@@ -266,36 +266,29 @@ export const SignUp = () => {
   const [userPicture, setUserPicture] = useState<string>("");
   const dataOutputRef = useRef<LR.DataOutput>();
 
-  useEffect(() => {
-    window.addEventListener("LR_DONE_FLOW", (e) => {
-      console.log("LR DOWN FLOW");
-      if (userPicture.length !== 0) {
-        // Perform upload
-        console.log(`Should upload ${userPicture}`);
-        setUserPicture("");
-      }
-    });
-  }, [userPicture]);
-
   const dataOutput = document.querySelector("lr-data-output");
   dataOutput?.addEventListener("lr-data-output", (e: any) => {
+    console.log("test");
     setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
   });
 
   return (
-    <WelcomePageTemplate
-      header={getHeader()}
-      body={getBody(
-        register,
-        handleSubmit,
-        signUpError,
-        dispatch,
-        formErrors,
-        navigate,
-        dataOutputRef,
-        userPicture
-      )}
-      footer={getFooter(navigate)}
-    />
+    <div>
+      <img src={userPicture} />
+      <WelcomePageTemplate
+        header={getHeader()}
+        body={getBody(
+          register,
+          handleSubmit,
+          signUpError,
+          dispatch,
+          formErrors,
+          navigate,
+          dataOutputRef,
+          userPicture
+        )}
+        footer={getFooter(navigate)}
+      />
+    </div>
   );
 };
