@@ -12,9 +12,41 @@ import { EcogestureItem } from "../ecogesture/EcogestureItem";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef, useState } from "react";
 import * as LR from "@uploadcare/blocks";
-import { PACKAGE_VERSION } from "@uploadcare/blocks";
 
 LR.registerBlocks(LR);
+
+const idCallback = (e: any) => {
+  const dialog = document
+    .querySelector("lr-file-uploader-regular")
+    ?.shadowRoot?.querySelector("dialog");
+
+  if (
+    dialog != null &&
+    dialog.open &&
+    e.target.localName !== "lr-file-uploader-regular"
+  ) {
+    showFileUploader("", false);
+  }
+};
+
+const showFileUploader = (ecogestureId: string, isVisible: boolean) => {
+  const config: any = document.querySelector("lr-config");
+  config.metadata = { selectedEcogestureId: ecogestureId };
+  const shadowRoot = document.querySelector(
+    "lr-file-uploader-regular"
+  )?.shadowRoot;
+  shadowRoot
+    ?.querySelector("lr-start-from")
+    ?.setAttribute("active", `${isVisible}`);
+  const modal = shadowRoot?.querySelector("dialog");
+  if (isVisible) {
+    modal?.showModal();
+    setTimeout(() => window.addEventListener("click", idCallback), 1000);
+  } else {
+    modal?.close();
+    window.removeEventListener("click", idCallback);
+  }
+};
 
 export const ChallengeEcogestures = ({
   ecogestures,
@@ -63,23 +95,8 @@ export const ChallengeEcogestures = ({
   const [proofURL, setProofURL] = useState<string>("");
   const dataOutputRef = useRef<LR.DataOutput>();
 
-  const showFileUploader = (ecogestureId: string, isVisible: boolean) => {
-    const config: any = document.querySelector("lr-config");
-    config.metadata = { selectedEcogestureId: ecogestureId };
-    const shadowRoot = document.querySelector(
-      "lr-file-uploader-regular"
-    )?.shadowRoot;
-    if (isVisible) {
-      shadowRoot
-        ?.querySelector("lr-start-from")
-        ?.setAttribute("active", "true");
-      shadowRoot?.querySelector("dialog")?.showModal();
-    }
-  };
-
   useEffect(() => {
     window.addEventListener("LR_DONE_FLOW", (e) => {
-      console.log("LR DOWN FLOW");
       if (proofURL.length !== 0) {
         // Perform upload
         console.log(`Should upload ${proofURL}`);
@@ -88,6 +105,10 @@ export const ChallengeEcogestures = ({
         setProofURL("");
       }
     });
+
+    return () => {
+      window.removeEventListener("click", idCallback);
+    };
   }, []);
 
   const dataOutput = document.querySelector("lr-data-output");
@@ -109,17 +130,19 @@ export const ChallengeEcogestures = ({
       <div>
         <lr-config
           ctx-name="my-uploader"
-          pubkey="demopublickey"
+          pubkey={process.env.UPLOAD_CARE_PUBLIC_KEY}
           imgOnly={true}
           multiple={false}
+          removeCopyright={true}
           source-list="local, camera"
         ></lr-config>
 
         <div style={{ width: 0, height: 0, opacity: 0 }}>
           <lr-file-uploader-regular
             class="my-config"
+            className="toto"
             ctx-name="my-uploader"
-            css-src={`https://unpkg.com/@uploadcare/blocks@${PACKAGE_VERSION}/web/lr-file-uploader-regular.min.css`}
+            css-src={"/uploader.css"}
           ></lr-file-uploader-regular>
         </div>
 
