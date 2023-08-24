@@ -139,7 +139,6 @@ export const thunkSignOut = createAsyncThunk(
 export const thunkSignUp = createAsyncThunk(
   "user/signUp",
   async (user: UserInput): Promise<User[] | SerializedError> => {
-    console.log("SiGN UP");
     const users = await apolloClient.mutate({
       mutation: SignUpDocument,
       variables: {

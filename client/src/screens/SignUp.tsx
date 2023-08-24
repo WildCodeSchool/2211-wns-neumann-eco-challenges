@@ -12,6 +12,42 @@ import { thunkSignIn, thunkSignUp } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
+import * as LR from "@uploadcare/blocks";
+import { useEffect, useRef, useState } from "react";
+
+LR.registerBlocks(LR);
+
+const idCallback = (e: any) => {
+  const dialog = document
+    .querySelector("lr-file-uploader-regular")
+    ?.shadowRoot?.querySelector("dialog");
+
+  if (
+    dialog != null &&
+    dialog.open &&
+    e.target.localName !== "lr-file-uploader-regular"
+  ) {
+    showFileUploader(false);
+  }
+};
+
+const showFileUploader = (isVisible: boolean) => {
+  console.log({isVisible})
+  const shadowRoot = document.querySelector(
+    "lr-file-uploader-regular"
+  )?.shadowRoot;
+  shadowRoot
+    ?.querySelector("lr-start-from")
+    ?.setAttribute("active", `${isVisible}`);
+  const modal = shadowRoot?.querySelector("dialog");
+  if (isVisible) {
+    modal?.showModal();
+    setTimeout(() => window.addEventListener("click", idCallback), 1000);
+  } else {
+    modal?.close();
+    window.removeEventListener("click", idCallback);
+  }
+};
 
 const minPasswordLength = 8;
 const getHeader = () => {
@@ -44,7 +80,9 @@ const getBody = (
   signUpError: string,
   dispatch: AppDispatch,
   formErrors: any,
-  navigate: any
+  navigate: any,
+  dataOutputRef: React.MutableRefObject<LR.DataOutput | undefined>,
+  userPicture: string | null
 ) => {
   return (
     <Box
@@ -59,7 +97,7 @@ const getBody = (
           const {
             meta: { requestStatus: requestStatusSignUp },
           } = await dispatch(
-            thunkSignUp({ email, firstName, lastName, password })
+            thunkSignUp({ email, firstName, lastName, password, picture: userPicture })
           );
 
           if (requestStatusSignUp === RequestStatus.fulfilled) {
@@ -146,6 +184,38 @@ const getBody = (
             minLength: minPasswordLength,
           })}
         />
+        <Button 
+          variant="outlined"
+          color="inherit"
+          onClick={() => {
+            showFileUploader(true)
+          }}
+        > 
+          Profile picture
+        </Button>
+
+        <lr-config
+          ctx-name="my-uploader"
+          pubkey="d3e850d949e62ece4422"
+          imgOnly={true}
+          multiple={false}
+          source-list="local, camera"
+        ></lr-config>
+
+        <div style={{ width: 0, height: 0, opacity: 0 }}>
+          <lr-file-uploader-regular
+            class="my-config"
+            ctx-name="my-uploader"
+            css-src={"/uploader.css"}
+          ></lr-file-uploader-regular>
+        </div>
+
+        <lr-data-output
+          ctx-name="my-uploader"
+          ref={dataOutputRef}
+          use-event
+          hidden
+        ></lr-data-output>
       </Grid>
 
       <Grid
@@ -190,6 +260,28 @@ export const SignUp = () => {
     formState: { errors: formErrors },
   } = useForm();
 
+  ///
+  /// Picture uploader
+  ///
+  const [userPicture, setUserPicture] = useState<string>("");
+  const dataOutputRef = useRef<LR.DataOutput>();
+
+  useEffect(() => {
+    window.addEventListener("LR_DONE_FLOW", (e) => {
+      console.log("LR DOWN FLOW");
+      if (userPicture.length !== 0) {
+        // Perform upload
+        console.log(`Should upload ${userPicture}`);
+        setUserPicture("");
+      }
+    });
+  }, [userPicture]);
+
+  const dataOutput = document.querySelector("lr-data-output");
+  dataOutput?.addEventListener("lr-data-output", (e: any) => {
+    setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
+  });
+
   return (
     <WelcomePageTemplate
       header={getHeader()}
@@ -199,7 +291,9 @@ export const SignUp = () => {
         signUpError,
         dispatch,
         formErrors,
-        navigate
+        navigate,
+        dataOutputRef,
+        userPicture
       )}
       footer={getFooter(navigate)}
     />
