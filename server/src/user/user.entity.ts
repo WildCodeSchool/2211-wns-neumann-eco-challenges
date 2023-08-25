@@ -27,8 +27,8 @@ class User {
   @Column({ unique: true })
   email: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   picture: string;
 
   @OneToMany(() => Friend, (friend) => friend.user)

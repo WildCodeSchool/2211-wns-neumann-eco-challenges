@@ -67,6 +67,7 @@ query ChallengeDetails($challengeId: String!) {
       firstName
       lastName
       email
+      picture
     }
     userEcogestures {
       id

@@ -235,6 +235,7 @@ export type Notification = {
   date: Scalars['DateTime'];
   hasBeenSeen: Scalars['Boolean'];
   id: Scalars['String'];
+  picture: Scalars['String'];
   receiverId: Scalars['String'];
   senderId: Scalars['String'];
   status?: Maybe<Scalars['String']>;
@@ -335,7 +336,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
-  picture?: Maybe<Scalars['String']>;
+  picture: Scalars['String'];
 };
 
 export type UserChallengeEcogestures = {
@@ -435,7 +436,7 @@ export type ChallengeDetailsQueryVariables = Exact<{
 }>;
 
 
-export type ChallengeDetailsQuery = { __typename?: 'Query', challengeDetails: { __typename?: 'ChallengeDetails', totalEcogesturesScore: number, challenge: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }, challengersScore: Array<{ __typename?: 'UserChallengeScore', id: string, score: number }>, ecogestures: Array<{ __typename?: 'Ecogesture', id: string, name: string, difficulty: number, reward: number, isProofNeeded: boolean, category: { __typename?: 'Category', id: string, name: string, icon?: string | null } }>, challengers: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string }>, userEcogestures: Array<{ __typename?: 'UserChallengeEcogestures', id: string, challengeId: string, userId: string, ecogestureId: string, proof?: string | null, completionDate: any, reward: number }>, categories: Array<{ __typename?: 'Category', id: string, name: string, icon?: string | null }> } };
+export type ChallengeDetailsQuery = { __typename?: 'Query', challengeDetails: { __typename?: 'ChallengeDetails', totalEcogesturesScore: number, challenge: { __typename?: 'Challenge', id: string, name: string, status: boolean, startingDate: any, endingDate: any }, challengersScore: Array<{ __typename?: 'UserChallengeScore', id: string, score: number }>, ecogestures: Array<{ __typename?: 'Ecogesture', id: string, name: string, difficulty: number, reward: number, isProofNeeded: boolean, category: { __typename?: 'Category', id: string, name: string, icon?: string | null } }>, challengers: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture: string }>, userEcogestures: Array<{ __typename?: 'UserChallengeEcogestures', id: string, challengeId: string, userId: string, ecogestureId: string, proof?: string | null, completionDate: any, reward: number }>, categories: Array<{ __typename?: 'Category', id: string, name: string, icon?: string | null }> } };
 
 export type DeleteChallengesMutationVariables = Exact<{
   deleteChallengesId: Array<Scalars['String']> | Scalars['String'];
@@ -469,7 +470,7 @@ export type GetFriendsQueryVariables = Exact<{
 }>;
 
 
-export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null } }> };
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture: string } }> };
 
 export type UpdateFriendRelationshipMutationVariables = Exact<{
   friendId: Scalars['String'];
@@ -481,7 +482,7 @@ export type UpdateFriendRelationshipMutation = { __typename?: 'Mutation', update
 export type GetOwnNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type?: InvitationType | null, content: string, status?: string | null, hasBeenSeen: boolean }> };
+export type GetOwnNotificationsQuery = { __typename?: 'Query', getOwnNotifications: Array<{ __typename?: 'Notification', id: string, senderId: string, receiverId: string, date: any, type?: InvitationType | null, content: string, status?: string | null, hasBeenSeen: boolean, picture: string }> };
 
 export type DeleteNotificationsMutationVariables = Exact<{
   deleteNotificationsId: Array<Scalars['String']> | Scalars['String'];
@@ -540,14 +541,14 @@ export type DeleteUserChallengeReactionMutation = { __typename?: 'Mutation', del
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null } } };
+export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture: string } } };
 
 export type SignUpMutationVariables = Exact<{
   userInputs: Array<UserInput> | UserInput;
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', createUser: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null }> };
+export type SignUpMutation = { __typename?: 'Mutation', createUser: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture: string }> };
 
 export type SignInMutationVariables = Exact<{
   data: LoginInput;
@@ -773,6 +774,7 @@ export const ChallengeDetailsDocument = gql`
       firstName
       lastName
       email
+      picture
     }
     userEcogestures {
       id
@@ -1052,6 +1054,7 @@ export const GetOwnNotificationsDocument = gql`
     content
     status
     hasBeenSeen
+    picture
   }
 }
     `;

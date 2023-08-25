@@ -15,6 +15,15 @@ export async function getUsersById(usersId: string[]): Promise<User[]> {
   return users.flat();
 }
 
+export async function getUserPicture(userId: string): Promise<string> {
+  const user = await datasource
+    .getRepository(User)
+    .findOne({ where: { id: userId } });
+  if (user == null)
+    throw new ApolloError("Cannot get user picture", "NOT FOUND");
+
+  return user.picture;
+}
 export async function createUsers(userData: UserInput[]): Promise<User[]> {
   return await Promise.all(
     userData.map(

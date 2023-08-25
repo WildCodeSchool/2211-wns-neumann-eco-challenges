@@ -74,6 +74,9 @@ export default class Notification {
 
   @Column({ default: false })
   canceledBySender?: boolean;
+
+  @Field()
+  picture: string;
 }
 
 @InputType()

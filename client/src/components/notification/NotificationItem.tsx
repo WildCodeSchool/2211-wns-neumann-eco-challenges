@@ -47,11 +47,6 @@ const getIcon = (type: string) => {
       return null;
   }
 };
-const avatars = [
-  "https://images.prismic.io/utopix-next-website/Mzk0NGJkOWEtY2ZlYS00MjVjLTkwNTAtOGY5OWQzN2IzNGVi_762cec57-2eaf-4eaf-9a0d-2e7860147e48_profilhomme7.jpg?ixlib=js-3.7.1&w=3840&auto=format&fit=max",
-  "https://www.informelles.media/wp-content/uploads/2022/05/Alice-Lhabouz-Couleur-HD-scaled.jpg",
-  "https://ca.slack-edge.com/TGU64F2H2-U04DJ3K2QTG-fbaa52a9366f-512",
-];
 
 export const NotificationItem = ({
   notification,
@@ -108,7 +103,7 @@ export const NotificationItem = ({
         >
           <Avatar
             sx={{ width: 56, height: 56 }}
-            src={avatars[Math.floor(Math.random() * (avatars.length - 0) + 0)]}
+            src={notification.picture}
           ></Avatar>
         </Grid>
         <Grid item xs={7} display={"flex"} direction={"column"}>

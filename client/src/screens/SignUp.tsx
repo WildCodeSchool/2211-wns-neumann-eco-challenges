@@ -32,6 +32,23 @@ const getHeader = () => {
   return <GreenMatesLogo format="graphic" size="100px" />;
 };
 
+const getAvatar = (userPicture: string) => {
+  if (userPicture.length === 0)
+    return (
+      <Face
+        style={{
+          width: "65px",
+          height: "65px",
+          color: "#212121",
+        }}
+      />
+    );
+  else
+    return (
+      <Avatar sx={{ width: "100px", height: "100px" }} src={userPicture} />
+    );
+};
+
 const getFooter = (navigate: any) => {
   return (
     <Box display="flex" justifyContent="center" flexDirection={"column"}>
@@ -59,7 +76,7 @@ const getBody = (
   dispatch: AppDispatch,
   formErrors: any,
   navigate: any,
-  userPicture: string | null
+  userPicture: string
 ) => {
   return (
     <Box
@@ -79,7 +96,10 @@ const getBody = (
               firstName,
               lastName,
               password,
-              picture: userPicture,
+              picture:
+                userPicture.length === 0
+                  ? `https://ui-avatars.com/api/?size=128&name=${firstName}+${lastName}&rounded=true&background=f8fffc&color=212121`
+                  : userPicture,
             })
           );
 
@@ -152,14 +172,8 @@ const getBody = (
             onClick={() => {
               showFileUploader(true);
             }}
-            >
-            <Face 
-              style={{
-                width: "65px",
-                height: "65px",
-                color: "#212121",
-              }}
-            />
+          >
+            {getAvatar(userPicture)}
           </Avatar>
         </Badge>
       </div>

@@ -49,7 +49,7 @@ export const ChallengerRankingItem = ({
         >
           {" "}
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU"
+            src={challenger.picture!}
             alt="avatar"
             style={{
               height: "50px",
