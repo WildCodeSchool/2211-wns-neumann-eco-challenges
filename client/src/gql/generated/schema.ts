@@ -335,7 +335,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
-  picture?: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
 };
 
 export type UserChallengeEcogestures = {
@@ -469,7 +469,7 @@ export type GetFriendsQueryVariables = Exact<{
 }>;
 
 
-export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null } }> };
 
 export type UpdateFriendRelationshipMutationVariables = Exact<{
   friendId: Scalars['String'];
@@ -969,6 +969,7 @@ export const GetFriendsDocument = gql`
       firstName
       lastName
       email
+      picture
     }
     didCurrentUserAskedFriendship
     status

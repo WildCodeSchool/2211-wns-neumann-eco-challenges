@@ -15,7 +15,7 @@ import { AppDispatch } from "../store";
 import * as LR from "@uploadcare/blocks";
 import { useEffect, useState } from "react";
 import { Avatar, Badge } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import { Edit, Face } from "@mui/icons-material";
 
 LR.registerBlocks(LR);
 
@@ -147,14 +147,20 @@ const getBody = (
               border: "4px solid #3bd8a9",
               width: "100px",
               height: "100px",
+              backgroundColor: "#f8fffc",
             }}
             onClick={() => {
               showFileUploader(true);
             }}
-            src={
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"
-            }
-          />
+            >
+            <Face 
+              style={{
+                width: "65px",
+                height: "65px",
+                color: "#212121",
+              }}
+            />
+          </Avatar>
         </Badge>
       </div>
       <Grid container item paddingX={2} paddingBottom={2}>
@@ -297,11 +303,6 @@ export const SignUp = () => {
 
   return (
     <div>
-      <img
-        src={userPicture}
-        alt="avatar"
-        style={{ width: "90px", height: "90px" }}
-      />
       <WelcomePageTemplate
         header={getHeader()}
         body={getBody(
