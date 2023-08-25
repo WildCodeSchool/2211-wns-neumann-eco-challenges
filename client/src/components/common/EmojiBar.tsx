@@ -6,12 +6,16 @@ import {
   ReactionEmojisWithIcon,
   useCreateOrUpdateUserChallengeReactionMutation,
   useDeleteUserChallengeReactionMutation,
+  UserChallengeReaction,
 } from "../../gql/generated/schema";
 import { Emoji } from "../common/Emoji";
 import { motion } from "framer-motion";
-import React from "react";
+import { Avatar, Typography } from "@mui/material";
+import { avatars, colors } from ".././friend/FriendInvitationEnhanced";
+import { useAppSelector } from "../../reducer/hooks";
 
 interface EmojiBarProps {
+  challengeReactions: UserChallengeReaction[];
   reactionEmojis: ReactionEmojisWithIcon[];
   onClose: () => void;
   anchorEl: HTMLElement;
@@ -35,7 +39,9 @@ export const EmojiBar = ({
   anchorEl,
   selectedChallengeId,
   initialReaction,
+  challengeReactions,
 }: EmojiBarProps) => {
+  const contextUserId = useAppSelector((store) => store.user.user!.id);
   const [selectedReaction, setSelectedReaction] = useState<
     ReactionEmojis | undefined
   >(initialReaction);
@@ -74,59 +80,121 @@ export const EmojiBar = ({
   };
 
   return (
-    <Popover
-      open
-      onClose={onClose}
-      anchorEl={anchorEl}
-      sx={{
-        "& .MuiPaper-root": {
-          marginTop: "20px",
-          backgroundColor: "#242E34",
-          height: "50px",
-          borderRadius: "40px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-          overflowX: "scroll",
-          overflowY: "hidden",
-        },
-      }}
-      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-    >
-      <Stack
-        direction="row"
-        display={"flex"}
-        spacing={2}
+    <>
+      <Popover
+        open
+        onClose={onClose}
+        anchorEl={anchorEl}
         sx={{
-          backgroundColor: "inherit",
-          borderRadius: "inherit",
+          "& .MuiPaper-root": {
+            marginTop: "20px",
+            backgroundColor: "#242E34",
+            height: "50px",
+            borderRadius: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            overflowX: "scroll",
+            overflowY: "hidden",
+          },
         }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        {reactionEmojis.map((reaction, index) => {
-          return (
-            <motion.div
-              key={index}
-              variants={emojiSelectionVariants}
-              animate={
-                reaction.reactionEmoji === selectedReaction
-                  ? "active"
-                  : "inactive"
-              }
-              transition={{ type: "spring", bounce: 0.6, duration: 0.4 }}
-              onAnimationComplete={(_) => {
-                if (reactionUpdated) onClose();
-              }}
-              onClick={() => {
-                onReactionSelected(reaction.reactionEmoji);
-              }}
-            >
-              <Emoji symbol={reaction.icon} label={reaction.icon} />
-            </motion.div>
-          );
-        })}
-      </Stack>
-    </Popover>
+        <Stack
+          direction="row"
+          display={"flex"}
+          spacing={2}
+          sx={{
+            backgroundColor: "inherit",
+            borderRadius: "inherit",
+          }}
+        >
+          {reactionEmojis.map((reaction, index) => {
+            return (
+              <motion.div
+                key={index}
+                variants={emojiSelectionVariants}
+                animate={
+                  reaction.reactionEmoji === selectedReaction
+                    ? "active"
+                    : "inactive"
+                }
+                transition={{ type: "spring", bounce: 0.6, duration: 0.4 }}
+                onAnimationComplete={(_) => {
+                  if (reactionUpdated) onClose();
+                }}
+                onClick={() => {
+                  onReactionSelected(reaction.reactionEmoji);
+                }}
+              >
+                <Emoji symbol={reaction.icon} label={reaction.icon} />
+              </motion.div>
+            );
+          })}
+        </Stack>
+      </Popover>
+
+      <Popover
+        open
+        onClose={onClose}
+        anchorEl={anchorEl}
+        sx={{
+          "& .MuiPaper-root": {
+            marginTop: "100px",
+            backgroundColor: "#242E34",
+            height: "50px",
+            borderRadius: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginLeft: "10px",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            overflowX: "scroll",
+            overflowY: "hidden",
+          },
+        }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Stack
+          direction="row"
+          display={"flex"}
+          spacing={1}
+          alignItems="center"
+          sx={{
+            backgroundColor: "inherit",
+            borderRadius: "inherit",
+          }}
+        >
+          {challengeReactions
+            .filter((reaction) => reaction.userId !== contextUserId)
+            .map((reaction, index) => {
+              const emoji = reactionEmojis.find(
+                (emoji) => emoji.reactionEmoji === reaction.content
+              );
+              return (
+                emoji && (
+                  <>
+                    <Avatar
+                      style={{
+                        border: `2px solid ${colors[index % colors.length]}`,
+                        width: "30px",
+                        height: "30px",
+                      }}
+                      src={avatars[index % avatars.length]}
+                    />
+                    <Typography color="white" fontWeight="bold">
+                      {reaction.user.firstName}
+                    </Typography>
+                    <Emoji symbol={emoji.icon} label={emoji.reactionEmoji} />
+                  </>
+                )
+              );
+            })}
+        </Stack>
+      </Popover>
+    </>
   );
 };

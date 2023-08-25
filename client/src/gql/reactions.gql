@@ -36,3 +36,18 @@ query GetReactionEmojis {
 mutation DeleteUserChallengeReaction($challengeId: String!) {
   deleteUserChallengeReaction(challengeId: $challengeId)
 }
+
+query GetChallengeReactions($challengeId: String!) {
+  getChallengeReactions(challengeId: $challengeId) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    userId
+    content
+    challengeId
+  }
+}

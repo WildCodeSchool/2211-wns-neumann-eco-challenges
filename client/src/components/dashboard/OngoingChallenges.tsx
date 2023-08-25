@@ -11,6 +11,7 @@ import {
   UserChallengeReaction,
   useGetReactionEmojisQuery,
   useGetUserChallengesReactionsQuery,
+  useGetChallengeReactionsQuery,
 } from "../../gql/generated/schema";
 
 const classes = [
@@ -26,6 +27,7 @@ export const OngoingChallenges = () => {
   const [selectedChallengeId, setSelectedChallengeId] = useState<string>("");
   const [reactionEmojis, setReactionEmojis] =
     useState<ReactionEmojisWithIcon[]>();
+
   const { data } = useGetReactionEmojisQuery();
 
   ///
@@ -97,12 +99,29 @@ export const OngoingChallenges = () => {
     const { data } = await getChallengesReactionsQuery({
       challengesId: challenges.map((challenge) => challenge.challenge.id),
     });
+
     setChallengesReactions(data.getUserChallengesReactions);
   };
+
+  const [
+    usersReactionsOnSelectedChallenge,
+    setUsersReactionsOnSelectedChallenge,
+  ] = useState<UserChallengeReaction[]>([]);
+
+  const { data: dataChallengeReactions } = useGetChallengeReactionsQuery({
+    variables: { challengeId: selectedChallengeId },
+  });
+
+  useEffect(() => {
+    setUsersReactionsOnSelectedChallenge(
+      dataChallengeReactions?.getChallengeReactions ?? []
+    );
+  }, [dataChallengeReactions]);
 
   useEffect(() => {
     getChallengesReactions();
   }, [challenges]);
+
   return (
     <>
       <ImageList
@@ -149,6 +168,7 @@ export const OngoingChallenges = () => {
 
       {openEmojiBar && (
         <EmojiBar
+          challengeReactions={usersReactionsOnSelectedChallenge}
           reactionEmojis={reactionEmojis ?? []}
           anchorEl={anchorEl!}
           onClose={handleClose}

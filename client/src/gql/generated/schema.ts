@@ -363,6 +363,7 @@ export type UserChallengeReaction = {
   challengeId: Scalars['String'];
   content: ReactionEmojis;
   id: Scalars['String'];
+  user: User;
   userId: Scalars['String'];
 };
 
@@ -534,6 +535,13 @@ export type DeleteUserChallengeReactionMutationVariables = Exact<{
 
 
 export type DeleteUserChallengeReactionMutation = { __typename?: 'Mutation', deleteUserChallengeReaction: boolean };
+
+export type GetChallengeReactionsQueryVariables = Exact<{
+  challengeId: Scalars['String'];
+}>;
+
+
+export type GetChallengeReactionsQuery = { __typename?: 'Query', getChallengeReactions: Array<{ __typename?: 'UserChallengeReaction', id: string, userId: string, content: ReactionEmojis, challengeId: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
 
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1338,6 +1346,50 @@ export function useDeleteUserChallengeReactionMutation(baseOptions?: Apollo.Muta
 export type DeleteUserChallengeReactionMutationHookResult = ReturnType<typeof useDeleteUserChallengeReactionMutation>;
 export type DeleteUserChallengeReactionMutationResult = Apollo.MutationResult<DeleteUserChallengeReactionMutation>;
 export type DeleteUserChallengeReactionMutationOptions = Apollo.BaseMutationOptions<DeleteUserChallengeReactionMutation, DeleteUserChallengeReactionMutationVariables>;
+export const GetChallengeReactionsDocument = gql`
+    query GetChallengeReactions($challengeId: String!) {
+  getChallengeReactions(challengeId: $challengeId) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    userId
+    content
+    challengeId
+  }
+}
+    `;
+
+/**
+ * __useGetChallengeReactionsQuery__
+ *
+ * To run a query within a React component, call `useGetChallengeReactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChallengeReactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChallengeReactionsQuery({
+ *   variables: {
+ *      challengeId: // value for 'challengeId'
+ *   },
+ * });
+ */
+export function useGetChallengeReactionsQuery(baseOptions: Apollo.QueryHookOptions<GetChallengeReactionsQuery, GetChallengeReactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChallengeReactionsQuery, GetChallengeReactionsQueryVariables>(GetChallengeReactionsDocument, options);
+      }
+export function useGetChallengeReactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChallengeReactionsQuery, GetChallengeReactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChallengeReactionsQuery, GetChallengeReactionsQueryVariables>(GetChallengeReactionsDocument, options);
+        }
+export type GetChallengeReactionsQueryHookResult = ReturnType<typeof useGetChallengeReactionsQuery>;
+export type GetChallengeReactionsLazyQueryHookResult = ReturnType<typeof useGetChallengeReactionsLazyQuery>;
+export type GetChallengeReactionsQueryResult = Apollo.QueryResult<GetChallengeReactionsQuery, GetChallengeReactionsQueryVariables>;
 export const GetProfileDocument = gql`
     query GetProfile {
   getProfile {

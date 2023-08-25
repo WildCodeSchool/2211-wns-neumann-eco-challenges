@@ -5,7 +5,6 @@ import {
   InvitationType,
   NotificationStatus,
   useGetFriendsQuery,
-  useUpdateNotificationMutation,
   useUpdateNotificationStatusBySenderReceiverTypeMutation,
 } from "../../gql/generated/schema";
 import { useEffect, useState } from "react";

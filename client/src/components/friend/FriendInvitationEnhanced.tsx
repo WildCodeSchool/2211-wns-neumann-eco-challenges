@@ -12,8 +12,8 @@ import { useState } from "react";
 import { ThunksStatus } from "../../store";
 import { FriendInvitationMode } from "../../interfaces/friend/friend.interface";
 
-const colors = ["#FF9996", "#FFE5CD", "#62B6B7"];
-const avatars = [
+export const colors = ["#FF9996", "#FFE5CD", "#62B6B7"];
+export const avatars = [
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU",
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU",
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoj4aXYYSDLGAQEZGKAteDT9Ia_wONVPsuUA&usqp=CAU",
