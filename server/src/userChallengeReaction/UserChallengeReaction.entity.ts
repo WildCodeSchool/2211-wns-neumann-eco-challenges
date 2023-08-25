@@ -79,6 +79,7 @@ class UserChallengeReaction {
   @Column({ enum: ReactionEmojis })
   content: ReactionEmojis;
 
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.userChallengeReactions, {
     onDelete: "CASCADE",
   })
