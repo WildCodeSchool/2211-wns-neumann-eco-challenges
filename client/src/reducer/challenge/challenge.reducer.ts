@@ -177,7 +177,6 @@ export const thunkUpdateUserChallengeEcogesture = createAsyncThunk(
     ecogestureId: string;
     proofUrl?: string;
   }): Promise<UserEcogesturesWithChallengersScore> => {
-    console.log({ challengeId, ecogestureId, proofUrl });
     const challengersScore = await apolloClient.mutate({
       mutation: UpdateUserChallengeEcogestureDocument,
       variables: { ecogestureId, challengeId, proofUrl },

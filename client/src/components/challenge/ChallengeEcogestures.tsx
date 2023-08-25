@@ -10,41 +10,18 @@ import {
 import { Category, Ecogesture } from "../../gql/generated/schema";
 import { EcogestureItem } from "../ecogesture/EcogestureItem";
 import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as LR from "@uploadcare/blocks";
 
 LR.registerBlocks(LR);
 
-const idCallback = (e: any) => {
-  const dialog = document
-    .querySelector("lr-file-uploader-regular")
-    ?.shadowRoot?.querySelector("dialog");
-
-  if (
-    dialog != null &&
-    dialog.open &&
-    e.target.localName !== "lr-file-uploader-regular"
-  ) {
-    showFileUploader("", false);
-  }
-};
-
 const showFileUploader = (ecogestureId: string, isVisible: boolean) => {
   const config: any = document.querySelector("lr-config");
   config.metadata = { selectedEcogestureId: ecogestureId };
-  const shadowRoot = document.querySelector(
-    "lr-file-uploader-regular"
-  )?.shadowRoot;
-  shadowRoot
-    ?.querySelector("lr-start-from")
-    ?.setAttribute("active", `${isVisible}`);
-  const modal = shadowRoot?.querySelector("dialog");
   if (isVisible) {
-    modal?.showModal();
-    setTimeout(() => window.addEventListener("click", idCallback), 1000);
-  } else {
-    modal?.close();
-    window.removeEventListener("click", idCallback);
+    const ctxProvider: UploadCtxProvider =
+      document.querySelector("#uploaderctx")!;
+    ctxProvider.initFlow();
   }
 };
 
@@ -92,29 +69,23 @@ export const ChallengeEcogestures = ({
   ///
   /// File uploader
   ///
-  const [proofURL, setProofURL] = useState<string>("");
-  const dataOutputRef = useRef<LR.DataOutput>();
-
+  let proofUrl = "";
   useEffect(() => {
     window.addEventListener("LR_DONE_FLOW", (e) => {
-      if (proofURL.length !== 0) {
-        // Perform upload
-        console.log(`Should upload ${proofURL}`);
+      if (proofUrl.length !== 0) {
         const config: any = document.querySelector("lr-config");
-        onSelectedEcogesture(config.metadata.selectedEcogestureId, proofURL);
-        setProofURL("");
+        onSelectedEcogesture(config.metadata.selectedEcogestureId, proofUrl);
+        proofUrl = "";
+        const ctxProvider: UploadCtxProvider =
+          document.querySelector("#uploaderctx")!;
+        ctxProvider.uploadCollection.clearAll();
       }
     });
 
-    return () => {
-      window.removeEventListener("click", idCallback);
-    };
+    window.addEventListener("LR_DATA_OUTPUT", (e: any) => {
+      proofUrl = e.detail?.data[0]?.cdnUrl ?? "";
+    });
   }, []);
-
-  const dataOutput = document.querySelector("lr-data-output");
-  dataOutput?.addEventListener("lr-data-output", (e: any) => {
-    setProofURL(e.detail?.data[0]?.cdnUrl ?? "");
-  });
 
   return (
     <Grid
@@ -130,41 +101,26 @@ export const ChallengeEcogestures = ({
       <div>
         <lr-config
           ctx-name="my-uploader"
-          pubkey={process.env.UPLOAD_CARE_PUBLIC_KEY}
+          pubkey={process.env.REACT_APP_UPLOADCARE_PUB_KEY}
           imgOnly={true}
+          confirm-upload={true}
           multiple={false}
           removeCopyright={true}
           source-list="local, camera"
         ></lr-config>
 
+        <lr-upload-ctx-provider
+          id="uploaderctx"
+          ctx-name="my-uploader"
+        ></lr-upload-ctx-provider>
+
         <div style={{ width: 0, height: 0, opacity: 0 }}>
           <lr-file-uploader-regular
             class="my-config"
-            className="toto"
             ctx-name="my-uploader"
             css-src={"/uploader.css"}
           ></lr-file-uploader-regular>
         </div>
-
-        <lr-data-output
-          ctx-name="my-uploader"
-          ref={dataOutputRef}
-          use-event
-          hidden
-        ></lr-data-output>
-
-        {/* <div>
-          {files.map((file) => (
-            <img
-              key={file.uuid}
-              src={`https://ucarecdn.com/${file.uuid}/${
-                file.cdnUrlModifiers || ""
-              }-/preview/-/scale_crop/400x400/`}
-              width="200"
-              alt="Preview"
-            />
-          ))}
-        </div> */}
       </div>
       <Stack
         width={"100%"}

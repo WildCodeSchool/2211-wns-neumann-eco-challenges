@@ -200,9 +200,9 @@
   --h-background: 208;
   --s-background: 4%;
   --l-background: calc(97% - 85% * var(--darkmode));
-  --h-accent: 211;
-  --s-accent: 100%;
-  --l-accent: calc(50% - 5% * var(--darkmode));
+  --h-accent: 0;
+  --s-accent: 0%;
+  --l-accent: 0%;
   --h-confirm: 137;
   --s-confirm: 85%;
   --l-confirm: 53%;
@@ -2798,8 +2798,4 @@ lr-select > button > select {
   width: 100%;
   height: 100%;
   opacity: 0;
-}
-
-::backdrop {
-  pointer-events: none !important;
 }
