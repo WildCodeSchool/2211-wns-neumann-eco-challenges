@@ -1,10 +1,12 @@
 mutation UpdateUserChallengeEcogesture(
   $ecogestureId: String!
   $challengeId: String!
+  $proofUrl: String
 ) {
   updateUserChallengeEcogesture(
     ecogestureId: $ecogestureId
     challengeId: $challengeId
+    proofUrl: $proofUrl
   ) {
     challengersScore {
       id

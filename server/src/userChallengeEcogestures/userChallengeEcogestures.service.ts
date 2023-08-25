@@ -25,7 +25,7 @@ export async function updateUserChallengeEcogesture(
   userId: string,
   challengeId: string,
   ecogestureId: string,
-  proof?: string
+  proofUrl?: string
 ): Promise<UserEcogesturesWithChallengersScore> {
   const isAlreadyDone = await datasource
     .getRepository(UserChallengeEcogestures)
@@ -49,7 +49,7 @@ export async function updateUserChallengeEcogesture(
       ecogestureId,
       challengeId,
       reward: ecogesture.reward,
-      proof,
+      proof: proofUrl,
     });
   }
 
