@@ -2799,7 +2799,3 @@ lr-select > button > select {
   height: 100%;
   opacity: 0;
 }
-
-::backdrop {
-  pointer-events: none !important;
-}

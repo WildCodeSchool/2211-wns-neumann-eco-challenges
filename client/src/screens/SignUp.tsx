@@ -13,40 +13,17 @@ import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
 import * as LR from "@uploadcare/blocks";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, Badge } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 
 LR.registerBlocks(LR);
 
-const idCallback = (e: any) => {
-  const dialog = document
-    .querySelector("lr-file-uploader-regular")
-    ?.shadowRoot?.querySelector("dialog");
-
-  if (
-    dialog != null &&
-    dialog.open &&
-    e.target.localName !== "lr-file-uploader-regular"
-  ) {
-    showFileUploader(false);
-  }
-};
-
 const showFileUploader = (isVisible: boolean) => {
-  const shadowRoot = document.querySelector(
-    "lr-file-uploader-regular"
-  )?.shadowRoot;
-  shadowRoot
-    ?.querySelector("lr-start-from")
-    ?.setAttribute("active", `${isVisible}`);
-  const modal = shadowRoot?.querySelector("dialog");
   if (isVisible) {
-    modal?.showModal();
-    setTimeout(() => window.addEventListener("click", idCallback), 1000);
-  } else {
-    modal?.close();
-    window.removeEventListener("click", idCallback);
+    const ctxProvider: UploadCtxProvider =
+      document.querySelector("#uploaderctx")!;
+    ctxProvider.initFlow();
   }
 };
 
@@ -82,7 +59,6 @@ const getBody = (
   dispatch: AppDispatch,
   formErrors: any,
   navigate: any,
-  dataOutputRef: React.MutableRefObject<LR.DataOutput | undefined>,
   userPicture: string | null
 ) => {
   return (
@@ -98,7 +74,13 @@ const getBody = (
           const {
             meta: { requestStatus: requestStatusSignUp },
           } = await dispatch(
-            thunkSignUp({ email, firstName, lastName, password, picture: userPicture })
+            thunkSignUp({
+              email,
+              firstName,
+              lastName,
+              password,
+              picture: userPicture,
+            })
           );
 
           if (requestStatusSignUp === RequestStatus.fulfilled) {
@@ -131,46 +113,50 @@ const getBody = (
         </Typography>
       </Grid>
 
-      <div style={{ 
+      <div
+        style={{
           flexBasis: "55px",
           display: "flex",
           textAlign: "center",
           justifyContent: "center",
           paddingBottom: "14px",
-        }}>
-          <Badge
-            overlap="circular"
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            badgeContent={
-              <div
-                style={{
-                  backgroundColor: "black",
-                  color: "white",
-                  borderRadius: "50%",
-                  width: "18px",
-                  height: "18px",
-                  fontSize: "18px",
-                  border: "2px solid white",
-                  boxShadow: "inset 0px 0px 0px 2px black",
-                }}
-              >
-                <Edit sx={{ fontSize: "15px" }} />
-              </div>
-            }
-          >
-            <Avatar
+        }}
+      >
+        <Badge
+          overlap="circular"
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          badgeContent={
+            <div
               style={{
-                border: "4px solid #3bd8a9",
-                width: "100px",
-                height: "100px",
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "50%",
+                width: "18px",
+                height: "18px",
+                fontSize: "18px",
+                border: "2px solid white",
+                boxShadow: "inset 0px 0px 0px 2px black",
               }}
-              onClick={() => {
-                showFileUploader(true)
-              }}
-              src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"}
-            />
-          </Badge>
-        </div>
+            >
+              <Edit sx={{ fontSize: "15px" }} />
+            </div>
+          }
+        >
+          <Avatar
+            style={{
+              border: "4px solid #3bd8a9",
+              width: "100px",
+              height: "100px",
+            }}
+            onClick={() => {
+              showFileUploader(true);
+            }}
+            src={
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"
+            }
+          />
+        </Badge>
+      </div>
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
@@ -229,11 +215,18 @@ const getBody = (
 
         <lr-config
           ctx-name="my-uploader"
-          pubkey="d3e850d949e62ece4422"
+          pubkey={process.env.REACT_APP_UPLOADCARE_PUB_KEY}
           imgOnly={true}
           multiple={false}
+          confirm-upload={true}
+          removeCopyright={true}
           source-list="local, camera"
         ></lr-config>
+
+        <lr-upload-ctx-provider
+          id="uploaderctx"
+          ctx-name="my-uploader"
+        ></lr-upload-ctx-provider>
 
         <div style={{ width: 0, height: 0, opacity: 0 }}>
           <lr-file-uploader-regular
@@ -242,13 +235,6 @@ const getBody = (
             css-src={"/uploader.css"}
           ></lr-file-uploader-regular>
         </div>
-
-        <lr-data-output
-          ctx-name="my-uploader"
-          ref={dataOutputRef}
-          use-event
-          hidden
-        ></lr-data-output>
       </Grid>
 
       <Grid
@@ -297,17 +283,25 @@ export const SignUp = () => {
   /// Picture uploader
   ///
   const [userPicture, setUserPicture] = useState<string>("");
-  const dataOutputRef = useRef<LR.DataOutput>();
 
-  const dataOutput = document.querySelector("lr-data-output");
-  dataOutput?.addEventListener("lr-data-output", (e: any) => {
-    console.log(e.detail?.data[0]?.cdnUrl)
-    setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
-  });
+  useEffect(() => {
+    window.addEventListener("LR_DATA_OUTPUT", (e: any) => {
+      setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
+    });
+    window.addEventListener("LR_DONE_FLOW", (e) => {
+      const ctxProvider: UploadCtxProvider =
+        document.querySelector("#uploaderctx")!;
+      ctxProvider.uploadCollection.clearAll();
+    });
+  }, []);
 
   return (
     <div>
-      <img src={userPicture} alt="avatar" style={{width: "90px", height: "90px"}}/>
+      <img
+        src={userPicture}
+        alt="avatar"
+        style={{ width: "90px", height: "90px" }}
+      />
       <WelcomePageTemplate
         header={getHeader()}
         body={getBody(
@@ -317,7 +311,6 @@ export const SignUp = () => {
           dispatch,
           formErrors,
           navigate,
-          dataOutputRef,
           userPicture
         )}
         footer={getFooter(navigate)}
