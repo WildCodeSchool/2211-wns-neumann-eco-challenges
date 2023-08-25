@@ -335,7 +335,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
-  picture?: Maybe<Scalars['String']>;
+  picture?: Scalars['String'];
 };
 
 export type UserChallengeEcogestures = {

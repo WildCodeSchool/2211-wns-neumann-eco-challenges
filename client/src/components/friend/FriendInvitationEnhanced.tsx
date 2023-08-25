@@ -90,7 +90,7 @@ export const FriendInvitationEnhanced = ({
                       | "none"
                   }
                   didCurrentUserAskedFriendship={didCurrentUserAskedFriendship}
-                  avatar={avatars[index % avatars.length]}
+                  avatar={friend.picture ?? ""}
                 />
               );
             }

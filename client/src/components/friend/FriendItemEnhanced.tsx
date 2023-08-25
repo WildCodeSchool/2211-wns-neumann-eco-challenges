@@ -120,9 +120,13 @@ export const FriendItemEnhanced = ({
               border: `4px solid ${borderColor}`,
               width: "50px",
               height: "50px",
+              backgroundColor: "#f8fffc",
+              color: "#212121"
             }}
-            src={avatar}
-          />
+            src={avatar ?? null}
+          >
+            {firstName.charAt(0)}
+          </Avatar>
         </Badge>
       </div>
       <Grid item flex={1}>

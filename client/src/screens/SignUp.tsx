@@ -14,6 +14,8 @@ import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
 import * as LR from "@uploadcare/blocks";
 import { useRef, useState } from "react";
+import { Avatar, Badge } from "@mui/material";
+import { Edit } from "@mui/icons-material";
 
 LR.registerBlocks(LR);
 
@@ -32,7 +34,6 @@ const idCallback = (e: any) => {
 };
 
 const showFileUploader = (isVisible: boolean) => {
-  console.log({isVisible})
   const shadowRoot = document.querySelector(
     "lr-file-uploader-regular"
   )?.shadowRoot;
@@ -129,6 +130,47 @@ const getBody = (
           Help us to make the planet greener.
         </Typography>
       </Grid>
+
+      <div style={{ 
+          flexBasis: "55px",
+          display: "flex",
+          textAlign: "center",
+          justifyContent: "center",
+          paddingBottom: "14px",
+        }}>
+          <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            badgeContent={
+              <div
+                style={{
+                  backgroundColor: "black",
+                  color: "white",
+                  borderRadius: "50%",
+                  width: "18px",
+                  height: "18px",
+                  fontSize: "18px",
+                  border: "2px solid white",
+                  boxShadow: "inset 0px 0px 0px 2px black",
+                }}
+              >
+                <Edit sx={{ fontSize: "15px" }} />
+              </div>
+            }
+          >
+            <Avatar
+              style={{
+                border: "4px solid #3bd8a9",
+                width: "100px",
+                height: "100px",
+              }}
+              onClick={() => {
+                showFileUploader(true)
+              }}
+              src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"}
+            />
+          </Badge>
+        </div>
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
@@ -184,15 +226,6 @@ const getBody = (
             minLength: minPasswordLength,
           })}
         />
-        <Button 
-          variant="outlined"
-          color="inherit"
-          onClick={() => {
-            showFileUploader(true)
-          }}
-        > 
-          Profile picture
-        </Button>
 
         <lr-config
           ctx-name="my-uploader"
@@ -268,13 +301,13 @@ export const SignUp = () => {
 
   const dataOutput = document.querySelector("lr-data-output");
   dataOutput?.addEventListener("lr-data-output", (e: any) => {
-    console.log("test");
+    console.log(e.detail?.data[0]?.cdnUrl)
     setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
   });
 
   return (
     <div>
-      <img src={userPicture} />
+      <img src={userPicture} alt="avatar" style={{width: "90px", height: "90px"}}/>
       <WelcomePageTemplate
         header={getHeader()}
         body={getBody(
