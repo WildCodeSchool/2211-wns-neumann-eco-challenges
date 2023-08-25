@@ -4,7 +4,7 @@ export type FriendInvitationMode = "CHALLENGE_INVITATION" | "FRIEND_INVITATION";
 
 export interface FriendItemProps {
   name: string;
-  avatar: string;
+  avatar?: string;
   url: string;
   challengedNTimes: number;
   borderColor: string;

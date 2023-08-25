@@ -335,6 +335,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
 };
 
 export type UserChallengeEcogestures = {
@@ -393,6 +394,7 @@ export type UserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+  picture?: InputMaybe<Scalars['String']>;
 };
 
 export type UserProfile = {
@@ -467,7 +469,7 @@ export type GetFriendsQueryVariables = Exact<{
 }>;
 
 
-export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } }> };
+export type GetFriendsQuery = { __typename?: 'Query', getFriends: Array<{ __typename?: 'FriendRelationship', didCurrentUserAskedFriendship: boolean, status: string, friend: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null } }> };
 
 export type UpdateFriendRelationshipMutationVariables = Exact<{
   friendId: Scalars['String'];
@@ -538,14 +540,14 @@ export type DeleteUserChallengeReactionMutation = { __typename?: 'Mutation', del
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } };
+export type GetProfileQuery = { __typename?: 'Query', getProfile: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null } } };
 
 export type SignUpMutationVariables = Exact<{
   userInputs: Array<UserInput> | UserInput;
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', createUser: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string }> };
+export type SignUpMutation = { __typename?: 'Mutation', createUser: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, email: string, picture?: string | null }> };
 
 export type SignInMutationVariables = Exact<{
   data: LoginInput;
@@ -967,6 +969,7 @@ export const GetFriendsDocument = gql`
       firstName
       lastName
       email
+      picture
     }
     didCurrentUserAskedFriendship
     status
@@ -1348,6 +1351,7 @@ export const GetProfileDocument = gql`
       firstName
       lastName
       email
+      picture
     }
   }
 }
@@ -1386,6 +1390,7 @@ export const SignUpDocument = gql`
     firstName
     lastName
     email
+    picture
   }
 }
     `;
