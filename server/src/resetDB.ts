@@ -89,7 +89,7 @@ async function userFill(): Promise<void> {
       lastName: "Matador",
       email: "user2@app.com",
       hashedPassword: await hashPassword("test2@123"),
-      picture: "https://ucarecdn.com/6b896b74-854e-4b03-8e86-1fa2cb9cf068/",
+      picture: "https://ucarecdn.com/3beb338d-c57d-495a-aea5-48b67905ff13/",
     },
     {
       firstName: "Dugon",
