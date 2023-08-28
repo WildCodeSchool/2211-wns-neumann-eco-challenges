@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { Avatar, Typography } from "@mui/material";
 
-let REACTION_NB = 3;
+let REACTION_NB = 4;
 const names = [
   "Nicolas",
   "Luc",
@@ -95,12 +95,11 @@ export const EmojiBar = ({
           marginTop: "20px",
           backgroundColor: "#242E34",
           minHeight: "50px",
-
           borderRadius: "40px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          padding: REACTION_NB === 0 ? "10px 0 10px 0" : "15px",
+          padding: REACTION_NB === 0 ? "0 15px 0px 15px" : "15px",
           overflowX: "scroll",
           overflowY: "hidden",
         },
@@ -145,22 +144,33 @@ export const EmojiBar = ({
             <Typography variant="subtitle1" color={"white"} fontWeight={"600"}>
               Reactions
             </Typography>
-            {reactionEmojis.slice(0, REACTION_NB).map((emoji, index) => (
-              <Stack
-                direction={"row"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <Avatar
-                  sx={{ marginRight: "20px", height: "40px", width: "40px" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU"
-                ></Avatar>
-                <Typography sx={{ flex: 1 }} color="white" fontWeight={600}>
-                  {names[index]}
-                </Typography>
-                <Emoji symbol={emoji.icon} label={emoji.reactionEmoji} />
-              </Stack>
-            ))}
+            <Stack
+              spacing={2}
+              sx={{
+                maxHeight: "170px",
+                overflowY: "scroll",
+                "&::-webkit-scrollbar": { display: "none" },
+                msOverflowStyle: "none",
+                scrollbarWidth: "none",
+              }}
+            >
+              {reactionEmojis.slice(0, REACTION_NB).map((emoji, index) => (
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                >
+                  <Avatar
+                    sx={{ marginRight: "20px", height: "40px", width: "40px" }}
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU"
+                  ></Avatar>
+                  <Typography sx={{ flex: 1 }} color="white" fontWeight={600}>
+                    {names[index]}
+                  </Typography>
+                  <Emoji symbol={emoji.icon} label={emoji.reactionEmoji} />
+                </Stack>
+              ))}
+            </Stack>
           </Stack>
         )}
       </Stack>
