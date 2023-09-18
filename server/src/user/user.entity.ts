@@ -27,6 +27,10 @@ class User {
   @Column({ unique: true })
   email: string;
 
+  @Field()
+  @Column()
+  picture: string;
+
   @OneToMany(() => Friend, (friend) => friend.user)
   friends: Friend[];
 
@@ -81,6 +85,10 @@ export class UserInput {
   @Field()
   @MinLength(8)
   password: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  picture: string;
 }
 
 @InputType()

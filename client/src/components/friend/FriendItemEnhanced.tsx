@@ -4,13 +4,7 @@ import {
   FriendInvitationMode,
   FriendItemEnhancedProps,
 } from "../../interfaces/friend/friend.interface";
-import {
-  Check,
-  CheckCircle,
-  CircleNotifications,
-  NotificationsNone,
-  Sync,
-} from "@mui/icons-material";
+import { Check, NotificationsNone, Sync } from "@mui/icons-material";
 
 const statusFriendRelationshipTexts = {
   FRIEND_INVITATION: {
@@ -122,7 +116,7 @@ export const FriendItemEnhanced = ({
               height: "50px",
             }}
             src={avatar}
-          />
+          ></Avatar>
         </Badge>
       </div>
       <Grid item flex={1}>

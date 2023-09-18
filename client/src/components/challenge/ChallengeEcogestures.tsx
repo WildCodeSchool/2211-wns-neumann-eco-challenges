@@ -11,6 +11,19 @@ import { Category, Ecogesture } from "../../gql/generated/schema";
 import { EcogestureItem } from "../ecogesture/EcogestureItem";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import * as LR from "@uploadcare/blocks";
+
+LR.registerBlocks(LR);
+
+const showFileUploader = (ecogestureId: string, isVisible: boolean) => {
+  const config: any = document.querySelector("lr-config");
+  config.metadata = { selectedEcogestureId: ecogestureId };
+  if (isVisible) {
+    const ctxProvider: UploadCtxProvider =
+      document.querySelector("#uploaderctx")!;
+    ctxProvider.initFlow();
+  }
+};
 
 export const ChallengeEcogestures = ({
   ecogestures,
@@ -21,7 +34,7 @@ export const ChallengeEcogestures = ({
   ecogestures: Ecogesture[];
   selectedEcogesturesId: string[];
   isForm?: boolean;
-  onSelectedEcogesture(ecogestureId: string): void;
+  onSelectedEcogesture(ecogestureId: string, proofUrl?: string): void;
 }) => {
   const {
     register,
@@ -53,6 +66,27 @@ export const ChallengeEcogestures = ({
     setSelectedCategoryId("all");
   }, [ecogestures]);
 
+  ///
+  /// File uploader
+  ///
+  let proofUrl = "";
+  useEffect(() => {
+    window.addEventListener("LR_DONE_FLOW", (e) => {
+      if (proofUrl.length !== 0) {
+        const config: any = document.querySelector("lr-config");
+        onSelectedEcogesture(config.metadata.selectedEcogestureId, proofUrl);
+        proofUrl = "";
+        const ctxProvider: UploadCtxProvider =
+          document.querySelector("#uploaderctx")!;
+        ctxProvider.uploadCollection.clearAll();
+      }
+    });
+
+    window.addEventListener("LR_DATA_OUTPUT", (e: any) => {
+      proofUrl = e.detail?.data[0]?.cdnUrl ?? "";
+    });
+  }, []);
+
   return (
     <Grid
       item
@@ -64,6 +98,30 @@ export const ChallengeEcogestures = ({
       position={"relative"}
       gap={4}
     >
+      <div>
+        <lr-config
+          ctx-name="my-uploader"
+          pubkey={process.env.REACT_APP_UPLOADCARE_PUB_KEY}
+          imgOnly={true}
+          confirm-upload={true}
+          multiple={false}
+          removeCopyright={true}
+          source-list="local, camera"
+        ></lr-config>
+
+        <lr-upload-ctx-provider
+          id="uploaderctx"
+          ctx-name="my-uploader"
+        ></lr-upload-ctx-provider>
+
+        <div style={{ width: 0, height: 0, opacity: 0 }}>
+          <lr-file-uploader-regular
+            class="my-config"
+            ctx-name="my-uploader"
+            css-src={"/uploader.css"}
+          ></lr-file-uploader-regular>
+        </div>
+      </div>
       <Stack
         width={"100%"}
         direction={"row"}
@@ -101,6 +159,7 @@ export const ChallengeEcogestures = ({
           </div>
         ))}
       </Stack>
+
       <FormGroup
         {...register("list", {
           validate: {
@@ -124,13 +183,20 @@ export const ChallengeEcogestures = ({
               <EcogestureItem
                 key={gesture.id}
                 callbackOnClick={() => {
-                  onSelectedEcogesture(gesture.id);
+                  if (
+                    gesture.isProofNeeded &&
+                    selectedEcogesturesId.find(
+                      (ecogestureId) => ecogestureId === gesture.id
+                    ) == null
+                  )
+                    showFileUploader(gesture.id, true);
+                  else onSelectedEcogesture(gesture.id);
                 }}
                 ecogesture={gesture}
                 isChecked={
-                  selectedEcogesturesId.findIndex(
+                  selectedEcogesturesId.find(
                     (ecogestureId) => ecogestureId === gesture.id
-                  ) !== -1
+                  ) != null
                 }
               />
             }

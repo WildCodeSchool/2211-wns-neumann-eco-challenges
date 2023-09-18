@@ -5,6 +5,7 @@ query GetFriends($status: String, $onlyFriends: Boolean) {
       firstName
       lastName
       email
+      picture
     }
     didCurrentUserAskedFriendship
     status

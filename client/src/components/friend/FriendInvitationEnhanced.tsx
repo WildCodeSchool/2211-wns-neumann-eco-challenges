@@ -13,11 +13,6 @@ import { ThunksStatus } from "../../store";
 import { FriendInvitationMode } from "../../interfaces/friend/friend.interface";
 
 const colors = ["#FF9996", "#FFE5CD", "#62B6B7"];
-const avatars = [
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU",
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoj4aXYYSDLGAQEZGKAteDT9Ia_wONVPsuUA&usqp=CAU",
-];
 
 export const FriendInvitationEnhanced = ({
   friends,
@@ -90,7 +85,7 @@ export const FriendInvitationEnhanced = ({
                       | "none"
                   }
                   didCurrentUserAskedFriendship={didCurrentUserAskedFriendship}
-                  avatar={avatars[index % avatars.length]}
+                  avatar={friend.picture ?? ""}
                 />
               );
             }

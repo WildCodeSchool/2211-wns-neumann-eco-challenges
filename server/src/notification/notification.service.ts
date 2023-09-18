@@ -1,7 +1,7 @@
 import { ApolloError } from "apollo-server";
 import { getChallengeById } from "../challenge/challenge.service";
 import datasource from "../db";
-import { getUsersById } from "../user/user.service";
+import { getUserPicture, getUsersById } from "../user/user.service";
 import Notification, {
   InvitationType,
   NotificationStatus,
@@ -39,10 +39,16 @@ export async function getOwnNotifications(
     order: { updatedDate: "DESC" },
   });
 
-  return notifications.map((notification) => ({
-    ...notification,
-    content: notification.contentAfterUserResponse ?? notification.content,
-  }));
+  return await Promise.all(
+    notifications.map(async (notification) => {
+      const picture = await getUserPicture(notification.senderId);
+      return {
+        ...notification,
+        picture,
+        content: notification.contentAfterUserResponse ?? notification.content,
+      };
+    })
+  );
 }
 
 export async function updateNotificationStatus(

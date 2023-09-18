@@ -8,6 +8,7 @@ query GetOwnNotifications {
     content
     status
     hasBeenSeen
+    picture
   }
 }
 

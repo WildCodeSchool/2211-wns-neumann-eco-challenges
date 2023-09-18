@@ -19,13 +19,6 @@ import {
   thunkUpdateUserChallengeEcogesture,
 } from "../reducer/challenge/challenge.reducer";
 
-const avatars = [
-  "https://images.prismic.io/utopix-next-website/Mzk0NGJkOWEtY2ZlYS00MjVjLTkwNTAtOGY5OWQzN2IzNGVi_762cec57-2eaf-4eaf-9a0d-2e7860147e48_profilhomme7.jpg?ixlib=js-3.7.1&w=3840&auto=format&fit=max",
-  "https://www.informelles.media/wp-content/uploads/2022/05/Alice-Lhabouz-Couleur-HD-scaled.jpg",
-  "https://www.informelles.media/wp-content/uploads/2022/05/Alice-Lhabouz-Couleur-HD-scaled.jpg",
-  "https://ca.slack-edge.com/TGU64F2H2-U04DJ3K2QTG-fbaa52a9366f-512",
-];
-
 const getGoldenPodium = (name: string, score: number, avatar: string) => {
   return (
     <Card
@@ -64,7 +57,7 @@ const getGoldenPodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatars[0]}
+          src={avatar}
         />
       </Badge>
 
@@ -144,7 +137,7 @@ const getSilverPodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatars[1]}
+          src={avatar}
         />
       </Badge>
 
@@ -224,7 +217,7 @@ const getBronzePodium = (name: string, score: number, avatar: string) => {
             boxShadow: "-1px 2px 0px rgba(38, 50, 56, 0.4)",
             marginBottom: "20px",
           }}
-          src={avatars[2]}
+          src={avatar}
         />
       </Badge>
 
@@ -289,20 +282,20 @@ export const Challenge = () => {
           return getSilverPodium(
             challenger!.firstName,
             score,
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"
+            challenger!.picture
           );
         if (rank === 0)
           return getGoldenPodium(
             challenger!.firstName,
             score,
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"
+            challenger!.picture
           );
 
         if (rank === 2) {
           return getBronzePodium(
             challenger!.firstName,
             score,
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsxpJxFOtoiJhB9nvQsEsHXmgTAatQD7o7-Q&usqp=CAU"
+            challenger!.picture
           );
         }
       });
@@ -497,11 +490,15 @@ export const Challenge = () => {
           </Stack>
           <div style={{ width: "80%" }}>
             <ChallengeEcogestures
-              onSelectedEcogesture={(ecogestureId: string) => {
+              onSelectedEcogesture={(
+                ecogestureId: string,
+                proofUrl?: string
+              ) => {
                 dispatch(
                   thunkUpdateUserChallengeEcogesture({
                     challengeId: challengeId!,
                     ecogestureId,
+                    proofUrl,
                   })
                 );
               }}

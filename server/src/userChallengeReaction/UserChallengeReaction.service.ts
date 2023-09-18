@@ -30,9 +30,11 @@ export async function createOrUpdateUserChallengeReaction(
 export async function getChallengeReactions(
   challengeId: string
 ): Promise<UserChallengeReaction[]> {
-  return await datasource
-    .getRepository(UserChallengeReaction)
-    .find({ where: { challengeId } });
+  return (
+    (await datasource
+      .getRepository(UserChallengeReaction)
+      .find({ where: { challengeId }, relations: { user: true } })) ?? []
+  );
 }
 
 export async function getUserChallengeReaction(

@@ -82,30 +82,37 @@ async function userFill(): Promise<void> {
       lastName: "De Datador",
       email: "user@app.com",
       hashedPassword: await hashPassword("test@123"),
+      picture: "https://ucarecdn.com/8a071c75-c41e-4092-a729-6a818ba0589d/",
     },
     {
       firstName: "Jessy",
       lastName: "Matador",
       email: "user2@app.com",
       hashedPassword: await hashPassword("test2@123"),
+      picture: "https://ucarecdn.com/3beb338d-c57d-495a-aea5-48b67905ff13/",
     },
     {
       firstName: "Dugon",
       lastName: "Morgord",
       email: "user3@app.com",
       hashedPassword: await hashPassword("test3@123"),
+      picture: "https://ucarecdn.com/053fe3f6-e55d-4c0e-9cd7-e0330b7fe526/",
     },
     {
       firstName: "Francis",
       lastName: "Molitor",
       email: "use4@app.com",
       hashedPassword: await hashPassword("test4@123"),
+      picture:
+        "https://ui-avatars.com/api/?size=128&name=Francis+Molitor&rounded=true&background=f8fffc&color=212121",
     },
     {
       firstName: "Bryan",
       lastName: "Deliencourt",
       email: "bdeliencourt@gmail.com",
       hashedPassword: await hashPassword("toulouse31"),
+      picture:
+        "https://ca.slack-edge.com/TGU64F2H2-U04DJ3K2QTG-fbaa52a9366f-512",
     },
   ]);
 }

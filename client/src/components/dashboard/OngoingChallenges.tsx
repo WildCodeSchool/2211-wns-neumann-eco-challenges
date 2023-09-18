@@ -116,6 +116,7 @@ export const OngoingChallenges = () => {
           "&::-webkit-scrollbar": { display: "none" },
           msOverflowStyle: "none",
           scrollbarWidth: "none",
+          overflowY: "hidden",
         }}
       >
         {challenges.map((challengeDetails, index) => {

@@ -12,10 +12,41 @@ import { thunkSignIn, thunkSignUp } from "../reducer/user/user.reducer";
 import { RequestStatus } from "../reducer/requestStatus.enums";
 import { useAppDispatch, useAppSelector } from "../reducer/hooks";
 import { AppDispatch } from "../store";
+import * as LR from "@uploadcare/blocks";
+import { useEffect, useState } from "react";
+import { Avatar, Badge } from "@mui/material";
+import { Edit, Face } from "@mui/icons-material";
+
+LR.registerBlocks(LR);
+
+const showFileUploader = (isVisible: boolean) => {
+  if (isVisible) {
+    const ctxProvider: UploadCtxProvider =
+      document.querySelector("#uploaderctx")!;
+    ctxProvider.initFlow();
+  }
+};
 
 const minPasswordLength = 8;
 const getHeader = () => {
   return <GreenMatesLogo format="graphic" size="100px" />;
+};
+
+const getAvatar = (userPicture: string) => {
+  if (userPicture.length === 0)
+    return (
+      <Face
+        style={{
+          width: "65px",
+          height: "65px",
+          color: "#212121",
+        }}
+      />
+    );
+  else
+    return (
+      <Avatar sx={{ width: "100px", height: "100px" }} src={userPicture} />
+    );
 };
 
 const getFooter = (navigate: any) => {
@@ -44,7 +75,8 @@ const getBody = (
   signUpError: string,
   dispatch: AppDispatch,
   formErrors: any,
-  navigate: any
+  navigate: any,
+  userPicture: string
 ) => {
   return (
     <Box
@@ -59,7 +91,16 @@ const getBody = (
           const {
             meta: { requestStatus: requestStatusSignUp },
           } = await dispatch(
-            thunkSignUp({ email, firstName, lastName, password })
+            thunkSignUp({
+              email,
+              firstName,
+              lastName,
+              password,
+              picture:
+                userPicture.length === 0
+                  ? `https://ui-avatars.com/api/?size=128&name=${firstName}+${lastName}&rounded=true&background=f8fffc&color=212121`
+                  : userPicture,
+            })
           );
 
           if (requestStatusSignUp === RequestStatus.fulfilled) {
@@ -91,6 +132,51 @@ const getBody = (
           Help us to make the planet greener.
         </Typography>
       </Grid>
+
+      <div
+        style={{
+          flexBasis: "55px",
+          display: "flex",
+          textAlign: "center",
+          justifyContent: "center",
+          paddingBottom: "14px",
+        }}
+      >
+        <Badge
+          overlap="circular"
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          badgeContent={
+            <div
+              style={{
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "50%",
+                width: "18px",
+                height: "18px",
+                fontSize: "18px",
+                border: "2px solid white",
+                boxShadow: "inset 0px 0px 0px 2px black",
+              }}
+            >
+              <Edit sx={{ fontSize: "15px" }} />
+            </div>
+          }
+        >
+          <Avatar
+            style={{
+              border: "4px solid #3bd8a9",
+              width: "100px",
+              height: "100px",
+              backgroundColor: "#f8fffc",
+            }}
+            onClick={() => {
+              showFileUploader(true);
+            }}
+          >
+            {getAvatar(userPicture)}
+          </Avatar>
+        </Badge>
+      </div>
       <Grid container item paddingX={2} paddingBottom={2}>
         <TextField
           fullWidth
@@ -146,6 +232,29 @@ const getBody = (
             minLength: minPasswordLength,
           })}
         />
+
+        <lr-config
+          ctx-name="my-uploader"
+          pubkey={process.env.REACT_APP_UPLOADCARE_PUB_KEY}
+          imgOnly={true}
+          multiple={false}
+          confirm-upload={true}
+          removeCopyright={true}
+          source-list="local, camera"
+        ></lr-config>
+
+        <lr-upload-ctx-provider
+          id="uploaderctx"
+          ctx-name="my-uploader"
+        ></lr-upload-ctx-provider>
+
+        <div style={{ width: 0, height: 0, opacity: 0 }}>
+          <lr-file-uploader-regular
+            class="my-config"
+            ctx-name="my-uploader"
+            css-src={"/uploader.css"}
+          ></lr-file-uploader-regular>
+        </div>
       </Grid>
 
       <Grid
@@ -190,18 +299,37 @@ export const SignUp = () => {
     formState: { errors: formErrors },
   } = useForm();
 
+  ///
+  /// Picture uploader
+  ///
+  const [userPicture, setUserPicture] = useState<string>("");
+
+  useEffect(() => {
+    window.addEventListener("LR_DATA_OUTPUT", (e: any) => {
+      setUserPicture(e.detail?.data[0]?.cdnUrl ?? "");
+    });
+    window.addEventListener("LR_DONE_FLOW", (e) => {
+      const ctxProvider: UploadCtxProvider =
+        document.querySelector("#uploaderctx")!;
+      ctxProvider.uploadCollection.clearAll();
+    });
+  }, []);
+
   return (
-    <WelcomePageTemplate
-      header={getHeader()}
-      body={getBody(
-        register,
-        handleSubmit,
-        signUpError,
-        dispatch,
-        formErrors,
-        navigate
-      )}
-      footer={getFooter(navigate)}
-    />
+    <div>
+      <WelcomePageTemplate
+        header={getHeader()}
+        body={getBody(
+          register,
+          handleSubmit,
+          signUpError,
+          dispatch,
+          formErrors,
+          navigate,
+          userPicture
+        )}
+        footer={getFooter(navigate)}
+      />
+    </div>
   );
 };

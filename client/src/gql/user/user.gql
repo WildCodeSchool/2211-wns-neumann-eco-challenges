@@ -6,6 +6,7 @@ query GetProfile {
       firstName
       lastName
       email
+      picture
     }
   }
 }
@@ -16,6 +17,7 @@ mutation SignUp($userInputs: [UserInput!]!) {
     firstName
     lastName
     email
+    picture
   }
 }
 

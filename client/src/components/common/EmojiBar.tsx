@@ -10,7 +10,19 @@ import {
 import { Emoji } from "../common/Emoji";
 import { motion } from "framer-motion";
 import React from "react";
+import { Avatar, Typography } from "@mui/material";
 
+let REACTION_NB = 4;
+const names = [
+  "Nicolas",
+  "Luc",
+  "Sylvie",
+  "Nina",
+  "Thomas",
+  "Timothée",
+  "Sophie",
+  "Tomoa",
+];
 interface EmojiBarProps {
   reactionEmojis: ReactionEmojisWithIcon[];
   onClose: () => void;
@@ -82,50 +94,85 @@ export const EmojiBar = ({
         "& .MuiPaper-root": {
           marginTop: "20px",
           backgroundColor: "#242E34",
-          height: "50px",
+          minHeight: "50px",
           borderRadius: "40px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          paddingLeft: "10px",
-          paddingRight: "10px",
+          padding: REACTION_NB === 0 ? "0 15px 0px 15px" : "15px",
           overflowX: "scroll",
           overflowY: "hidden",
         },
       }}
       anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
     >
-      <Stack
-        direction="row"
-        display={"flex"}
-        spacing={2}
-        sx={{
-          backgroundColor: "inherit",
-          borderRadius: "inherit",
-        }}
-      >
-        {reactionEmojis.map((reaction, index) => {
-          return (
-            <motion.div
-              key={index}
-              variants={emojiSelectionVariants}
-              animate={
-                reaction.reactionEmoji === selectedReaction
-                  ? "active"
-                  : "inactive"
-              }
-              transition={{ type: "spring", bounce: 0.6, duration: 0.4 }}
-              onAnimationComplete={(_) => {
-                if (reactionUpdated) onClose();
-              }}
-              onClick={() => {
-                onReactionSelected(reaction.reactionEmoji);
+      <Stack direction="column">
+        <Stack
+          direction="row"
+          display={"flex"}
+          spacing={2}
+          sx={{
+            backgroundColor: "inherit",
+            borderRadius: "inherit",
+          }}
+        >
+          {reactionEmojis.map((reaction, index) => {
+            return (
+              <motion.div
+                key={index}
+                variants={emojiSelectionVariants}
+                animate={
+                  reaction.reactionEmoji === selectedReaction
+                    ? "active"
+                    : "inactive"
+                }
+                transition={{ type: "spring", bounce: 0.6, duration: 0.4 }}
+                onAnimationComplete={(_) => {
+                  if (reactionUpdated) onClose();
+                }}
+                onClick={() => {
+                  onReactionSelected(reaction.reactionEmoji);
+                }}
+              >
+                <Emoji symbol={reaction.icon} label={reaction.icon} />
+              </motion.div>
+            );
+          })}
+        </Stack>
+        {REACTION_NB !== 0 && (
+          <Stack spacing={2} marginTop={1}>
+            <Typography variant="subtitle1" color={"white"} fontWeight={"600"}>
+              Reactions
+            </Typography>
+            <Stack
+              spacing={2}
+              sx={{
+                maxHeight: "170px",
+                overflowY: "scroll",
+                "&::-webkit-scrollbar": { display: "none" },
+                msOverflowStyle: "none",
+                scrollbarWidth: "none",
               }}
             >
-              <Emoji symbol={reaction.icon} label={reaction.icon} />
-            </motion.div>
-          );
-        })}
+              {reactionEmojis.slice(0, REACTION_NB).map((emoji, index) => (
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}
+                >
+                  <Avatar
+                    sx={{ marginRight: "20px", height: "40px", width: "40px" }}
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyd5PFcDiHxvTjILerFYZEIvN3CebMINKMhg&usqp=CAU"
+                  ></Avatar>
+                  <Typography sx={{ flex: 1 }} color="white" fontWeight={600}>
+                    {names[index]}
+                  </Typography>
+                  <Emoji symbol={emoji.icon} label={emoji.reactionEmoji} />
+                </Stack>
+              ))}
+            </Stack>
+          </Stack>
+        )}
       </Stack>
     </Popover>
   );
