@@ -1,0 +1,54 @@
+query GetOwnNotifications {
+  getOwnNotifications {
+    id
+    senderId
+    receiverId
+    date
+    type
+    content
+    status
+    hasBeenSeen
+    picture
+  }
+}
+
+mutation DeleteNotifications($deleteNotificationsId: [String!]!) {
+  deleteNotifications(id: $deleteNotificationsId)
+}
+
+mutation UpdateNotificationStatusBySenderReceiverType(
+  $status: NotificationStatus!
+  $type: String!
+  $receiverId: String!
+  $senderId: String!
+  $statusFilter: NotificationStatus
+  $challengeId: String
+) {
+  updateNotificationStatusBySenderReceiverType(
+    status: $status
+    type: $type
+    receiverId: $receiverId
+    senderId: $senderId
+    statusFilter: $statusFilter
+    challengeId: $challengeId
+  ) {
+    id
+  }
+}
+
+mutation UpdateNotification(
+  $status: NotificationStatus!
+  $notificationId: String!
+) {
+  updateNotificationStatus(status: $status, notificationId: $notificationId) {
+    id
+    senderId
+    receiverId
+    date
+    updatedDate
+    type
+    content
+    status
+    hasBeenSeen
+  }
+}

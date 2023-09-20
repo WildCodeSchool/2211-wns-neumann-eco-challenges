@@ -70,26 +70,30 @@ export class UserResolver {
     @Arg("data") { email, password }: LoginInput,
     @Ctx() { res }: ContextType
   ): Promise<UserProfile> {
+    console.log("login");
     const user = await datasource.getRepository(User).findOneBy({ email });
+    console.log({ user });
 
     if (user === null || !(await verifyPassword(password, user.hashedPassword)))
       throw new ApolloError("Invalid Credentials", "INVALID_CREDS");
-
     const token = jwt.sign({ userId: user.id }, env.JWT_PRIVATE_KEY);
     res.cookie("token", token, {
       httpOnly: true,
       secure: env.NODE_ENV === "production",
     });
+
     return { user, token };
   }
 
   @Mutation(() => Boolean)
+  @Authorized()
   async logout(@Ctx() { res }: ContextType): Promise<boolean> {
     res.clearCookie("token");
     return true;
   }
 
   @Query(() => User)
+  @Authorized()
   async profile(@Ctx() { currentUser }: ContextType): Promise<User> {
     return currentUser as User;
   }
