@@ -39,7 +39,7 @@ export const GenericDialog = ({
         navigate(redirectUrl);
       }
       dispatch(clearEvent());
-    }, 8000);
+    }, 3000);
   }, []);
   return (
     <div>

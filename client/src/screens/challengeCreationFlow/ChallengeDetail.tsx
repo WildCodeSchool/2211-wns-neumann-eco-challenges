@@ -169,6 +169,7 @@ export const ChallengeDetail = ({
                 required: true,
                 validate: {
                   checkDates: () => endingDate > startingDate,
+                  checkAfterNow: () => endingDate > moment().utc(),
                 },
               })}
               label="Ending Date"
@@ -182,9 +183,9 @@ export const ChallengeDetail = ({
               slotProps={{
                 textField: {
                   fullWidth: true,
-                  helperText: formErrors["endingDate"]
+                  helperText: formErrors["endingDate"]?.type === "checkDates"
                     ? "The ending date must starts after the starting date"
-                    : "",
+                    : formErrors["endingDate"]?.type === "checkAfterNow" ? "The ending date can't be in the past" : "",
                   error: formErrors["endingDate"] ? true : false,
                 },
                 day: { className: "datePicker" },

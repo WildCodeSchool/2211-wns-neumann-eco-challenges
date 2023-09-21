@@ -184,6 +184,7 @@ export const ChallengeEcogestures = ({
                 key={gesture.id}
                 callbackOnClick={() => {
                   if (
+                    !isForm &&
                     gesture.isProofNeeded &&
                     selectedEcogesturesId.find(
                       (ecogestureId) => ecogestureId === gesture.id
