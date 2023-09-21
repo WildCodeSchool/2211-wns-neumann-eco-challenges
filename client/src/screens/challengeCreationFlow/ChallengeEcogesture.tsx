@@ -25,7 +25,11 @@ export const ChallengeEcogesture = ({
     Array<string>
   >([]);
 
-  const { handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors },
+  } = useForm();
 
   const handleSelectionUpdate = (ecogestureId: string) => {
     const ecogestureIndex = selectedEcogesturesId.findIndex(
@@ -143,11 +147,27 @@ export const ChallengeEcogesture = ({
             </Stack>
             <div style={{ width: "80%" }}>
               <ChallengeEcogestures
+                {...register("ecogesture", {
+                  validate: {
+                    checkEcogesture: () => selectedEcogesturesId.length !== 0,
+                  },
+                })}
                 ecogestures={data?.ecogestures ?? []}
                 onSelectedEcogesture={handleSelectionUpdate}
                 isForm={true}
                 selectedEcogesturesId={selectedEcogesturesId}
               />
+              {formErrors["ecogesture"]?.type === "checkEcogesture" && (
+                <Typography
+                  variant="caption"
+                  color="#ba000d"
+                  display="block"
+                  gutterBottom
+                  paddingLeft={"14px"}
+                >
+                  Select at least 1 ecogesture to create a challenge
+                </Typography>
+              )}
             </div>
             <Button
               variant="contained"
