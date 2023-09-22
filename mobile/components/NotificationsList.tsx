@@ -68,7 +68,7 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function NotificationsList({ allowedNotifications = false }) {
-  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
   const { data, loading, error, refetch } = useGetOwnNotificationsQuery();
   const [notifications, setNotifications] = useState<Array<Notification>>();
@@ -79,16 +79,14 @@ export default function NotificationsList({ allowedNotifications = false }) {
           useUpdateExpoPushNotificationTokenMutation({ variables: { token } });
       });
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
         refetch();
       });
 
     return () => {
-      if (notificationListener.current != null)
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
+      if (responseListener.current != null)
+        Notifications.removeNotificationSubscription(responseListener.current);
     };
   });
   useEffect(() => {
