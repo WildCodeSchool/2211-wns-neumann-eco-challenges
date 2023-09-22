@@ -1,6 +1,5 @@
 import User, {
   LoginInput,
-  UpdateUserExpoToken,
   UserInput,
   UserProfile,
   verifyPassword,
@@ -64,13 +63,29 @@ export class UserResolver {
     return { user, token };
   }
 
+  @Authorized()
+  @Mutation(() => Boolean)
+  async updateExpoPushNotificationToken(
+    @Arg("token") token: string,
+    @Ctx() { currentUser }: ContextType
+  ): Promise<boolean> {
+    if (currentUser == null)
+      throw new ApolloError("User not found", "NOT_FOUND");
+
+    console.log(`Update token ${token}`);
+    await datasource
+      .getRepository(User)
+      .update({ id: currentUser.id }, { expoNotificationToken: token });
+
+    return true;
+  }
+
   // Login - JWT
   @Mutation(() => UserProfile)
   async login(
     @Arg("data") { email, password }: LoginInput,
     @Ctx() { res }: ContextType
   ): Promise<UserProfile> {
-    console.log("login");
     const user = await datasource.getRepository(User).findOneBy({ email });
     console.log({ user });
 
@@ -96,16 +111,6 @@ export class UserResolver {
   @Authorized()
   async profile(@Ctx() { currentUser }: ContextType): Promise<User> {
     return currentUser as User;
-  }
-
-  @Mutation(() => User)
-  async updateUserExpoToken(
-    @Arg("data") data: UpdateUserExpoToken,
-    @Ctx() { currentUser }: ContextType
-  ): Promise<User> {
-    return await datasource
-      .getRepository(User)
-      .save({ ...currentUser, ...data });
   }
 
   // Authorize only for admin

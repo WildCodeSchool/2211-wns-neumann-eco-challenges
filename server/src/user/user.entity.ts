@@ -38,6 +38,7 @@ class User {
   hashedPassword: string;
 
   @Column({ nullable: true })
+  @Field({ nullable: true })
   expoNotificationToken?: string;
 
   // One user can realize many ecogestures from a challenge

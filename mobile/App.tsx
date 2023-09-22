@@ -11,7 +11,7 @@ import { View } from "react-native";
 import { Button, PaperProvider } from "react-native-paper";
 import * as SecureStore from "expo-secure-store";
 import NotificationsList from "./components/NotificationsList";
-
+import SafeAreaView from "./components/SafeAreaView";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -52,12 +52,19 @@ function App() {
         style={{
           flex: 1,
           backgroundColor: "rgba(248, 255, 252, 0.95)",
-          padding: 30,
         }}
       >
-        {isTokenSet && currentUser != null && <NotificationsList />}
-        {!isTokenSet && <SignIn />}
-        <Button onPress={() => setToken(!isTokenSet)}>Logout</Button>
+        <SafeAreaView>
+          {isTokenSet && currentUser != null && (
+            <NotificationsList
+              allowedNotifications={
+                currentUser?.profile.expoNotificationToken != null
+              }
+            />
+          )}
+          {!isTokenSet && <SignIn />}
+          <Button onPress={() => setToken(!isTokenSet)}>Logout</Button>
+        </SafeAreaView>
       </View>
     </ProfileContext.Provider>
   );

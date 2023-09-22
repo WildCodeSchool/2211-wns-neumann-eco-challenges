@@ -8,6 +8,8 @@ import Notification, {
 } from "./notification.entity";
 import { updateFriendRelationshipStatus } from "../friend/friend.service";
 import { updateChallengeParticipationStatus } from "../userChallengesParticipation/userChallengesParticipation.service";
+import { Expo } from "expo-server-sdk";
+const expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
 
 const contentTemplates = {
   friend_invitation: {
@@ -21,6 +23,12 @@ const contentTemplates = {
     accepted: "You joined <b>$challengeName$</b>.😁",
     declined: "You refused to join <b>$challengeName$</b>.😕",
   },
+};
+
+const contentTemplatesMobile = {
+  friend_invitation: "$sender$ wants to be your friend!",
+  challenge_invitation:
+    "$sender$ wants you to join the challenge $challengeName$",
 };
 
 export async function getNotificationById(
@@ -128,6 +136,8 @@ export async function notifyChallengeInvitation(
   challengeId: string
 ): Promise<boolean> {
   const [{ firstName }] = await getUsersById([senderId]);
+  const [{ expoNotificationToken }] = await getUsersById([receiverId]);
+
   const { name } = (await getChallengeById(challengeId)) ?? { name: "" };
   const content = contentTemplates.challenge_invitation.pending
     .replace("$sender$", firstName)
@@ -141,6 +151,17 @@ export async function notifyChallengeInvitation(
     receiverId,
     challengeId,
   });
+
+  if (expoNotificationToken != null) {
+    console.log(expoNotificationToken);
+    await pushExpoNotification(
+      expoNotificationToken,
+      "#challenge🔥",
+      contentTemplatesMobile.challenge_invitation
+        .replace("$sender$", firstName)
+        .replace("$challengeName$", name)
+    );
+  }
 
   return true;
 }
@@ -163,11 +184,37 @@ export async function cancelFriendInvitation(
   return affected !== 0;
 }
 
+export async function pushExpoNotification(
+  token: string,
+  title: string,
+  body: string
+): Promise<boolean> {
+  try {
+    await expo.sendPushNotificationsAsync([
+      {
+        to: token,
+        title,
+        body,
+        // data:
+        //   typeof notificationPayload.data === "string"
+        //     ? JSON.parse(notificationPayload.data)
+        //     : undefined,
+      },
+    ]);
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export async function notifyFriendInvitation(
   senderId: string,
   receiverId: string
 ): Promise<boolean> {
   const [{ firstName }] = await getUsersById([senderId]);
+  const [{ expoNotificationToken }] = await getUsersById([receiverId]);
+
   const content = contentTemplates.friend_invitation.pending.replace(
     "$sender$",
     firstName
@@ -178,9 +225,17 @@ export async function notifyFriendInvitation(
     type: InvitationType.friend_invitation,
     senderId,
     receiverId,
-
     status: NotificationStatus.pending,
   });
+
+  if (expoNotificationToken != null) {
+    console.log(expoNotificationToken);
+    await pushExpoNotification(
+      expoNotificationToken,
+      "#friendship 🥂",
+      contentTemplatesMobile.friend_invitation.replace("$sender$", firstName)
+    );
+  }
 
   return true;
 }

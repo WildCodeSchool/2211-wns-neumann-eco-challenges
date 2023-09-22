@@ -115,11 +115,11 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   sendExpoNotification: Scalars['Boolean'];
   updateChallenge: Challenge;
+  updateExpoPushNotificationToken: Scalars['Boolean'];
   updateFriendRelationship: User;
   updateNotificationStatus: Notification;
   updateNotificationStatusBySenderReceiverType: Notification;
   updateUserChallengeEcogesture: UserEcogesturesWithChallengersScore;
-  updateUserExpoToken: User;
 };
 
 
@@ -197,6 +197,11 @@ export type MutationUpdateChallengeArgs = {
 };
 
 
+export type MutationUpdateExpoPushNotificationTokenArgs = {
+  token: Scalars['String'];
+};
+
+
 export type MutationUpdateFriendRelationshipArgs = {
   friendId: Scalars['String'];
 };
@@ -222,11 +227,6 @@ export type MutationUpdateUserChallengeEcogestureArgs = {
   challengeId: Scalars['String'];
   ecogestureId: Scalars['String'];
   proofUrl?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateUserExpoTokenArgs = {
-  data: UpdateUserExpoToken;
 };
 
 export type Notification = {
@@ -325,14 +325,10 @@ export type ReactionEmojisWithIcon = {
   reactionEmoji: ReactionEmojis;
 };
 
-export type UpdateUserExpoToken = {
-  email?: InputMaybe<Scalars['String']>;
-  expoNotificationToken?: InputMaybe<Scalars['String']>;
-};
-
 export type User = {
   __typename?: 'User';
   email: Scalars['String'];
+  expoNotificationToken?: Maybe<Scalars['String']>;
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
@@ -445,7 +441,12 @@ export type UpdateNotificationMutation = { __typename?: 'Mutation', updateNotifi
 export type GetProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProfileQuery = { __typename?: 'Query', profile: { __typename?: 'User', id: string, email: string } };
+export type GetProfileQuery = { __typename?: 'Query', profile: { __typename?: 'User', id: string, email: string, expoNotificationToken?: string | null } };
+
+export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SignOutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type SignInMutationVariables = Exact<{
   data: LoginInput;
@@ -454,10 +455,12 @@ export type SignInMutationVariables = Exact<{
 
 export type SignInMutation = { __typename?: 'Mutation', login: { __typename?: 'UserProfile', token: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string } } };
 
-export type SignOutMutationVariables = Exact<{ [key: string]: never; }>;
+export type UpdateExpoPushNotificationTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
 
 
-export type SignOutMutation = { __typename?: 'Mutation', logout: boolean };
+export type UpdateExpoPushNotificationTokenMutation = { __typename?: 'Mutation', updateExpoPushNotificationToken: boolean };
 
 
 export const ChallengesDocument = gql`
@@ -663,6 +666,7 @@ export const GetProfileDocument = gql`
   profile {
     id
     email
+    expoNotificationToken
   }
 }
     `;
@@ -693,6 +697,36 @@ export function useGetProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetProfileQueryHookResult = ReturnType<typeof useGetProfileQuery>;
 export type GetProfileLazyQueryHookResult = ReturnType<typeof useGetProfileLazyQuery>;
 export type GetProfileQueryResult = Apollo.QueryResult<GetProfileQuery, GetProfileQueryVariables>;
+export const SignOutDocument = gql`
+    mutation SignOut {
+  logout
+}
+    `;
+export type SignOutMutationFn = Apollo.MutationFunction<SignOutMutation, SignOutMutationVariables>;
+
+/**
+ * __useSignOutMutation__
+ *
+ * To run a mutation, you first call `useSignOutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignOutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signOutMutation, { data, loading, error }] = useSignOutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSignOutMutation(baseOptions?: Apollo.MutationHookOptions<SignOutMutation, SignOutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignOutMutation, SignOutMutationVariables>(SignOutDocument, options);
+      }
+export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
+export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
+export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
 export const SignInDocument = gql`
     mutation SignIn($data: LoginInput!) {
   login(data: $data) {
@@ -732,33 +766,34 @@ export function useSignInMutation(baseOptions?: Apollo.MutationHookOptions<SignI
 export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
 export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
 export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
-export const SignOutDocument = gql`
-    mutation SignOut {
-  logout
+export const UpdateExpoPushNotificationTokenDocument = gql`
+    mutation updateExpoPushNotificationToken($token: String!) {
+  updateExpoPushNotificationToken(token: $token)
 }
     `;
-export type SignOutMutationFn = Apollo.MutationFunction<SignOutMutation, SignOutMutationVariables>;
+export type UpdateExpoPushNotificationTokenMutationFn = Apollo.MutationFunction<UpdateExpoPushNotificationTokenMutation, UpdateExpoPushNotificationTokenMutationVariables>;
 
 /**
- * __useSignOutMutation__
+ * __useUpdateExpoPushNotificationTokenMutation__
  *
- * To run a mutation, you first call `useSignOutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSignOutMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateExpoPushNotificationTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExpoPushNotificationTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [signOutMutation, { data, loading, error }] = useSignOutMutation({
+ * const [updateExpoPushNotificationTokenMutation, { data, loading, error }] = useUpdateExpoPushNotificationTokenMutation({
  *   variables: {
+ *      token: // value for 'token'
  *   },
  * });
  */
-export function useSignOutMutation(baseOptions?: Apollo.MutationHookOptions<SignOutMutation, SignOutMutationVariables>) {
+export function useUpdateExpoPushNotificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<UpdateExpoPushNotificationTokenMutation, UpdateExpoPushNotificationTokenMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SignOutMutation, SignOutMutationVariables>(SignOutDocument, options);
+        return Apollo.useMutation<UpdateExpoPushNotificationTokenMutation, UpdateExpoPushNotificationTokenMutationVariables>(UpdateExpoPushNotificationTokenDocument, options);
       }
-export type SignOutMutationHookResult = ReturnType<typeof useSignOutMutation>;
-export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
-export type SignOutMutationOptions = Apollo.BaseMutationOptions<SignOutMutation, SignOutMutationVariables>;
+export type UpdateExpoPushNotificationTokenMutationHookResult = ReturnType<typeof useUpdateExpoPushNotificationTokenMutation>;
+export type UpdateExpoPushNotificationTokenMutationResult = Apollo.MutationResult<UpdateExpoPushNotificationTokenMutation>;
+export type UpdateExpoPushNotificationTokenMutationOptions = Apollo.BaseMutationOptions<UpdateExpoPushNotificationTokenMutation, UpdateExpoPushNotificationTokenMutationVariables>;

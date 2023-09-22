@@ -1,0 +1,27 @@
+query getProfile {
+  profile {
+    id
+    email
+    expoNotificationToken
+  }
+}
+
+mutation SignOut {
+  logout
+}
+
+mutation SignIn($data: LoginInput!) {
+  login(data: $data) {
+    token
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}
+
+mutation updateExpoPushNotificationToken($token: String!) {
+  updateExpoPushNotificationToken(token: $token)
+}

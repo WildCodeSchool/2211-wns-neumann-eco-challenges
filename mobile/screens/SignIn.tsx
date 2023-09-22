@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     padding: 0,
-    backgroundColor: "white",
   },
   error: {
     color: "red",

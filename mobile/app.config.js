@@ -13,6 +13,15 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
+    plugins: [
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/notification-icon.png",
+          color: "#ffffff",
+        },
+      ],
+    ],
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
@@ -30,4 +39,18 @@ export default {
       REACT_APP_GRAPHQL_API_URL: process.env.REACT_APP_GRAPHQL_API_URL,
     },
   },
+  plugins: [
+    [
+      "expo-notifications",
+      {
+        icon: "./assets/notification-icon.png",
+        color: "#ffffff",
+
+        // sounds: [
+        //   "./local/assets/notification-sound.wav",
+        //   "./local/assets/notification-sound-other.wav",
+        // ],
+      },
+    ],
+  ],
 };
