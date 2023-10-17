@@ -21,7 +21,9 @@ import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogesture
 import Category from "./category/category.entity";
 import Notification from "./notification/notification.entity";
 import { updateFriendRelationship } from "./friend/friend.service";
-async function reset(): Promise<void> {
+import { DataSource } from "typeorm";
+
+export async function reset(datasource: DataSource): Promise<void> {
   // Drop database
   await datasource.initialize();
   await datasource.dropDatabase();
@@ -49,11 +51,11 @@ async function reset(): Promise<void> {
   await userChallengesParticipationFill();
 
   // Close connection
-  await datasource.destroy();
+  // await datasource.destroy();
   console.log("done !");
 }
 
-reset().catch(console.error);
+reset(datasource).catch(console.error);
 
 async function categoryFill(): Promise<void> {
   await datasource.getRepository(Category).save([
