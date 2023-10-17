@@ -41,7 +41,6 @@ beforeAll(async () => {
         req: { headers },
       } = context;
 
-      console.log("Auth checker");
       const tokenInAuthHeaders = headers.authorization?.split(" ")[1];
       const tokenInCookie = cookie.parse(headers.cookie ?? "").token;
       const token = tokenInAuthHeaders ?? tokenInCookie;
@@ -69,20 +68,21 @@ beforeAll(async () => {
       credentials: true,
     },
   });
-
-  await apolloServer.listen();
 });
 
-afterAll(async () => await datasource?.destroy());
+afterAll(async () => {
+  await datasource?.destroy();
+  await apolloServer.stop();
+});
 
 it("test challenge query", async () => {
   // Get challenges
   const challenges: Challenge[] = await allChallenges();
+
   // Get token
   const user = await datasource
     .getRepository(User)
     .findOneBy({ email: "bdeliencourt@gmail.com" });
-  console.log({ challenges });
 
   const token =
     user != null ? jwt.sign({ userId: user.id }, env.JWT_PRIVATE_KEY) : "";
@@ -150,23 +150,4 @@ it("test challenge query", async () => {
     },
     req
   );
-  // console.log(token);
-
-  // const client = new ApolloClient({
-  //   cache: new InMemoryCache(),
-  //   defaultOptions: {
-  //     query: {
-  //       fetchPolicy: "no-cache",
-  //     },
-  //   },
-  //   link: createHttpLink({
-  //     uri: apolloServer != null ? "http://localhost:4000" : "toto",
-  //     headers: { Authorization: `Bearer ${token}` },
-  //     credentials: "include",
-  //   }),
-  // });
-
-  // console.log(apolloServer.graphqlPath);
-  // const result = await client.query(queryChallenge);
-  console.log(result.data);
 });
