@@ -15,7 +15,7 @@ import UserChallengeReaction from "./userChallengeReaction/UserChallengeReaction
 const datasource = new DataSource({
   type: "postgres",
   host: env.DB_HOST,
-  port: env.DB_PORT,
+  port: env.NODE_ENV.includes("test") ? env.DB_PORT_TEST : env.DB_PORT,
   username: env.DB_USER,
   password: env.DB_PASS,
   database: env.DB_NAME,

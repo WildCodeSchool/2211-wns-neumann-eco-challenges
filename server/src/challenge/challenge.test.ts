@@ -1,63 +1,47 @@
-import { ApolloServer, gql } from "apollo-server";
-import { buildSchemaSync } from "type-graphql";
-import { ChallengeResolver } from "./challenge.resolver";
 import { env } from "../env";
+import User from "../user/user.entity";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import User from "../user/user.entity";
-import { ContextType, JWTPayload } from "../user/user.resolver";
-import { InMemoryLRUCache } from "@apollo/utils.keyvaluecache";
-import { DataSource } from "typeorm";
-import Category from "../category/category.entity";
-import { ChallengeEcogestures } from "../challengeEcogestures/challengeEcogestures.entity";
-import Ecogesture from "../ecogesture/ecogesture.entity";
-import Friend from "../friend/friend.entity";
-import UserChallengeEcogestures from "../userChallengeEcogestures/userChallengeEcogestures.entity";
-import UserChallengeReaction from "../userChallengeReaction/UserChallengeReaction.entity";
-import UserChallengesCreation from "../userChallengesCreation/userChallengesCreation.entity";
-import UserChallengesParticipation from "../userChallengesParticipation/userChallengesParticipation.entity";
 import Challenge from "./challenge.entity";
-import Notification from "../notification/notification.entity";
 import { reset } from "../resetDB";
+import { ApolloServer, gql } from "apollo-server";
+import { buildSchemaSync } from "type-graphql/dist/utils/buildSchema";
+import { ContextType, JWTPayload, UserResolver } from "../user/user.resolver";
+import { ChallengeResolver } from "./challenge.resolver";
+import { InMemoryLRUCache } from "@apollo/utils.keyvaluecache/dist/InMemoryLRUCache";
+import datasource from "../db";
+import { allChallenges } from "./challenge.service";
+import { EcogestureResolver } from "../ecogesture/ecogesture.resolver";
+import { FriendResolver } from "../friend/friend.resolver";
+import { NotificationResolver } from "../notification/notification.resolver";
+import { UserChallengeEcogesturesResolver } from "../userChallengeEcogestures/userChallengeEcogestures.resolver";
+import { UserChallengeReactionResolver } from "../userChallengeReaction/UserChallengeReaction.resolver";
+import { UserChallengesParticipationResolver } from "../userChallengesParticipation/userChallengesParticipation.resolver";
 
-const datasource = new DataSource({
-  type: "postgres",
-  host: env.DB_HOST,
-  port: 5434,
-  username: env.DB_USER,
-  password: env.DB_PASS,
-  database: env.DB_NAME,
-  synchronize: true,
+let apolloServer: ApolloServer;
 
-  entities: [
-    User,
-    Challenge,
-    Ecogesture,
-    UserChallengeEcogestures,
-    UserChallengesCreation,
-    UserChallengesParticipation,
-    ChallengeEcogestures,
-    Friend,
-    Notification,
-    Category,
-    UserChallengeReaction,
-  ],
-  logging: ["error"],
-});
-
-let server: ApolloServer;
-const serverinItialise = async (): Promise<void> => {
-  jest.useFakeTimers();
-  await reset(datasource);
-  console.log(datasource.isInitialized);
+beforeAll(async () => {
+  await reset();
+  await datasource.initialize();
 
   const schema = buildSchemaSync({
-    resolvers: [ChallengeResolver],
+    resolvers: [
+      ChallengeResolver,
+      UserChallengeEcogesturesResolver,
+      EcogestureResolver,
+      FriendResolver,
+      NotificationResolver,
+      UserChallengesParticipationResolver,
+      UserResolver,
+      UserChallengeReactionResolver,
+    ],
     authChecker: async ({ context }: { context: ContextType }) => {
+      console.log({ context });
       const {
         req: { headers },
       } = context;
 
+      console.log("Auth checker");
       const tokenInAuthHeaders = headers.authorization?.split(" ")[1];
       const tokenInCookie = cookie.parse(headers.cookie ?? "").token;
       const token = tokenInAuthHeaders ?? tokenInCookie;
@@ -75,19 +59,34 @@ const serverinItialise = async (): Promise<void> => {
       return false;
     },
   });
-  server = new ApolloServer({ schema, cache: new InMemoryLRUCache() });
-};
+
+  apolloServer = new ApolloServer({
+    schema,
+    cache: new InMemoryLRUCache(),
+    context: ({ req, res }) => ({ req, res }),
+    cors: {
+      origin: env.CORS_ALLOWED_ORIGINS.split(","),
+      credentials: true,
+    },
+  });
+
+  await apolloServer.listen();
+});
+
+afterAll(async () => await datasource?.destroy());
 
 it("test challenge query", async () => {
-  await serverinItialise();
-  const challenges: Challenge[] = await datasource
-    .getRepository(Challenge)
-    .find({
-      relations: {
-        challengeEcogestures: true,
-        userChallengesParticipation: { challenge: true, user: true },
-      },
-    });
+  // Get challenges
+  const challenges: Challenge[] = await allChallenges();
+  // Get token
+  const user = await datasource
+    .getRepository(User)
+    .findOneBy({ email: "bdeliencourt@gmail.com" });
+  console.log({ challenges });
+
+  const token =
+    user != null ? jwt.sign({ userId: user.id }, env.JWT_PRIVATE_KEY) : "";
+
   const queryChallenge = {
     query: gql`
       query Query($challengeId: String!) {
@@ -142,44 +141,32 @@ it("test challenge query", async () => {
     variables: { challengeId: challenges[0].id },
   };
 
-  const result = await server.executeOperation({
-    query: queryChallenge.query,
-    variables: queryChallenge.variables,
-  });
+  const req: any = { req: { headers: { authorization: `Bearer ${token}` } } };
 
-  console.log(result);
+  const result = await apolloServer.executeOperation(
+    {
+      query: queryChallenge.query,
+      variables: queryChallenge.variables,
+    },
+    req
+  );
+  // console.log(token);
 
-  expect(result).toMatchSnapshot();
+  // const client = new ApolloClient({
+  //   cache: new InMemoryCache(),
+  //   defaultOptions: {
+  //     query: {
+  //       fetchPolicy: "no-cache",
+  //     },
+  //   },
+  //   link: createHttpLink({
+  //     uri: apolloServer != null ? "http://localhost:4000" : "toto",
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     credentials: "include",
+  //   }),
+  // });
+
+  // console.log(apolloServer.graphqlPath);
+  // const result = await client.query(queryChallenge);
+  console.log(result.data);
 });
-
-// it("create a challenge", async () => {
-//   const server = await beforeEach();
-
-//   const createChallengeMutation = {
-//     mutation: gql`
-//       mutation Mutation($challenges: [ChallengeCreationInput!]!) {
-//         createChallenges(challenges: $challenges) {
-//           id
-//           name
-//           status
-//           startingDate
-//           endingDate
-//         }
-//       }
-//     `,
-//     variables: {
-//       id: fakeChallenge.id,
-//       name: fakeChallenge.name,
-//       status: fakeChallenge.status,
-//       startingDate: fakeChallenge.startingDate,
-//       endingDate: fakeChallenge.endingDate,
-//     },
-//   };
-
-//   const result = await server.executeOperation({
-//     query: createChallengeMutation.mutation,
-//     variables: createChallengeMutation.variables,
-//   });
-
-//   expect(result).toMatchSnapshot();
-// });

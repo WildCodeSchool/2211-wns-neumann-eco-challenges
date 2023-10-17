@@ -25,10 +25,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - 5434:5433
-    expose:
-      - 5434
-
+      - 5434:5432
   server:
     restart: always
     depends_on:
