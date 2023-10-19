@@ -24,6 +24,7 @@ describe("User resolver", () => {
               password: "jimmyjimmy",
               firstName: "jimmy",
               lastName: "jimjim",
+              picture: "https://ui-avatars.com/api/?size=128&name=jimmy&rounded=true&background=f8fffc&color=212121",
             },
           ],
         },

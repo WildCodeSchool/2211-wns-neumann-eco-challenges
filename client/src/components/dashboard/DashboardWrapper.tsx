@@ -1,6 +1,5 @@
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { MoreButton } from "./MoreButton";
 export const DashboardWrapper = ({
   title,
   subtitle,
@@ -22,15 +21,6 @@ export const DashboardWrapper = ({
               {subtitle}
             </Typography>
           </div>
-        </Grid>
-        <Grid
-          item
-          xs={2}
-          display="flex"
-          justifyContent={"center"}
-          alignItems="top"
-        >
-          <MoreButton />
         </Grid>
       </Grid>
       <Grid item>{component}</Grid>
