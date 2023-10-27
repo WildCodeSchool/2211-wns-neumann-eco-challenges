@@ -7,6 +7,7 @@ export const env = load({
   NODE_ENV: ["production" as const, "development" as const, "test" as const],
   SERVER_HOST: String,
   SERVER_PORT: Number,
+  DB_PORT_TEST: Number,
   DB_HOST: String,
   DB_PORT: Number,
   DB_PASS: String,

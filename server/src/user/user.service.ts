@@ -24,6 +24,7 @@ export async function getUserPicture(userId: string): Promise<string> {
 
   return user.picture;
 }
+
 export async function createUsers(userData: UserInput[]): Promise<User[]> {
   return await Promise.all(
     userData.map(

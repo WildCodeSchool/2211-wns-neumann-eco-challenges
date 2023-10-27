@@ -76,9 +76,7 @@ export async function getChallengeDetails(
   const challengers = await getUsersById(challengersId);
 
   return {
-    challenge: {
-      ...challenge,
-    },
+    challenge,
     categories,
     challengers,
     ecogestures,

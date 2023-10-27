@@ -21,7 +21,9 @@ import { ChallengeEcogestures } from "./challengeEcogestures/challengeEcogesture
 import Category from "./category/category.entity";
 import Notification from "./notification/notification.entity";
 import { updateFriendRelationship } from "./friend/friend.service";
-async function reset(): Promise<void> {
+import { env } from "./env";
+
+export async function reset(): Promise<void> {
   // Drop database
   await datasource.initialize();
   await datasource.dropDatabase();
@@ -53,7 +55,7 @@ async function reset(): Promise<void> {
   console.log("done !");
 }
 
-reset().catch(console.error);
+if (!env.NODE_ENV.includes("test")) reset().catch(console.error);
 
 async function categoryFill(): Promise<void> {
   await datasource.getRepository(Category).save([
