@@ -34,6 +34,16 @@ class Challenge {
   @Field()
   endingDate: Date;
 
+  // One challenge can have multiple participation
+  @OneToMany(
+    () => UserChallengesParticipation,
+    (challengeParticipation) => challengeParticipation.challenge,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  userChallengesParticipation: UserChallengesParticipation[];
+
   // One challenge can have many ecogestures
   @OneToMany(() => ChallengeEcogestures, (ce) => ce.challenge, {
     onDelete: "CASCADE",
@@ -48,16 +58,6 @@ class Challenge {
     onDelete: "CASCADE",
   })
   userChallengeEcogestures: UserChallengeEcogestures[];
-
-  // One challenge can have multiple participation
-  @OneToMany(
-    () => UserChallengesParticipation,
-    (challengeParticipation) => challengeParticipation.challenge,
-    {
-      onDelete: "CASCADE",
-    }
-  )
-  userChallengesParticipation: UserChallengesParticipation[];
 }
 
 @ObjectType()

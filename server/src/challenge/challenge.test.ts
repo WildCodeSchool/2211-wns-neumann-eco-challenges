@@ -4,19 +4,20 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import Challenge from "./challenge.entity";
 import { reset } from "../resetDB";
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloError, ApolloServer, gql } from "apollo-server";
 import { buildSchemaSync } from "type-graphql/dist/utils/buildSchema";
 import { ContextType, JWTPayload, UserResolver } from "../user/user.resolver";
 import { ChallengeResolver } from "./challenge.resolver";
 import { InMemoryLRUCache } from "@apollo/utils.keyvaluecache/dist/InMemoryLRUCache";
 import datasource from "../db";
-import { allChallenges } from "./challenge.service";
+import { allChallenges, getChallengeDetails } from "./challenge.service";
 import { EcogestureResolver } from "../ecogesture/ecogesture.resolver";
 import { FriendResolver } from "../friend/friend.resolver";
 import { NotificationResolver } from "../notification/notification.resolver";
 import { UserChallengeEcogesturesResolver } from "../userChallengeEcogestures/userChallengeEcogestures.resolver";
 import { UserChallengeReactionResolver } from "../userChallengeReaction/UserChallengeReaction.resolver";
 import { UserChallengesParticipationResolver } from "../userChallengesParticipation/userChallengesParticipation.resolver";
+import { getEcogestures } from "../ecogesture/ecogesture.service";
 
 let apolloServer: ApolloServer;
 
@@ -36,7 +37,6 @@ beforeAll(async () => {
       UserChallengeReactionResolver,
     ],
     authChecker: async ({ context }: { context: ContextType }) => {
-      console.log({ context });
       const {
         req: { headers },
       } = context;
@@ -72,30 +72,84 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await datasource?.destroy();
-  await apolloServer.stop();
+  // await apolloServer.stop();
 });
 
-it("test challenge query", async () => {
-  // Get challenges
-  const challenges: Challenge[] = await allChallenges();
-
-  // Get token
+const getTestUser = async (): Promise<{
+  user: User;
+  token: string;
+  req: any;
+}> => {
   const user = await datasource
     .getRepository(User)
     .findOneBy({ email: "bdeliencourt@gmail.com" });
-
+  if (user === null) throw new ApolloError("no user found");
   const token =
     user != null ? jwt.sign({ userId: user.id }, env.JWT_PRIVATE_KEY) : "";
+  const req: any = { req: { headers: { authorization: `Bearer ${token}` } } };
+  return { user, token, req };
+};
+
+it("test the mutation create challenge", async () => {
+  const { user, req } = await getTestUser();
+  const ecogestures = await getEcogestures();
+
+  const createChallengeMutation = {
+    mutation: gql`
+      mutation CreateChallenges($challenges: [ChallengeCreationInput!]!) {
+        createChallenges(challenges: $challenges) {
+          id
+          name
+          status
+          startingDate
+          endingDate
+        }
+      }
+    `,
+    variables: {
+      challenges: [
+        {
+          challenge: {
+            name: "Test challenge",
+            status: true,
+            startingDate: new Date("2023-10-27").toISOString(),
+            endingDate: new Date("2023-11-27").toISOString(),
+          },
+          ecogesturesId: ecogestures.map((ecogeste) => ecogeste.id),
+          challengersId: user.id,
+        },
+      ],
+    },
+  };
+  const result = await apolloServer.executeOperation(
+    {
+      query: createChallengeMutation.mutation,
+      variables: createChallengeMutation.variables,
+    },
+    req
+  );
+
+  const challenges = await allChallenges();
+  expect(result.data?.createChallenges[0].id).toBe(
+    challenges[challenges.length - 1].id
+  );
+});
+
+it("test challenge details query", async () => {
+  // Get challenges
+  const challenges: Challenge[] = await allChallenges();
+
+  const { user, req } = await getTestUser();
+
+  const challengeDetails = await getChallengeDetails(
+    challenges[0]?.id,
+    user?.id
+  );
 
   const queryChallenge = {
     query: gql`
       query Query($challengeId: String!) {
         challengeDetails(challengeId: $challengeId) {
-          categories {
-            id
-            icon
-            name
-          }
           challenge {
             id
             name
@@ -103,45 +157,11 @@ it("test challenge query", async () => {
             startingDate
             endingDate
           }
-          challengers {
-            id
-            firstName
-            lastName
-            email
-          }
-          challengersScore {
-            id
-            score
-          }
-          ecogestures {
-            id
-            name
-            difficulty
-            reward
-            isProofNeeded
-            category {
-              id
-              name
-              icon
-            }
-          }
-          totalEcogesturesScore
-          userEcogestures {
-            id
-            challengeId
-            userId
-            ecogestureId
-            proof
-            completionDate
-            reward
-          }
         }
       }
     `,
     variables: { challengeId: challenges[0].id },
   };
-
-  const req: any = { req: { headers: { authorization: `Bearer ${token}` } } };
 
   const result = await apolloServer.executeOperation(
     {
@@ -149,5 +169,9 @@ it("test challenge query", async () => {
       variables: queryChallenge.variables,
     },
     req
+  );
+
+  expect(result.data?.challengeDetails.challenge.id).toEqual(
+    challengeDetails.challenge.id
   );
 });

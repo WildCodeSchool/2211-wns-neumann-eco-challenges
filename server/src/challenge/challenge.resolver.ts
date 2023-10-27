@@ -45,6 +45,7 @@ export class ChallengeResolver {
     return await createChallenges(currentUser.id, data);
   }
 
+  @Authorized()
   @Mutation(() => Challenge)
   async updateChallenge(
     @Arg("id", () => String) id: string,
@@ -53,6 +54,7 @@ export class ChallengeResolver {
     return await updateChallenge(id, data);
   }
 
+  @Authorized()
   @Mutation(() => [Boolean])
   async deleteChallenges(
     @Arg("id", () => [String]) id: string[]
